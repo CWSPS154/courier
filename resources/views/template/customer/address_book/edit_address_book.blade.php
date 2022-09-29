@@ -30,7 +30,7 @@
                 </div>
             </x-slot>
             <x-slot name="button">
-                <x-admin.ui.button type="submit" btn-name="Submit" name="address_book_submit" id="address_book_submit"/>
+                <x-admin.ui.button type="submit" btn-name="Update" name="address_book_submit" id="address_book_submit"/>
             </x-slot>
         </x-admin.ui.card-form>
         <!-- /.content -->
