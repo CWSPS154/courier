@@ -59,13 +59,14 @@
 
     <!-- Content Header (Page header) -->
     <div class="content-header">
-        <x-admin.title-and-breadcrumb title="Create Job"
-                                      breadcrumbs='{"Home":"dashboard","Job":"jobs.index","Create Job":""}'/>
+        <x-admin.title-and-breadcrumb title="Create a Job"
+                                      breadcrumbs='{"Home":"dashboard","Job":"jobs.index","Create a Job":""}'/>
         <!-- /.content-header -->
 
         <x-admin.ui.card-form title="Job Details" form-route="jobs.store" form-id="create_job" autocomplete>
             <x-slot name="input">
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Customer" type="hidden" name="customer"
                                           id="customer"
@@ -78,6 +79,7 @@
                                           add-class=""
                                           placeholder="Customer Contact" required autocomplete/>
                     </div>
+					</div>
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
@@ -97,7 +99,7 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box1-bg p-3">
                                     <lable class="text-bold text-black-50">From Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="from">Select From Address Book
@@ -125,7 +127,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box2-bg p-3">
                                     <lable class="text-bold text-black-50">To Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="to">Select From Address Book
@@ -155,6 +157,7 @@
                     </div>
                 </div>
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
                                           add-class=""
@@ -171,6 +174,7 @@
                                              id="note"
                         />
                     </div>
+					</div>
                 </div>
                 {{--                <div class="row">--}}
                 {{--                    <div class="col-lg-6">--}}

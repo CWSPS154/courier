@@ -143,13 +143,7 @@ class JobDataTable extends DataTable
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
-                'buttons' => ['excel', 'csv', 'pdf', 'print', [
-                    'text' => 'New Job',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('job.create') . '";
-                     }'
-                ], [
+                'buttons' => ['excel', 'csv', 'pdf', 'print',[
                     'text' => 'Mass Assign',
                     'className' => 'bg-success mb-lg-0 mb-3 disabled mass-assign'
                 ], [
@@ -158,7 +152,14 @@ class JobDataTable extends DataTable
                     'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('job.show', 'notify') . '";
                      }'
-                ]]
+                ],[
+                    'text' => 'New Job',
+                    'className' => 'bg-primary mb-lg-0 mb-3',
+                    'action' => 'function( e, dt, button, config){
+                         window.location = "' . Helper::getRoute('job.create') . '";
+                     }'
+                ]
+							 ]
             ]);
     }
 
