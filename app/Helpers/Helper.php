@@ -112,7 +112,7 @@ class Helper
      */
     public static function getAddressBook($user_id)
     {
-        return AddressBook::where('user_id', $user_id)->get();
+        return AddressBook::with('area:area,id')->where('user_id', $user_id)->get();
     }
 
     /**

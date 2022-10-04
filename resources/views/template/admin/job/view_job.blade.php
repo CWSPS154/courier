@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'Create Job'])
+@extends('layouts.admin.admin_layout',['title'=>'View Job'])
 @section('content')
 
     @push('styles')
@@ -59,127 +59,103 @@
 
     <!-- Content Header (Page header) -->
     <div class="content-header">
-        <x-admin.title-and-breadcrumb title="Create a Job"
-                                      breadcrumbs='{"Home":"dashboard","Job":"job.index","Create a Job":""}'/>
+        <x-admin.title-and-breadcrumb title="View Job"
+                                      breadcrumbs='{"Home":"dashboard","Completed Jobs":"job.completed","View Job":""}'/>
         <!-- /.content-header -->
 
-        <x-admin.ui.card-form title="Job Details" form-route="job.store" form-id="create_job" autocomplete>
+        <x-admin.ui.card-form title="Job Details" form-route="" form-id="view_job" autocomplete>
             <x-slot name="input">
                 <div class="row px-3">
 					<div class="card-body">
                     <div class="col-12">
-                        <x-admin.ui.select label="Select the Customer"
+                        <x-admin.ui.input type="text" label="Customer"
                                            name="customer"
                                            id="customer"
-                                           required
-                                           options="customer.list"
-                                           add-class="customer"
+                                           add-class="customer bg-white"
+                                           :value="$job->user->name"
+                                           readonly
                         />
                     </div>
                     <div class="col-12">
                         <x-admin.ui.input label="Customer Contact" type="text" name="customer_contact"
                                           id="customer_contact"
-                                          add-class=""
-                                          placeholder="Customer Contact" required autocomplete/>
+                                          add-class="bg-white"
+                                          placeholder="Customer Contact" autocomplete
+                                          :value="$job->customerContact->customer_contact" readonly/>
                     </div>
-					</div>
-
+				</div>
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
-                        <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
-                            <label class="btn btn-primary job-radio active">
-                                <input type="radio" name="default_address" id="from" value="from" autocomplete="off"
-                                       checked class="default_address">Pick up from client
-                            </label>
-                            <label class="btn btn-primary job-radio">
-                                <input type="radio" name="default_address" id="to" value="to" autocomplete="off"
-                                       class="default_address">Deliver to client
-                            </label>
-                            <label class="btn btn-primary job-radio">
-                                <input type="radio" name="default_address" id="neither" value="neither"
-                                       autocomplete="off" class="default_address">Custom job
-                            </label>
-                        </div>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="col-12 box1-bg p-3">
-                                    <lable class="text-bold text-black-50">From Address</lable>
-                                    <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
-                                       data-target="#modal-xl" data-id="from">Select From Address Book
-                                    </a>
                                     <x-admin.ui.input label="Company Name" type="text" name="company_name_from"
                                                       id="company_name_from"
-                                                      add-class="company_name"
-                                                      placeholder="Company Name" required autocomplete
-                                                      other="data-type=from"/>
-                                    <x-admin.address-autocomplete input-id="from"/>
-                                    <x-admin.ui.select label="Area"
+                                                      add-class="company_name bg-white"
+                                                      placeholder="Company Name" autocomplete
+                                                      other="data-type=from"
+                                                      :value="$job->fromAddress->company_name" readonly/>
+                                    <x-admin.address-autocomplete input-id="from" :edit-data="$job"
+                                                                  relations="fromAddress" readonly="true"/>
+                                    <x-admin.ui.input type="text" label="Area"
                                                        name="from_area_id"
                                                        id="from_area_id"
-                                                       required
-                                                       options="area.list"
-                                                       add-class="from_area"
-                                                       required
-                                    />
-                                    <label for="from_add_to_address_book">Add to address
-                                        book</label><br>
-                                    <x-admin.ui.bootstrap-switch name="from_add_to_address_book"
-                                                                 id="from_add_to_address_book" onText="Yes"
-                                                                 offText="No" label=""/>
 
+                                                       add-class="from_area bg-white"
+
+                                                       :value="$job->fromArea->area"
+                                                       readonly
+                                    />
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="col-12 box2-bg p-3">
-                                    <lable class="text-bold text-black-50">To Address</lable>
-                                    <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
-                                       data-target="#modal-xl" data-id="to">Select From Address Book
-                                    </a>
                                     <x-admin.ui.input label="Company Name" type="text" name="company_name_to"
                                                       id="company_name_to"
-                                                      add-class="company_name"
-                                                      placeholder="Company Name" required autocomplete
-                                                      other="data-type=to"/>
-                                    <x-admin.address-autocomplete input-id="to"/>
-                                    <x-admin.ui.select label="Area"
+                                                      add-class="company_name bg-white"
+                                                      placeholder="Company Name" autocomplete
+                                                      other="data-type=to"
+                                                      :value="$job->toAddress->company_name" readonly/>
+                                    <x-admin.address-autocomplete input-id="to" :edit-data="$job"
+                                                                  relations="toAddress" readonly="true"/>
+                                    <x-admin.ui.input type="text" label="Area"
                                                        name="to_area_id"
                                                        id="to_area_id"
-                                                       required
-                                                       options="area.list"
-                                                       add-class="to_area"
-                                                       required
-                                    />
-                                    <label for="to_add_to_address_book">Add to address book</label><br>
-                                    <x-admin.ui.bootstrap-switch name="to_add_to_address_book"
-                                                                 id="to_add_to_address_book" onText="Yes"
-                                                                 offText="No" label=""/>
 
+                                                       add-class="to_area bg-white"
+
+                                                       :value="$job->toArea->area"
+                                                       readonly
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+				<div class="card-body">
                 <div class="row px-3">
-					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
-                                          add-class=""
-                                          placeholder="Number of Boxes" required/>
+                                          add-class="bg-white"
+                                          placeholder="Number of Boxes" :value="$job->number_box" readonly/>
                     </div>
                     <div class="col-12">
                         <label for="van_hire">Do you need van?</label><br>
                         <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
-                                                     offText="No" label="Need"/>
+                                                     offText="No" label="Need" :value="$job->van_hire" disable/>
                     </div>
                     <div class="col-12">
                         <x-admin.ui.Textarea label="Notes"
                                              name="notes"
                                              id="note"
+                                             :value="$job->notes"
+                                             readonly="true"
                         />
                     </div>
-					</div>
                 </div>
+				</div>
                 {{--                <div class="row">--}}
                 {{--                    <div class="col-lg-6">--}}
                 {{--                        <x-admin.ui.select label="Assign Driver"--}}
@@ -194,24 +170,13 @@
                 {{--                        <x-admin.ui.select label="Time Frame"--}}
                 {{--                                           name="timeframe_id"--}}
                 {{--                                           id="timeframe_id"--}}
-                {{--                                           required--}}
+                {{--                                          --}}
                 {{--                                           options="timeframe.list"--}}
                 {{--                                           add-class="timeframe_id"--}}
 
                 {{--                        />--}}
                 {{--                    </div>--}}
                 {{--                </div>--}}
-            </x-slot>
-            <x-slot name="button">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <x-admin.ui.button type="button" btn-name="Cancel" name="job_cancel" id="job_cancel"
-                                           class="btn-secondary" other="onclick=redirectBack()"/>
-                    </div>
-                    <div>
-                        <x-admin.ui.button type="submit" btn-name="Submit" name="job_submit" id="job_submit"/>
-                    </div>
-                </div>
             </x-slot>
         </x-admin.ui.card-form>
 
@@ -278,7 +243,6 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
-                    setAreaAddress(type,data.area_id);
                 }
 
                 function unSetAddressData(type) {
@@ -408,8 +372,6 @@
                                         <dd class="col-sm-8">${address.zip}</dd>
                                         <dt class="col-sm-4">Country</dt>
                                         <dd class="col-sm-8">${address.country}</dd>
-                                        <dt class="col-sm-4">Area</dt>
-                                        <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
                                 <div class="card-footer"><a href="{{ url('admin/edit_address_book') }}/${address.id}/edit" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>

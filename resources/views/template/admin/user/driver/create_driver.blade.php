@@ -15,7 +15,7 @@
             <x-slot name="input">
                 <div class="mb-3">
                     <x-admin.ui.bootstrap-switch name="is_active" id="is_active" label="Status" onText="Active"
-                                                 offText="Inactive"/>
+                                                 offText="Inactive" :value="true"/>
                 </div>
                 <div class="row">
                     <div class="col-lg-6">
@@ -63,6 +63,12 @@
                     </div>
                     <div class="col-lg-6">
                         <x-admin.address-autocomplete input-id="driver"/>
+                    </div>
+                    <div class="col-lg-12">
+                        <x-admin.ui.input label="Password" type="password" name="password" id="password" add-class=""
+                                          placeholder="Password" required/>
+                        <x-admin.ui.input label="Confirm Password" type="password" name="password_confirmation" id="password_confirmation" add-class=""
+                                          placeholder="Confirm Password" required/>
                     </div>
                 </div>
             </x-slot>

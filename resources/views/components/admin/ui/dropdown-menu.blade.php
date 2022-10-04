@@ -19,7 +19,7 @@
         @forelse($menus as $menu)
             <li class="nav-item">
                 <a href="{{ Helper::getRoute($menu['route']) }}"
-                   class="nav-link @if(request()->route()->getName()==$menu['route'] || str_contains(request()->route()->getName(),Helper::getFirstRoute($menu['route']))) active @endif"
+                   class="nav-link @if(request()->route()->getName()==$menu['route']) active @endif"
                    target="{{ Helper::getTarget($menu['target']) }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>{{ __($menu['label'])  }}</p>

@@ -56,6 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/user/customer', CustomerController::class);
         Route::resource('/user/driver', DriverController::class);
         Route::resource('/area', AreaController::class);
+        Route::get('/job/completed', [JobController::class, 'completed'])->name('job.completed');
+        Route::get('/job/completed/{job}/view', [JobController::class, 'view'])->name('job.completed.view');
         Route::post('/job/getAddress', [JobController::class, 'getAddress'])->name('job.getAddress');
         Route::post('/job/getAddressBook', [JobController::class, 'getAddressBook'])->name('job.getAddressBook');
         Route::post('/job/assignDriver', [JobController::class, 'assignDriver'])->name('job.assignDriver');

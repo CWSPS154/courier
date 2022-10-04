@@ -54,6 +54,10 @@ class Textarea extends Component
      * @var string|null
      */
     public $addClass;
+    /**
+     * @var bool
+     */
+    public $readonly;
 
     /**
      * Create a new component instance.
@@ -67,7 +71,8 @@ class Textarea extends Component
         string $value = null,
         string $placeholder = '',
         bool   $required = false,
-        string $addClass = null
+        string $addClass = null,
+        bool $readonly = false
     ) {
         $this->label = $label;
         $this->name = $name;
@@ -76,6 +81,7 @@ class Textarea extends Component
         $this->required = $required;
         $this->value = $value;
         $this->addClass = $addClass;
+        $this->readonly = $readonly;
     }
 
     /**

@@ -15,7 +15,7 @@
             <x-slot name="input">
                 <div class="mb-3">
                     <x-admin.ui.bootstrap-switch name="status" id="status" label="Status" onText="Active"
-                                                 offText="Inactive"/>
+                                                 offText="Inactive" :value="true"/>
                 </div>
                 <x-admin.ui.input label="Area Name" type="text" name="area" id="area" add-class=""
                                   placeholder="Enter New Area" required/>

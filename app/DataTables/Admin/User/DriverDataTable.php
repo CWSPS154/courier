@@ -45,6 +45,9 @@ class DriverDataTable extends DataTable
             ->editColumn('mobile', function ($query) {
                 return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
             })
+            ->editColumn('area', function ($query) {
+                return $query->driver->area->area;
+            })
             ->editColumn('driver.driver_id', function ($query) {
                 return $query->driver->driver_id;
             })
@@ -73,7 +76,7 @@ class DriverDataTable extends DataTable
      */
     public function query(User $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('driver:user_id,driver_id')->where('role_id', Role::DRIVER)->orderBy('created_at', 'desc');
+        return $model->with('driver:user_id,driver_id,area_id','driver.area')->where('role_id', Role::DRIVER)->orderBy('created_at', 'desc');
     }
 
     /**
@@ -120,6 +123,12 @@ class DriverDataTable extends DataTable
             'last_name',
             'email',
             'mobile',
+            'area' => new Column(
+                ['title' => 'Area',
+                    'data' => 'area',
+                    'name' => 'driver.area.area',
+                    'searchable' => true]
+            ),
             'status' => new Column(
                 ['title' => 'Status',
                     'data' => 'is_active',

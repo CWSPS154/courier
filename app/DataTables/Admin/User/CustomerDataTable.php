@@ -39,14 +39,17 @@ class CustomerDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->editColumn('customer.customer_id', function ($query) {
+                return $query->customer_id;
+            })
+            ->editColumn('customer.company_name', function ($query) {
+                return $query->company_name;
+            })
             ->editColumn('email', function ($query) {
                 return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
             })
             ->editColumn('mobile', function ($query) {
                 return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
-            })
-            ->editColumn('area', function ($query) {
-                return $query->customer->area->area;
             })
             ->editColumn('is_active', function ($query) {
                 if ($query->is_active) {
@@ -58,8 +61,8 @@ class CustomerDataTable extends DataTable
             ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.button',
-                    ['edit' => Helper::getRoute('customer.edit', $query->id),
-                        'delete' => Helper::getRoute('customer.destroy', $query->id), 'id' => $query->id]
+                    ['edit' => Helper::getRoute('customer.edit', $query->user_id),
+                        'delete' => Helper::getRoute('customer.destroy', $query->user_id), 'id' => $query->user_id]
                 );
             })
             ->rawColumns(['email', 'mobile', 'is_active', 'action']);
@@ -73,8 +76,8 @@ class CustomerDataTable extends DataTable
      */
     public function query(User $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('customer:user_id,customer_id,area_id,id', 'customer.area')
-            ->where('role_id', Role::CUSTOMER)->orderBy('created_at', 'desc');
+        return $model->where('role_id', Role::CUSTOMER)->with('customer:user_id,company_name,customer_id,id')
+            ->orderByDesc('users.created_at')->select('*');
     }
 
     /**
@@ -117,16 +120,16 @@ class CustomerDataTable extends DataTable
                     'name' => 'customer.customer_id',
                     'searchable' => true]
             ),
+            'company_name' => new Column(
+                ['title' => 'Company Name',
+                    'data' => 'customer.company_name',
+                    'name' => 'customer.company_name',
+                    'searchable' => true]
+            ),
             'first_name',
             'last_name',
             'email',
             'mobile',
-            'area' => new Column(
-                ['title' => 'Area',
-                    'data' => 'area',
-                    'name' => 'customer.area.area',
-                    'searchable' => true]
-            ),
             'status' => new Column(
                 ['title' => 'Status',
                     'data' => 'is_active',
