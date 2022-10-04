@@ -167,7 +167,7 @@
                         </div>
                     </div>
                 </div>
-				
+
 				<div class="card-body">
                 <div class="row px-3">
                     <div class="col-12">
@@ -288,6 +288,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
+                    setAreaAddress(type,data.area_id);
                 }
 
                 function unSetAddressData(type) {
@@ -417,6 +418,8 @@
                                         <dd class="col-sm-8">${address.zip}</dd>
                                         <dt class="col-sm-4">Country</dt>
                                         <dd class="col-sm-8">${address.country}</dd>
+                                        <dt class="col-sm-4">Area</dt>
+                                        <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
                                 <div class="card-footer"><a href="{{ url('admin/edit_address_book') }}/${address.id}/edit" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>

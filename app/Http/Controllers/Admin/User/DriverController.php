@@ -95,7 +95,7 @@ class DriverController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'mobile' => $request->mobile,
-            'password' => Hash::make('driver@123'),
+            'password' => Hash::make($request->password_confirmation),
             'role_id' => Role::DRIVER,
             'is_active' => $is_active,
         ]);
@@ -152,7 +152,8 @@ class DriverController extends Controller
                 'location_url_driver' => ['required'],
                 'json_response_driver' => ['required'],
                 'is_company_driver' => ['filled'],
-                'company_email' => ['nullable', 'email']
+                'company_email' => ['nullable', 'email'],
+                'password' => ['sometimes','confirmed','min:8']
             ]
         );
     }
@@ -186,6 +187,7 @@ class DriverController extends Controller
                 'zip' => $address['zip_' . 'driver'],
                 'country' => $address['country_' . 'driver'],
                 'place_id' => $address['place_id_' . 'driver'],
+                'area_id' => $address['area_id'],
                 'latitude' => $address['latitude_' . 'driver'],
                 'longitude' => $address['longitude_' . 'driver'],
                 'location_url' => $address['location_url_' . 'driver'],
@@ -203,6 +205,7 @@ class DriverController extends Controller
             $editAddress->zip = $address['zip_' . 'driver'];
             $editAddress->country = $address['country_' . 'driver'];
             $editAddress->place_id = $address['place_id_' . 'driver'];
+            $editAddress->area_id = $address['area_id'];
             $editAddress->latitude = $address['latitude_' . 'driver'];
             $editAddress->longitude = $address['longitude_' . 'driver'];
             $editAddress->location_url = $address['location_url_' . 'driver'];

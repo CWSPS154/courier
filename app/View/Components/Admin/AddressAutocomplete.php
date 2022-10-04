@@ -42,6 +42,10 @@ class AddressAutocomplete extends Component
      * @var false|mixed
      */
     public $noRelation;
+    /**
+     * @var bool
+     */
+    public $readonly;
 
     /**
      * Create a new component instance.
@@ -55,12 +59,14 @@ class AddressAutocomplete extends Component
         string $inputId = null,
         object $editData = null,
         string $relations = 'defaultAddress',
-        bool   $noRelation = false
+        bool   $noRelation = false,
+        bool   $readonly = false
     ) {
         $this->inputId = $inputId;
         $this->editData = $editData;
         $this->relations = $relations;
         $this->noRelation = $noRelation;
+        $this->readonly = $readonly;
     }
 
     /**

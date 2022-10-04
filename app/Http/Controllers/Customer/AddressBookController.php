@@ -71,6 +71,7 @@ class AddressBookController extends Controller
             'zip' => $request->zip_address_book,
             'country' => $request->country_address_book,
             'place_id' => $request->place_id_address_book,
+            'area_id' => $request->area_id,
             'latitude' => $request->latitude_address_book,
             'longitude' => $request->longitude_address_book,
             'location_url' => $request->location_url_address_book,
@@ -113,7 +114,8 @@ class AddressBookController extends Controller
                 'latitude_address_book' => ['required'],
                 'longitude_address_book' => ['required'],
                 'location_url_address_book' => ['required'],
-                'json_response_address_book' => ['required']
+                'json_response_address_book' => ['required'],
+                'area_id' => ['required']
             ]
         );
     }
@@ -145,6 +147,7 @@ class AddressBookController extends Controller
         $addressBook->zip = $request->zip_address_book;
         $addressBook->country = $request->country_address_book;
         $addressBook->place_id = $request->place_id_address_book;
+        $addressBook->area_id = $request->area_id;
         $addressBook->latitude = $request->latitude_address_book;
         $addressBook->longitude = $request->longitude_address_book;
         $addressBook->location_url = $request->location_url_address_book;

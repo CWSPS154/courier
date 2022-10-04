@@ -100,7 +100,7 @@ class CustomerController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'mobile' => $request->mobile,
-            'password' => Hash::make('customer@123'),
+            'password' => Hash::make($request->password_confirmation),
             'role_id' => Role::CUSTOMER,
             'is_active' => $is_active,
         ]);
@@ -152,8 +152,8 @@ class CustomerController extends Controller
                 'latitude_customer' => ['required'],
                 'longitude_customer' => ['required'],
                 'location_url_customer' => ['required'],
-                'json_response_customer' => ['required']
-
+                'json_response_customer' => ['required'],
+                'password' => ['sometimes','confirmed','min:8']
             ]
         );
     }
@@ -188,6 +188,7 @@ class CustomerController extends Controller
                 'zip' => $address['zip_' . 'customer'],
                 'country' => $address['country_' . 'customer'],
                 'place_id' => $address['place_id_' . 'customer'],
+                'area_id' => $address['area_id'],
                 'latitude' => $address['latitude_' . 'customer'],
                 'longitude' => $address['longitude_' . 'customer'],
                 'location_url' => $address['location_url_' . 'customer'],
@@ -206,6 +207,7 @@ class CustomerController extends Controller
             $editAddress->zip = $address['zip_' . 'customer'];
             $editAddress->country = $address['country_' . 'customer'];
             $editAddress->place_id = $address['place_id_' . 'customer'];
+            $editAddress->area_id = $address['area_id'];
             $editAddress->latitude = $address['latitude_' . 'customer'];
             $editAddress->longitude = $address['longitude_' . 'customer'];
             $editAddress->location_url = $address['location_url_' . 'customer'];

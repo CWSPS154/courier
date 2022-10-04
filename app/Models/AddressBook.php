@@ -45,6 +45,7 @@ class AddressBook extends Model
         'zip',
         'country',
         'place_id',
+        'area_id',
         'latitude',
         'longitude',
         'location_url',
@@ -65,5 +66,13 @@ class AddressBook extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class, 'area_id');
     }
 }

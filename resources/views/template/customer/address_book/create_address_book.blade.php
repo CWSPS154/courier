@@ -15,13 +15,20 @@
             <x-slot name="input">
                 <div class="mb-3">
                     <x-admin.ui.bootstrap-switch name="status" id="status" label="Status" onText="Active"
-                                                 offText="Inactive"/>
+                                                 offText="Inactive" :value="true"/>
                 </div>
                 <x-admin.ui.input label="Company Name" type="text" name="company_name_address_book"
                                   id="company_name_address_book"
                                   add-class="company_name"
                                   placeholder="Company Name" required autocomplete/>
                 <x-admin.address-autocomplete input-id="address_book"/>
+                <x-admin.ui.select label="Area"
+                                   name="area_id"
+                                   id="area_id"
+                                   required
+                                   options="area.list"
+                                   add-class="area"
+                />
                 <div class="mb-3">
                     <label for="set_as_default">Set as default</label><br>
                     <x-admin.ui.bootstrap-switch name="set_as_default" id="set_as_default" label="Set" onText="Yes"

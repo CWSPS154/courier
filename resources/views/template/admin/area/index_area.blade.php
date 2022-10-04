@@ -4,7 +4,7 @@
     @push('styles')
         {{-- Custom Style --}}
     @endpush
-    <x-admin.ui.datatable :data-table="$dataTable" title="Area Listing">
+    <x-admin.ui.datatable :data-table="$dataTable" title="">
         <x-slot name="breadcrumb">
             <x-admin.title-and-breadcrumb title="Area"
                                           breadcrumbs='{"Home":"dashboard","Area":""}'/>
