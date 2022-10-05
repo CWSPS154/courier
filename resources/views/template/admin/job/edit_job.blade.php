@@ -422,7 +422,7 @@
                                         <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
-                                <div class="card-footer"><a href="{{ url('admin/edit_address_book') }}/${address.id}/edit" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
+                                <div class="card-footer"><a href="${route('edit_address_book.edit',address.id)}" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
                                 <!-- /.card-body -->
                             </div>
                             <!-- /.card -->

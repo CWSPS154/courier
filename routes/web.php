@@ -64,7 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/job/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('job.getCustomerContact');
         Route::resource('/job', JobController::class);
-        Route::resource('/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
+        Route::resource('/job/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
     });
 
     /*Customer Routes */
@@ -74,7 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/jobs/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('jobs.getCustomerContact');
         Route::resource('/jobs', CustomerJobController::class);
-        Route::resource('/address_book', CustomerAddressBookController::class);
+        Route::resource('jobs/address_book', CustomerAddressBookController::class);
     });
 
     /*Driver Routes */
