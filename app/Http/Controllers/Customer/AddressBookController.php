@@ -135,7 +135,7 @@ class AddressBookController extends Controller
         $request->has('status') ? $status = true : $status = false;
         $request->has('set_as_default') ? $set_as_default = true : $set_as_default = false;
         if ($set_as_default) {
-            AddressBook::where('set_as_default', true)->where('user_id', Auth::id())
+            AddressBook::where('id','!=',$addressBook->id)->where('set_as_default', true)->where('user_id', Auth::id())
                 ->update(['set_as_default' => false]);
         }
         $addressBook->company_name = $request->company_name_address_book;
