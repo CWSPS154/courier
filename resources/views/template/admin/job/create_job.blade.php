@@ -83,7 +83,7 @@
                                           placeholder="Customer Contact" required autocomplete/>
                     </div>
 					</div>
-					
+
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
@@ -174,7 +174,7 @@
                     </div>
                     <div class="col-12">
                         <x-admin.ui.Textarea label="Notes"
-                                             name="notes"											
+                                             name="notes"
                                              id="note"
                         />
                     </div>
@@ -409,7 +409,7 @@
                                         <dd class="col-sm-8">${address.country}</dd>
                                     </dl>
                                 </div>
-                                <div class="card-footer"><a href="{{ url('admin/edit_address_book') }}/${address.id}/edit" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
+                                <div class="card-footer"><a href="${route('edit_address_book.edit',address.id)}" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
                                 <!-- /.card-body -->
                             </div>
                             <!-- /.card -->
