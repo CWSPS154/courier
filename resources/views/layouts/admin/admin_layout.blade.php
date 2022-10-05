@@ -23,7 +23,6 @@
 </div>
 <!-- ./wrapper -->
 <x-admin.foot>
-    @routes
     @stack('scripts')
 </x-admin.foot>
 </body>

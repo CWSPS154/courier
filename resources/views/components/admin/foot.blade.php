@@ -86,6 +86,6 @@
         location.href = '{{ url()->previous() }}';
     }
 </script>
-
+@routes
 {{ $slot }}
 
