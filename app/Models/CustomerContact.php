@@ -19,12 +19,16 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerContact extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     /**
      * Indicates if the model should be timestamped.
@@ -40,4 +44,9 @@ class CustomerContact extends Model
      * @var string[]
      */
     protected $fillable = ['user_id', 'customer_contact'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 }

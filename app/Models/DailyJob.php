@@ -20,12 +20,16 @@
 namespace App\Models;
 
 use Carbon;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DailyJob extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     /**
      * @var string
@@ -36,6 +40,11 @@ class DailyJob extends Model
      * @var string[]
      */
     protected $fillable = ['job_id', 'job_number'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @return int
