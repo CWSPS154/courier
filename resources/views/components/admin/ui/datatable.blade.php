@@ -21,40 +21,44 @@
         </div>
         <!-- /.card-body -->
     </div>
-    <!-- /.content -->
-    {{--    <!-- Modal start -->--}}
-    {{--    <div class="modal" tabindex="-1" role="dialog" id="{{ $modalId }}">--}}
-    {{--        <div class="modal-dialog" role="document">--}}
-    {{--            <div class="modal-content">--}}
-    {{--                <div class="modal-header">--}}
-    {{--                    <h5 class="modal-title">{{ __('Delete row') }}</h5>--}}
-    {{--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
-    {{--                        <span aria-hidden="true">&times;</span>--}}
-    {{--                    </button>--}}
-    {{--                </div>--}}
-    {{--                <div class="modal-body">--}}
-    {{--                    <form method="POST" id="modal-form-{{ $modalId }}">--}}
-
-    {{--                </div>--}}
-    {{--                <div class="modal-footer d-block text-center d-lg-flex">--}}
-    {{--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>--}}
-    {{--                    <button type="submit" class="mt-0 mt-lg-1 btn btn-primary">{{ __('Submit') }}</button>--}}
-    {{--                    </form>--}}
-    {{--                </div>--}}
-    {{--            </div>--}}
-    {{--        </div>--}}
-    {{--    </div>--}}
-    <!-- Modal end -->
+    @prepend('scripts')
+        <div class="modal fade" id="modal-sm-delete">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{  __('Delete') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{__('Are you sure ?')}}</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{__("Close")}}</button>
+                        <form class="d-none delete-form" id="delete-form_delete" method="POST">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                        <button type="submit" class="btn btn-primary"
+                                onclick="event.preventDefault();document.getElementById('delete-form_delete').submit();">{{  __('Delete') }}</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    @endprepend
     @push('scripts')
         @once
-            {{--        <script type="text/javascript">--}}
-            {{--            $('.{{ $triggerClass }}').click(function () {--}}
-            {{--                let action = $(this).data('action');--}}
-            {{--                $('#modal-form-{{ $modalId }}').attr('action', action);--}}
-            {{--            })--}}
-            {{--            $('#{{ $modalId }}').modal('hide');--}}
-            {{--        </script>--}}
-
+            <script>
+                $('body').one('click','.delete',function(e){
+                    e.preventDefault();
+                    let action = $(this).attr('href');
+                    $('#delete-form_delete').attr('action',action);
+                });
+            </script>
             <!-- DataTables  & Plugins -->
             <script src="{{asset('admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
             <script src="{{asset('admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
@@ -68,6 +72,6 @@
             <script src="{{asset('admin/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
             <script src="{{asset('admin/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
             <script src="{{asset('admin/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-@endonce
+        @endonce
 {!! $dataTable->scripts() !!}
 @endpush
