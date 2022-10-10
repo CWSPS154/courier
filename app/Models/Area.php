@@ -19,13 +19,18 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Area extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     /**
      * @var string
@@ -48,8 +53,30 @@ class Area extends Model
     protected $casts = ['status' => 'boolean'];
 
     /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
+
+    /**
      * @return mixed
      */
+
+    /**
+     * @return HasMany
+     */
+    public function fromJobs(): HasMany
+    {
+        return $this->hasMany(Job::class,'from_area_id','id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function toJobs(): HasMany
+    {
+        return $this->hasMany(Job::class,'to_area_id','id');
+    }
+
     public static function getAreas()
     {
         return Area::where('status', true)->pluck('area', 'id')->toArray();

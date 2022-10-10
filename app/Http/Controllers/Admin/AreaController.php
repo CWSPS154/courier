@@ -173,7 +173,11 @@ class AreaController extends Controller
     public function destroy(Area $area): RedirectResponse
     {
         try {
-            $area->delete();
+            if($area->fromJobs->count()==0 && $area->toJobs->count()==0 ){
+                $area->delete();
+            }else{
+                $area->forceDelete();
+            }
             return back()->with('success', 'Area deleted successfully');
         } catch (QueryException $e) {
             return back()->with(
