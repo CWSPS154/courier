@@ -35,6 +35,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class DriverController extends Controller
@@ -133,11 +134,11 @@ class DriverController extends Controller
         return Validator::make(
             $data,
             [
-                'did' => ['required', 'string', 'unique:drivers,driver_id,' . $driver_id],
+                'did' => ['required', 'string', Rule::unique('drivers','driver_id')->whereNull('deleted_at')->ignore($driver_id)],
                 'first_name' => ['required', 'string', 'max:250'],
                 'last_name' => ['required', 'string'],
-                'email' => ['required', 'email', 'unique:users,email,' . $id],
-                'mobile' => ['required', 'unique:users,mobile,' . $id],
+                'email' => ['required', 'email', Rule::unique('users','email')->whereNull('deleted_at')->ignore($id)],
+                'mobile' => ['required', Rule::unique('users','mobile')->whereNull('deleted_at')->ignore($id)],
                 'area_id' => ['required'],
                 'street_address_driver' => ['required'],
                 'street_number_driver' => ['required'],
@@ -269,10 +270,7 @@ class DriverController extends Controller
     public function destroy(User $driver): RedirectResponse
     {
         try {
-            $driver->jobAssigns()->delete();
-            $driver->defaultAddress()->delete();
-            $driver->driver()->delete();
-            $driver->forceDelete();
+            $driver->delete();
             return back()->with('success', 'Driver details deleted successfully');
         } catch (QueryException $e) {
             return back()->with(

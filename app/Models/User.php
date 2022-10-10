@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Wildside\Userstamps\Userstamps;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 class User extends Authenticatable implements
     AuthenticatableContract,
@@ -43,6 +44,7 @@ class User extends Authenticatable implements
     use Notifiable;
     use SoftDeletes;
     use Userstamps;
+    use CascadeSoftDeletes;
 
     /**
      * @var string
@@ -85,6 +87,16 @@ class User extends Authenticatable implements
         'is_admin' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * @var array|string[]
+     */
+    protected array $cascadeDeletes = ['customer','driver','jobs','jobAssigns','customerContacts','defaultAddress'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @return bool

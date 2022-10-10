@@ -19,13 +19,17 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Driver extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     public const DRIVER_ID_PREFIX = 'DID';
 
@@ -45,6 +49,11 @@ class Driver extends Model
      * @var array
      */
     protected $casts = ['company_driver' => 'boolean'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @return BelongsTo

@@ -36,6 +36,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CustomerController extends Controller
@@ -134,12 +135,12 @@ class CustomerController extends Controller
         return Validator::make(
             $data,
             [
-                'cid' => ['required', 'string', 'unique:customers,customer_id,' . $customer_id],
-                'company_name' => ['required', 'string', 'max:250', 'unique:customers,company_name,' . $customer_id],
+                'cid' => ['required', 'string', Rule::unique('customers','customer_id')->whereNull('deleted_at')->ignore($customer_id)],
+                'company_name' => ['required', 'string', 'max:250', Rule::unique('customers','company_name')->whereNull('deleted_at')->ignore($customer_id)],
                 'first_name' => ['required', 'string', 'max:250'],
                 'last_name' => ['required', 'string'],
-                'email' => ['required', 'email', 'unique:users,email,' . $id],
-                'mobile' => ['required', 'unique:users,mobile,' . $id],
+                'email' => ['required', 'email', Rule::unique('users','email')->whereNull('deleted_at')->ignore($id)],
+                'mobile' => ['required', Rule::unique('users','mobile')->whereNull('deleted_at')->ignore($id)],
                 'area_id' => ['required'],
                 'street_address_customer' => ['required'],
                 'street_number_customer' => ['required'],
@@ -267,11 +268,7 @@ class CustomerController extends Controller
     public function destroy(User $customer): RedirectResponse
     {
         try {
-            $customer->jobs()->delete();
-            $customer->customerContacts()->delete();
-            $customer->defaultAddress()->delete();
-            $customer->customer()->delete();
-            $customer->forceDelete();
+            $customer->delete();
             return back()->with('success', 'Customer details deleted successfully');
         } catch (QueryException $e) {
             return back()->with(

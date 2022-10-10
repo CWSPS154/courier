@@ -19,16 +19,20 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     public const CUSTOMER_ID_PREFIX = 'CID';
-    
+
     /**
      * @var string
      */
@@ -38,6 +42,11 @@ class Customer extends Model
      * @var string[]
      */
     protected $fillable = ['user_id', 'company_name', 'customer_id', 'area_id'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @return BelongsTo

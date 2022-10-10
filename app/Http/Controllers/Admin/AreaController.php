@@ -178,7 +178,7 @@ class AreaController extends Controller
         } catch (QueryException $e) {
             return back()->with(
                 'error',
-                'You Can not delete this customer due  to data integrity violation, Error:' . $e->getMessage()
+                'You Can not delete this area due to data integrity violation, Error:' . $e->getMessage()
             );
         }
     }

@@ -19,16 +19,20 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
 class Job extends Model
 {
     use HasFactory;
     use Userstamps;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     public const JOB_ID_PREFIX = 'JOB';
 
@@ -58,6 +62,16 @@ class Job extends Model
      * @var array
      */
     protected $casts = ['van_hire' => 'boolean'];
+
+    /**
+     * @var array|string[]
+     */
+    protected array $cascadeDeletes = ['fromAddress','toAddress','jobAssign','dailyJob'];
+
+    /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * @return void
