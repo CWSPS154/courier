@@ -26,7 +26,7 @@ class AlterTableAddressBooksAddAreaId extends Migration
     public function down()
     {
         Schema::table('address_books', function (Blueprint $table) {
-            $table->dropColumn('area_id');
+            $table->dropConstrainedForeignId('area_id');
         });
     }
 }
