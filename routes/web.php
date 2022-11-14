@@ -20,6 +20,7 @@
 use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobStatusController;
 use App\Http\Controllers\Admin\TimeFrameController;
 use App\Http\Controllers\Admin\User\CustomerController;
 use App\Http\Controllers\Admin\User\DriverController;
@@ -38,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => true,'register' => false]);
 
 Route::get('/', function () {
     return redirect('login');
@@ -56,13 +57,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/user/customer', CustomerController::class);
         Route::resource('/user/driver', DriverController::class);
         Route::resource('/area', AreaController::class);
+        Route::get('/job/completed', [JobController::class, 'completed'])->name('job.completed');
+        Route::get('/job/completed/{job}/view', [JobController::class, 'view'])->name('job.completed.view');
         Route::post('/job/getAddress', [JobController::class, 'getAddress'])->name('job.getAddress');
         Route::post('/job/getAddressBook', [JobController::class, 'getAddressBook'])->name('job.getAddressBook');
         Route::post('/job/assignDriver', [JobController::class, 'assignDriver'])->name('job.assignDriver');
         Route::post('/job/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('job.getCustomerContact');
         Route::resource('/job', JobController::class);
-        Route::resource('/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
+        Route::resource('/job/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
+        Route::resource('/job/status/job_status', JobStatusController::class)->name('*','job_status');
     });
 
     /*Customer Routes */
@@ -72,7 +76,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/jobs/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('jobs.getCustomerContact');
         Route::resource('/jobs', CustomerJobController::class);
-        Route::resource('/address_book', CustomerAddressBookController::class);
+        Route::resource('jobs/address_book', CustomerAddressBookController::class);
     });
 
     /*Driver Routes */

@@ -91,7 +91,7 @@ class AddressBookDataTable extends DataTable
             ->parameters([
                 'dom' => 'Bfrtip',
                 'buttons' => [[
-                    'text' => 'New Address',
+                    'text' => 'Create New Address',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('address_book.create') . '";

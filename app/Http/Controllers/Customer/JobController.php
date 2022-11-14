@@ -329,6 +329,7 @@ class JobController extends Controller
             $newAddress->zip = $address['zip_' . $input_id];
             $newAddress->country = $address['country_' . $input_id];
             $newAddress->place_id = $address['place_id_' . $input_id];
+            $newAddress->area_id = $address[$input_id.'_area_id'];
             $newAddress->latitude = $address['latitude_' . $input_id];
             $newAddress->longitude = $address['longitude_' . $input_id];
             $newAddress->location_url = $address['location_url_' . $input_id];
@@ -349,6 +350,7 @@ class JobController extends Controller
                     'zip' => $address['zip_' . $input_id],
                     'country' => $address['country_' . $input_id],
                     'place_id' => $address['place_id_' . $input_id],
+                    'area_id' => $address[$input_id.'_area_id'],
                     'latitude' => $address['latitude_' . $input_id],
                     'longitude' => $address['longitude_' . $input_id],
                     'location_url' => $address['location_url_' . $input_id],
@@ -369,6 +371,7 @@ class JobController extends Controller
                 'zip' => $address['zip_' . $input_id],
                 'country' => $address['country_' . $input_id],
                 'place_id' => $address['place_id_' . $input_id],
+                'area_id' => $address[$input_id.'area_id'],
                 'latitude' => $address['latitude_' . $input_id],
                 'longitude' => $address['longitude_' . $input_id],
                 'location_url' => $address['location_url_' . $input_id],

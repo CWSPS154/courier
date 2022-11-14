@@ -112,7 +112,7 @@ class Helper
      */
     public static function getAddressBook($user_id)
     {
-        return AddressBook::where('user_id', $user_id)->get();
+        return AddressBook::with('area:area,id')->where('user_id', $user_id)->get();
     }
 
     /**
@@ -130,5 +130,14 @@ class Helper
     public static function isJson($string): bool
     {
         return is_string($string) && is_array(json_decode($string, true));
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    public static function strLoU($string): string
+    {
+        return strtolower(str_replace(' ','_',$string));
     }
 }

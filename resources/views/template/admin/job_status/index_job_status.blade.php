@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'Area'])
+@extends('layouts.admin.admin_layout',['title'=>'Job Status'])
 @section('content')
 
     @push('styles')
@@ -6,8 +6,8 @@
     @endpush
     <x-admin.ui.datatable :data-table="$dataTable" title="">
         <x-slot name="breadcrumb">
-            <x-admin.title-and-breadcrumb title="Area"
-                                          breadcrumbs='{"Home":"dashboard","Area":""}'/>
+            <x-admin.title-and-breadcrumb title="Job Status"
+                                          breadcrumbs='{"Home":"dashboard","Jobs":"","Job Status":""}'/>
         </x-slot>
     </x-admin.ui.datatable>
     @push('scripts')

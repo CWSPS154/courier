@@ -59,15 +59,16 @@
 
     <!-- Content Header (Page header) -->
     <div class="content-header">
-        <x-admin.title-and-breadcrumb title="Create Job"
-                                      breadcrumbs='{"Home":"dashboard","Job":"job.index","Create Job":""}'/>
+        <x-admin.title-and-breadcrumb title="Create a Job"
+                                      breadcrumbs='{"Home":"dashboard","Job":"job.index","Create a Job":""}'/>
         <!-- /.content-header -->
 
         <x-admin.ui.card-form title="Job Details" form-route="job.store" form-id="create_job" autocomplete>
             <x-slot name="input">
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
-                        <x-admin.ui.select label="Customer"
+                        <x-admin.ui.select label="Select the Customer"
                                            name="customer"
                                            id="customer"
                                            required
@@ -81,26 +82,28 @@
                                           add-class=""
                                           placeholder="Customer Contact" required autocomplete/>
                     </div>
+					</div>
+
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
                         <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
                             <label class="btn btn-primary job-radio active">
                                 <input type="radio" name="default_address" id="from" value="from" autocomplete="off"
-                                       checked class="default_address">Pick up from
+                                       checked class="default_address">Pick up from client
                             </label>
                             <label class="btn btn-primary job-radio">
                                 <input type="radio" name="default_address" id="to" value="to" autocomplete="off"
-                                       class="default_address">Deliver to
+                                       class="default_address">Deliver to client
                             </label>
                             <label class="btn btn-primary job-radio">
                                 <input type="radio" name="default_address" id="neither" value="neither"
-                                       autocomplete="off" class="default_address">Custom
+                                       autocomplete="off" class="default_address">Custom job
                             </label>
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box1-bg p-3">
                                     <lable class="text-bold text-black-50">From Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="from">Select From Address Book
@@ -128,7 +131,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box2-bg p-3">
                                     <lable class="text-bold text-black-50">To Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="to">Select From Address Book
@@ -158,6 +161,7 @@
                     </div>
                 </div>
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
                                           add-class=""
@@ -174,6 +178,7 @@
                                              id="note"
                         />
                     </div>
+					</div>
                 </div>
                 {{--                <div class="row">--}}
                 {{--                    <div class="col-lg-6">--}}
@@ -273,6 +278,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
+                    setAreaAddress(type,data.area_id);
                 }
 
                 function unSetAddressData(type) {
@@ -402,9 +408,11 @@
                                         <dd class="col-sm-8">${address.zip}</dd>
                                         <dt class="col-sm-4">Country</dt>
                                         <dd class="col-sm-8">${address.country}</dd>
+                                        <dt class="col-sm-4">Area</dt>
+                                        <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
-                                <div class="card-footer"><a href="{{ url('admin/edit_address_book') }}/${address.id}/edit" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
+                                <div class="card-footer"><a href="${route('edit_address_book.edit',address.id)}" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
                                 <!-- /.card-body -->
                             </div>
                             <!-- /.card -->

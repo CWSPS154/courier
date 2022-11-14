@@ -19,13 +19,17 @@
 
 namespace App\Models;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AddressBook extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+    use CascadeSoftDeletes;
 
     /**
      * @var string
@@ -45,6 +49,7 @@ class AddressBook extends Model
         'zip',
         'country',
         'place_id',
+        'area_id',
         'latitude',
         'longitude',
         'location_url',
@@ -60,10 +65,23 @@ class AddressBook extends Model
     protected $casts = ['status' => 'boolean', 'set_as_default' => 'boolean'];
 
     /**
+     * @var string[]
+     */
+    protected $dates = ['deleted_at'];
+
+    /**
      * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class, 'area_id');
     }
 }

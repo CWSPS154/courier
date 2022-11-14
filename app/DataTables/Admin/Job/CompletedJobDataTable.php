@@ -14,10 +14,10 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 28/08/22
+ * Date 02/09/22
  * */
 
-namespace App\DataTables\Admin;
+namespace App\DataTables\Admin\Job;
 
 use App\Models\Job;
 use App\Models\JobAssign;
@@ -28,7 +28,7 @@ use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class JobDataTable extends DataTable
+class CompletedJobDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -50,8 +50,11 @@ class JobDataTable extends DataTable
             ->addColumn('daily_job_number', function ($query) {
                 return $query->dailyJob->job_number;
             })
-            ->editColumn('user_id', function ($query) {
-                return $query->user->customer->company_name . ', ' . $query->user->customer->customer_id . ' - ' . $query->user->name;
+            ->editColumn('company_name', function ($query) {
+                return $query->user->customer->company_name ;
+            })
+            ->editColumn('customer_id', function ($query) {
+                return $query->user->customer->customer_id;
             })
             ->editColumn('from_area_id', function ($query) {
                 return $query->fromArea->area;
@@ -97,20 +100,10 @@ class JobDataTable extends DataTable
                 return $query->editor->name;
             })
             ->addColumn('action', function ($query) {
-                if ($query->status_id == JobStatus::ORDER_PLACED || $query->status_id == JobStatus::DELIVERY_REJECTED) {
-                    return view(
-                        'components.admin.datatable.button',
-                        ['edit' => Helper::getRoute('job.edit', $query->id),
-                            'delete' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id,
-                            'assign' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id]
+                return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('job.completed.view', $query->id)]
                     );
-                } else {
-                    return view(
-                        'components.admin.datatable.button',
-                        ['edit' => Helper::getRoute('job.edit', $query->id),
-                            'delete' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id]
-                    );
-                }
             })
             ->rawColumns(['#', 'assigned_to', 'van_hire', 'action']);
     }
@@ -124,7 +117,7 @@ class JobDataTable extends DataTable
     public function query(Job $model): \Illuminate\Database\Eloquent\Builder
     {
         return $model->with('user:name,id', 'user.customer:company_name,id,user_id,customer_id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,job_id', 'jobAssign:job_id,user_id,id,status', 'jobAssign.user:name,id')
-            ->select('*')->orderBy('jobs.created_at', 'desc');
+            ->where('status_id',JobStatus::ORDER_DELIVERED)->select('*')->orderBy('jobs.created_at', 'desc');
     }
 
     /**
@@ -143,22 +136,7 @@ class JobDataTable extends DataTable
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
-                'buttons' => ['excel', 'csv', 'pdf', 'print', [
-                    'text' => 'New Job',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('job.create') . '";
-                     }'
-                ], [
-                    'text' => 'Mass Assign',
-                    'className' => 'bg-success mb-lg-0 mb-3 disabled mass-assign'
-                ], [
-                    'text' => 'Notify Drivers',
-                    'className' => 'bg-info mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('job.show', 'notify') . '";
-                     }'
-                ]]
+                'buttons' => ['excel', 'csv', 'pdf', 'print']
             ]);
     }
 
@@ -183,10 +161,16 @@ class JobDataTable extends DataTable
                     'name' => 'dailyJob.job_number',
                     'searchable' => true]
             ),
-            'user_id' => new Column(
-                ['title' => 'Customer',
-                    'data' => 'user_id',
-                    'name' => 'user.name',
+            'company_name' => new Column(
+                ['title' => 'Company',
+                    'data' => 'company_name',
+                    'name' => 'user.customer.company_name',
+                    'searchable' => true]
+            ),
+            'customer_id' => new Column(
+                ['title' => 'Customer ID',
+                    'data' => 'customer_id',
+                    'name' => 'user.customer.customer_id',
                     'searchable' => true]
             ),
             'from_area_id' => new Column(

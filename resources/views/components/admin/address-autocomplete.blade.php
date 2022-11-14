@@ -1,4 +1,4 @@
-@if($noRelation)
+@if($noRelation && !$readonly)
     <x-admin.ui.input label="Street Address"
                       type="text"
                       name="street_address_{{ $inputId }}"
@@ -58,7 +58,7 @@
            value="{{ old('location_url_'.$inputId,$editData->location_url ?? '') }}">
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->full_json_response ?? '') }}">
-@else
+@elseif(!$noRelation && !$readonly)
     <x-admin.ui.input label="Street Address"
                       type="text"
                       name="street_address_{{ $inputId }}"
@@ -118,6 +118,56 @@
            value="{{ old('location_url_'.$inputId,$editData->$relations->location_url ?? '') }}">
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->$relations->full_json_response ?? '') }}">
+@else
+    <x-admin.ui.input label="Street Address"
+                      type="text"
+                      name="street_address_{{ $inputId }}"
+                      id="street_address_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Street Address"
+                      :value="$editData->$relations->street_address ?? ''" readonly disable/>
+    <x-admin.ui.input label="Street Number"
+                      type="text"
+                      name="street_number_{{ $inputId }}"
+                      id="street_number_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Street Number"
+                      :value="$editData->$relations->street_number ?? ''" readonly/>
+    <x-admin.ui.input label="Suburb"
+                      type="text"
+                      name="suburb_{{ $inputId }}"
+                      id="suburb_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Suburb"
+                      :value="$editData->$relations->suburb ?? ''" readonly/>
+    <x-admin.ui.input label="City"
+                      type="text"
+                      name="city_{{ $inputId }}"
+                      id="city_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="City"
+                      :value="$editData->$relations->city ?? ''" readonly/>
+    <x-admin.ui.input label="State/Region"
+                      type="text"
+                      name="state_{{ $inputId }}"
+                      id="state_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="State/Region"
+                      :value="$editData->$relations->state ?? ''" readonly/>
+    <x-admin.ui.input label="Country"
+                      type="text"
+                      name="country_{{ $inputId }}"
+                      id="country_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Country"
+                      :value="$editData->$relations->country ?? ''" readonly/>
+    <x-admin.ui.input label="Post Code"
+                      type="text"
+                      name="zip_{{ $inputId }}"
+                      id="zip_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Post Code"
+                      :value="$editData->$relations->zip ?? ''" readonly/>
 @endif
 @push('scripts')
     @once

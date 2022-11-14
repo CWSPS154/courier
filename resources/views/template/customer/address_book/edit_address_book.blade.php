@@ -23,6 +23,14 @@
                                   add-class="company_name"
                                   placeholder="Company Name" required autocomplete :value="$addressBook->company_name"/>
                 <x-admin.address-autocomplete input-id="address_book" :edit-data="$addressBook" no-relation/>
+                <x-admin.ui.select label="Area"
+                                   name="area_id"
+                                   id="area_id"
+                                   required
+                                   options="area.list"
+                                   add-class="area"
+                                   :value="$addressBook->area_id"
+                />
                 <div class="mb-3">
                     <label for="set_as_default">Set as default</label><br>
                     <x-admin.ui.bootstrap-switch name="set_as_default" id="set_as_default" label="Set" onText="Yes"
@@ -30,7 +38,7 @@
                 </div>
             </x-slot>
             <x-slot name="button">
-                <x-admin.ui.button type="submit" btn-name="Submit" name="address_book_submit" id="address_book_submit"/>
+                <x-admin.ui.button type="submit" btn-name="Update" name="address_book_submit" id="address_book_submit"/>
             </x-slot>
         </x-admin.ui.card-form>
         <!-- /.content -->

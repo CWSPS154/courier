@@ -18,14 +18,16 @@
                 @if(auth()->user()->isAdmin())
                     <x-admin.ui.menu name="Customers" route="customer.index" icon="fas fa-users" target="0"
                                      new="0" count="0"/>
-                    <x-admin.ui.menu name="Driver" route="driver.index" icon="fas fa-truck" target="0"
+                    <x-admin.ui.menu name="Drivers" route="driver.index" icon="fas fa-truck" target="0"
                                      new="0" count="0"/>
                     <x-admin.ui.menu name="Area" route="area.index" icon="fas fa-location-arrow" target="0"
                                      new="0" count="0"/>
-                    <x-admin.ui.menu name="Job" route="job.index" icon="fas fa-briefcase" target="0"
-                                     new="0" count="0"/>
-                @elseif(auth()->user()->isCustomer())
 
+                    <x-admin.ui.dropdown-menu name="Jobs" icon="fas fa-briefcase"
+                                              menus='[{"label":"Current Jobs","route":"job.index","target":"0","new":"0","count":"0"},
+                                              {"label":"Completed Jobs","route":"job.completed","target":"0","new":"0","count":"0"},
+                                              {"label":"Job Status","route":"job_status.index","target":"0","new":"0","count":"0"}]'/>
+                @elseif(auth()->user()->isCustomer())
                     <x-admin.ui.menu name="Job" route="jobs.index" icon="fas fa-briefcase" target="0"
                                      new="0" count="0"/>
                     <x-admin.ui.menu name="Address Book" route="address_book.index" icon="fas fa-address-book"

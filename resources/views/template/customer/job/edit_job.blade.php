@@ -59,7 +59,7 @@
 
     <!-- Content Header (Page header) -->
     <div class="content-header">
-        <x-admin.title-and-breadcrumb title="Create Job"
+        <x-admin.title-and-breadcrumb title="Edit Job"
                                       breadcrumbs='{"Home":"dashboard","Job":"jobs.index","Edit Job":""}'/>
         <!-- /.content-header -->
 
@@ -67,6 +67,7 @@
                               form-route-id="{{ $job->id }}">
             <x-slot name="input">
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Customer" type="hidden" name="customer"
                                           id="customer"
@@ -80,6 +81,7 @@
                                           placeholder="Customer Contact" required autocomplete
                                           :value="$job->customerContact->customer_contact"/>
                     </div>
+					</div>
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
@@ -99,7 +101,7 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box1-bg p-3">
                                     <lable class="text-bold text-black-50">From Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="from">Select From Address Book
@@ -129,7 +131,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="col-12 bg-custom p-3">
+                                <div class="col-12 box2-bg p-3">
                                     <lable class="text-bold text-black-50">To Address</lable>
                                     <a class="btn btn-link text-sm address-book float-right" data-toggle="modal"
                                        data-target="#modal-xl" data-id="to">Select From Address Book
@@ -161,6 +163,7 @@
                     </div>
                 </div>
                 <div class="row px-3">
+					<div class="card-body">
                     <div class="col-12">
                         <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
                                           add-class=""
@@ -178,6 +181,7 @@
                                              :value="$job->notes"
                         />
                     </div>
+					</div>
                 </div>
                 {{--                <div class="row">--}}
                 {{--                    <div class="col-lg-6">--}}
@@ -208,7 +212,7 @@
                                            class="btn-secondary" other="onclick=redirectBack()"/>
                     </div>
                     <div>
-                        <x-admin.ui.button type="submit" btn-name="Submit" name="job_submit" id="job_submit"/>
+                        <x-admin.ui.button type="submit" btn-name="Update" name="job_submit" id="job_submit"/>
                     </div>
                 </div>
             </x-slot>
@@ -277,6 +281,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
+                    setAreaAddress(type,data.area_id);
                 }
 
                 function unSetAddressData(type) {
@@ -406,9 +411,11 @@
                                         <dd class="col-sm-8">${address.zip}</dd>
                                         <dt class="col-sm-4">Country</dt>
                                         <dd class="col-sm-8">${address.country}</dd>
+                                        <dt class="col-sm-4">Area</dt>
+                                        <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
-                                <div class="card-footer"><a href="{{ url('customer/address_book') }}/${address.id}/edit" class="btn btn-link" target="_blank"><i class="fa fa-edit"></i>Edit</a></div>
+                                <div class="card-footer"><a href="${route('address_book.edit',address.id)}" class="btn btn-link" target="_blank"><i class="fa fa-edit"></i>Edit</a></div>
                                 <!-- /.card-body -->
                             </div>
                             <!-- /.card -->
