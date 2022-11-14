@@ -20,6 +20,7 @@
 use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobStatusController;
 use App\Http\Controllers\Admin\TimeFrameController;
 use App\Http\Controllers\Admin\User\CustomerController;
 use App\Http\Controllers\Admin\User\DriverController;
@@ -65,6 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
             'getCustomerContact'])->name('job.getCustomerContact');
         Route::resource('/job', JobController::class);
         Route::resource('/job/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
+        Route::resource('/job/status/job_status', JobStatusController::class)->name('*','job_status');
     });
 
     /*Customer Routes */
