@@ -8,6 +8,9 @@
            @endif @if($disable) disabled @endif
            @if($readonly) readonly @endif @if($autocomplete) autocomplete="on"
            @else autocomplete="off" @endif {{ $other }}>
+    @if(isset($hint))
+        <small id="{{ $id }}" class="form-text text-muted">{{ $hint }}</small>
+    @endif
     @error($name)
     <span class="invalid-feedback" role="alert">
         <strong>{{ __($message) }}</strong>

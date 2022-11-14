@@ -131,4 +131,13 @@ class Helper
     {
         return is_string($string) && is_array(json_decode($string, true));
     }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    public static function strLoU($string): string
+    {
+        return strtolower(str_replace(' ','_',$string));
+    }
 }
