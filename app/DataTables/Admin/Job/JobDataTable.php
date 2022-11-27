@@ -144,7 +144,7 @@ class JobDataTable extends DataTable
 //                     }'
 //                    ],
                     [
-                    'text' => 'New OrderJob',
+                    'text' => 'New Job',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('job.create') . '";
