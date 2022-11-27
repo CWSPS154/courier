@@ -19,7 +19,8 @@
 
 namespace App\DataTables\Driver;
 
-use App\Models\Job;
+use App\Models\JobStatus;
+use App\Models\OrderJob;
 use App\Models\JobAssign;
 use Helper;
 use Yajra\DataTables\DataTableAbstract;
@@ -40,6 +41,9 @@ class AcceptedJobDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->addColumn('daily_job_number', function ($query) {
+                return $query->dailyJob->job_number ?? '';
+            })
             ->editColumn('user.id', function ($query) {
                 return $query->user->customer->company_name . ', ' . $query->user->customer->customer_id . ' - ' . $query->user->name;
             })
@@ -60,10 +64,23 @@ class AcceptedJobDataTable extends DataTable
                 return $query->status->status;
             })
             ->addColumn('action', function ($query) {
-                return view(
-                    'components.admin.datatable.view_button',
-                    ['view' => Helper::getRoute('myjob.show', $query->id)]
-                );
+                if($query->status->identifier==JobStatus::ACCEPTED) {
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id),'picked_up'=>Helper::getRoute('myjob.update',$query->id)]
+                    );
+                }
+                elseif($query->status->identifier==JobStatus::PICKED_UP) {
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id),'delivered'=>Helper::getRoute('myjob.update',$query->id)]
+                    );
+                }else{
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id)]
+                    );
+                }
             })
             ->rawColumns(['van_hire', 'status', 'action']);
     }
@@ -71,15 +88,15 @@ class AcceptedJobDataTable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param Job $model
+     * @param OrderJob $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Job $model): \Illuminate\Database\Eloquent\Builder
+    public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,id')
+        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,identifier,id','dailyJob:job_number,id,order_job_id')
             ->whereHas('jobAssign', function ($q) {
-                $q->where('user_id', Auth::id())->where('status', JobAssign::JOB_ACCEPTED);
-            })->select('jobs.*')->orderBy('jobs.created_at', 'desc');
+                $q->where('user_id', Auth::id());
+            })->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::ASSIGNED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
@@ -107,10 +124,10 @@ class AcceptedJobDataTable extends DataTable
     protected function getColumns(): array
     {
         return [
-            'job_increment_id' => new Column(
-                ['title' => 'Increment ID',
-                    'data' => 'job_increment_id',
-                    'name' => 'job_increment_id',
+            'daily_job_number' => new Column(
+                ['title' => 'Job Number',
+                    'data' => 'daily_job_number',
+                    'name' => 'dailyJob.job_number',
                     'searchable' => true]
             ),
             'user_id' => new Column(

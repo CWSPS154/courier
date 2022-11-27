@@ -39,7 +39,7 @@ class DailyJob extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['job_id', 'job_number'];
+    protected $fillable = ['order_job_id', 'job_number'];
 
     /**
      * @var string[]

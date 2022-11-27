@@ -19,7 +19,7 @@
 
 namespace App\DataTables\Admin\Job;
 
-use App\Models\Job;
+use App\Models\OrderJob;
 use App\Models\JobAssign;
 use App\Models\JobStatus;
 use Helper;
@@ -41,20 +41,20 @@ class JobDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('#', function ($query) {
-                if ($query->status_id == JobStatus::ORDER_PLACED || $query->status_id == JobStatus::DELIVERY_REJECTED) {
+                if ($query->status_id != JobStatus::getStatusId(JobStatus::PICKED_UP)) {
                     return '<input type="checkbox" name="job_no" class="form-control mass-assign-checkbox" value="' . $query->id . '">';
                 } else {
                     return '<input type="checkbox" name="job_no" class="form-control mass-assign-checkbox" value="' . $query->id . '" disabled>';
                 }
             })
             ->addColumn('daily_job_number', function ($query) {
-                return $query->dailyJob->job_number;
+                return $query->dailyJob->job_number ?? '';
             })
             ->editColumn('company_name', function ($query) {
                 return $query->user->customer->company_name ;
             })
             ->editColumn('customer_id', function ($query) {
-                return $query->user->customer->customer_id;
+                return $query->user->customer->customer_id.'-'.$query->user->name;
             })
             ->editColumn('from_area_id', function ($query) {
                 return $query->fromArea->area;
@@ -73,34 +73,20 @@ class JobDataTable extends DataTable
                 return $query->status->status;
             })
             ->addColumn('assigned_to', function ($query) {
-                if (isset($query->jobAssign->status)) {
-                    if ($query->jobAssign->status == JobAssign::ASSIGNED) {
-                        return '<span class="text-info">' . $query->jobAssign->user->name . '</span>';
-                    } elseif ($query->jobAssign->status == JobAssign::NOT_ASSIGNED) {
-                        return '<span class="text-secondary">' . $query->jobAssign->user->name . '</span>';
-                    } elseif ($query->jobAssign->status == JobAssign::JOB_ACCEPTED) {
-                        return '<span class="text-success">' . $query->jobAssign->user->name . '</span>';
-                    } else {
-                        return '<span class="text-danger">' . $query->jobAssign->user->name . '</span>';
-                    }
+                if (isset($query->jobAssign)) {
+                    return '<span class="text-success">' . $query->jobAssign->user->name . '</span>';
                 } else {
                     return '<span class="text-warning">Not Assigned</span>';
                 }
             })
             ->editColumn('created_at', function ($query) {
-                return $query->created_at->diffForHumans();
+                return $query->created_at->format('Y-m-d h:i A');
             })
             ->editColumn('creator.name', function ($query) {
                 return $query->creator->name;
             })
-            ->editColumn('updated_at', function ($query) {
-                return $query->updated_at->diffForHumans();
-            })
-            ->editColumn('editor.name', function ($query) {
-                return $query->editor->name;
-            })
             ->addColumn('action', function ($query) {
-                if ($query->status_id == JobStatus::ORDER_PLACED || $query->status_id == JobStatus::DELIVERY_REJECTED) {
+                if ($query->status_id == JobStatus::getStatusId(JobStatus::NEW_JOB) || JobStatus::getStatusId(JobStatus::ASSIGNED) || JobStatus::getStatusId(JobStatus::ACCEPTED)) {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('job.edit', $query->id),
@@ -121,13 +107,13 @@ class JobDataTable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param Job $model
+     * @param OrderJob $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Job $model): \Illuminate\Database\Eloquent\Builder
+    public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('user:name,id', 'user.customer:company_name,id,user_id,customer_id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,job_id', 'jobAssign:job_id,user_id,id,status', 'jobAssign.user:name,id')
-            ->where('status_id','!=',JobStatus::ORDER_DELIVERED)->select('*')->orderBy('jobs.created_at', 'desc');
+        return $model->with('user:name,id', 'user.customer:company_name,id,user_id,customer_id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,order_job_id', 'jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id')
+            ->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->select('*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
@@ -149,14 +135,16 @@ class JobDataTable extends DataTable
                 'buttons' => ['excel', 'csv', 'pdf', 'print',[
                     'text' => 'Mass Assign',
                     'className' => 'bg-success mb-lg-0 mb-3 disabled mass-assign'
-                ], [
-                    'text' => 'Notify Drivers',
-                    'className' => 'bg-info mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('job.show', 'notify') . '";
-                     }'
-                ],[
-                    'text' => 'New Job',
+                ],
+//                    [
+//                    'text' => 'Notify Drivers',
+//                    'className' => 'bg-info mb-lg-0 mb-3',
+//                    'action' => 'function( e, dt, button, config){
+//                         window.location = "' . Helper::getRoute('job.show', 'notify') . '";
+//                     }'
+//                    ],
+                    [
+                    'text' => 'New OrderJob',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('job.create') . '";
@@ -175,12 +163,6 @@ class JobDataTable extends DataTable
     {
         return [
             '#',
-            'job_increment_id' => new Column(
-                ['title' => 'Increment ID',
-                    'data' => 'job_increment_id',
-                    'name' => 'job_increment_id',
-                    'searchable' => true]
-            ),
             'daily_job_number' => new Column(
                 ['title' => 'Job Number',
                     'data' => 'daily_job_number',
@@ -194,7 +176,7 @@ class JobDataTable extends DataTable
                     'searchable' => true]
             ),
             'customer_id' => new Column(
-                ['title' => 'Customer ID',
+                ['title' => 'Customer',
                     'data' => 'customer_id',
                     'name' => 'user.customer.customer_id',
                     'searchable' => true]
@@ -230,13 +212,6 @@ class JobDataTable extends DataTable
                 ['title' => 'Created By',
                     'data' => 'creator.name',
                     'name' => 'creator.name',
-                    'searchable' => false]
-            ),
-            'updated_at',
-            'updated_by' => new Column(
-                ['title' => 'Updated By',
-                    'data' => 'editor.name',
-                    'name' => 'editor.name',
                     'searchable' => false]
             ),
             'action'

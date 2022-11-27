@@ -22,7 +22,8 @@ namespace App\Http\Controllers\Driver;
 use App\DataTables\Driver\JobDataTable;
 use App\DataTables\Driver\AcceptedJobDataTable;
 use App\Http\Controllers\Controller;
-use App\Models\Job;
+use App\Models\JobStatusHistory;
+use App\Models\OrderJob;
 use App\Models\JobAssign;
 use App\Models\JobStatus;
 use Illuminate\Contracts\Foundation\Application;
@@ -60,29 +61,46 @@ class JobController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Job $myjob
+     * @param OrderJob $myjob
      * @return Application|Factory|View
      */
-    public function show(Job $myjob)
+    public function show(OrderJob $myjob)
     {
+        $myjob->load('fromAddress','toAddress','jobStatusHistory');
         return view('template.driver.job.view_job', compact('myjob'));
+    }
+
+    /**
+     * @param $order_job_id
+     * @param $user_id
+     * @param $from_status
+     * @param $to_status
+     * @param $comment
+     * @return void
+     */
+    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null): void
+    {
+        JobStatusHistory::create([
+            'order_job_id'=>$order_job_id,
+            'user_id'=>$user_id,
+            'from_status_id'=>$from_status,
+            'to_status_id'=>$to_status,
+            'comment'=>$comment,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Job $myjob
+     * @param OrderJob $myjob
      * @return RedirectResponse
      */
-    public function edit(Job $myjob): RedirectResponse
+    public function edit(OrderJob $myjob): RedirectResponse
     {
-        $jobAssign = JobAssign::where('job_id', $myjob->id)->where('status', JobAssign::ASSIGNED)
-            ->where('user_id', Auth::id())->latest()->first();
-        $jobAssign->status = JobAssign::JOB_ACCEPTED;
-        $jobAssign->save();
-        $myjob->status_id = JobStatus::DELIVERY_ACCEPTED;
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,JobStatus::getStatusId(JobStatus::ACCEPTED));
+        $myjob->status_id = JobStatus::getStatusId(JobStatus::ACCEPTED);
         $myjob->save();
-        if ($jobAssign->wasChanged() && $myjob->wasChanged()) {
+        if ($myjob->wasChanged()) {
             return back()->with('success', 'Job Accepted successfully');
         }
         return back()->with('info', 'Job Is Not Accepted');
@@ -91,18 +109,15 @@ class JobController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Job $myjob
+     * @param OrderJob $myjob
      * @return RedirectResponse
      */
-    public function destroy(Job $myjob): RedirectResponse
+    public function destroy(OrderJob $myjob): RedirectResponse
     {
-        $jobAssign = JobAssign::where('job_id', $myjob->id)->where('status', JobAssign::ASSIGNED)
-            ->where('user_id', Auth::id())->latest()->first();
-        $jobAssign->status = JobAssign::JOB_REJECTED;
-        $jobAssign->save();
-        $myjob->status_id = JobStatus::DELIVERY_REJECTED;
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,JobStatus::getStatusId(JobStatus::REJECTED));
+        $myjob->status_id = JobStatus::getStatusId(JobStatus::REJECTED);
         $myjob->save();
-        if ($jobAssign->wasChanged() && $myjob->wasChanged()) {
+        if ($myjob->wasChanged()) {
             return back()->with('success', 'Job Rejected successfully');
         }
         return back()->with('info', 'Job Is Not Rejected');
@@ -112,11 +127,12 @@ class JobController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Job $myjob
+     * @param OrderJob $myjob
      * @return RedirectResponse
      */
-    public function update(Request $request, Job $myjob): RedirectResponse
+    public function update(Request $request, OrderJob $myjob): RedirectResponse
     {
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status);
         $myjob->status_id = $request->status;
         $myjob->save();
         if ($myjob->wasChanged()) {

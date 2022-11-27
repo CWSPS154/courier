@@ -15,7 +15,7 @@ class CreateJobAddressesTable extends Migration
     {
         Schema::create('job_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_id')->constrained('jobs');
+            $table->foreignId('order_job_id')->constrained('order_jobs');
             $table->string('type')->nullable();
             $table->string('company_name')->nullable();
             $table->string('street_address')->nullable();

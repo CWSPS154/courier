@@ -75,7 +75,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/jobs/getAddressBook', [JobController::class, 'getAddressBook'])->name('jobs.getAddressBook');
         Route::post('/jobs/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('jobs.getCustomerContact');
-        Route::resource('/jobs', CustomerJobController::class);
+        Route::get('/jobs/completed', [CustomerJobController::class, 'completed'])->name('jobs.completed');
+        Route::get('/jobs/completed/{job}/view', [CustomerJobController::class, 'view'])->name('jobs.completed.view');
+        Route::resource('/jobs', CustomerJobController::class)->except('show');
         Route::resource('jobs/address_book', CustomerAddressBookController::class);
     });
 

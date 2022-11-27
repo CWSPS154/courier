@@ -33,7 +33,7 @@
                       id="state_{{ $inputId }}"
                       add-class=""
                       placeholder="State/Region"
-                      required :value="$editData->state ?? ''"/>
+                      :value="$editData->state ?? ''"/>
     <x-admin.ui.input label="Country"
                       type="text"
                       name="country_{{ $inputId }}"
@@ -93,7 +93,7 @@
                       id="state_{{ $inputId }}"
                       add-class=""
                       placeholder="State/Region"
-                      required :value="$editData->$relations->state ?? ''"/>
+                      :value="$editData->$relations->state ?? ''"/>
     <x-admin.ui.input label="Country"
                       type="text"
                       name="country_{{ $inputId }}"

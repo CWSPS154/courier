@@ -49,7 +49,7 @@ class CustomerDataTable extends DataTable
                 return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
             })
             ->editColumn('mobile', function ($query) {
-                return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
+                return $query->mobile ? '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>' : 'NA';
             })
             ->editColumn('is_active', function ($query) {
                 if ($query->is_active) {

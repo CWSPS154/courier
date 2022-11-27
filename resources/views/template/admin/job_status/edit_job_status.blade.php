@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'Edit Job Status'])
+@extends('layouts.admin.admin_layout',['title'=>'Edit OrderJob Status'])
         @section('content')
 
             @push('styles')

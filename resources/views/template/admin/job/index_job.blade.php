@@ -34,7 +34,7 @@
                                                    required
 
                                 />
-                                <input type="hidden" name="job_id" id="job_id" required>
+                                <input type="hidden" name="order_job_id" id="order_job_id" required>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
             });
             $('body').on('click', '.assign-driver', function (e) {
                 e.preventDefault();
-                $('#job_id').val($(this).data('id'));
+                $('#order_job_id').val($(this).data('id'));
             });
             ``
             $('body').on('click', '.mass-assign-checkbox', function () {
@@ -69,11 +69,11 @@
                 }
             });
             $('body').on('click', '.mass-assign', function () {
-                let job_id = [];
+                let order_job_id = [];
                 $('.mass-assign-checkbox:checked').each(function (index) {
-                    job_id[index] = $(this).val();
+                    order_job_id[index] = $(this).val();
                 });
-                $('#job_id').val(JSON.stringify(job_id));
+                $('#order_job_id').val(JSON.stringify(order_job_id));
                 $('#modal-sm-assign').modal('show');
             });
 

@@ -25,7 +25,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AddressBook;
 use App\Models\CustomerContact;
 use App\Models\DailyJob;
-use App\Models\Job;
+use App\Models\JobStatusHistory;
+use App\Models\OrderJob;
 use App\Models\JobAddress;
 use App\Models\JobAssign;
 use App\Models\JobStatus;
@@ -40,8 +41,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Carbon;
+use App\Events\Admin\JobAssignedEvent;
 
 class JobController extends Controller
 {
@@ -154,42 +158,58 @@ class JobController extends Controller
      */
     public function assignDriver(Request $request)
     {
-        if (\App\Helpers\Helper::isJSON($request->job_id)) {
-            $job_ids = json_decode($request->job_id, true);
-            if (is_array($job_ids)) {
-                foreach ($job_ids as $job_id) {
-                    $jobAssign = JobAssign::where('job_id', $job_id)->first();
-                    if (end($job_ids)) {
+        if (\App\Helpers\Helper::isJSON($request->order_job_id)) {
+            $order_job_ids = json_decode($request->order_job_id, true);
+            if (is_array($order_job_ids)) {
+                foreach ($order_job_ids as $order_job_id) {
+                    $daily_job=DailyJob::where('order_job_id',$order_job_id)->first();
+                    $order_job=OrderJob::findOrFail($order_job_id);
+                    $jobAssign = JobAssign::where('order_job_id', $order_job_id)->first();
+                    if (end($order_job_ids)) {
                     }
-                    if ($jobAssign && ($jobAssign->status == JobAssign::NOT_ASSIGNED || $jobAssign->status == JobAssign::JOB_REJECTED || $jobAssign->status == JobAssign::ASSIGNED)) {
+                    if ($jobAssign) {
                         $jobAssign->user_id = $request->driver_id;
-                        $jobAssign->status = JobAssign::NOT_ASSIGNED;
                         $jobAssign->save();
+                        $this->jobOrderStatusHistory($order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED));
+                        $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
+                        $order_job->save();
+                        event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
                         $result = back()->with('success', 'Mass jobs assigned updated successfully');
                     } else {
                         JobAssign::create([
-                            'job_id' => $job_id,
-                            'user_id' => $request->driver_id,
-                            'status' => JobAssign::NOT_ASSIGNED,
+                            'order_job_id' => $order_job_id,
+                            'user_id' => $request->driver_id
                         ]);
+                        $this->jobOrderStatusHistory($order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED));
+                        $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
+                        $order_job->save();
+                        event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
                         $result = back()->with('success', 'Mass jobs assigned successfully');
                     }
                 }
                 return $result;
             }
         } else {
-            $jobAssign = JobAssign::where('job_id', $request->job_id)->first();
-            if ($jobAssign && ($jobAssign->status == JobAssign::NOT_ASSIGNED || $jobAssign->status == JobAssign::JOB_REJECTED || $jobAssign->status == JobAssign::ASSIGNED)) {
+            $jobAssign = JobAssign::where('order_job_id', $request->order_job_id)->first();
+            $daily_job=DailyJob::where('order_job_id',$request->order_job_id)->first();
+            $order_job=OrderJob::findOrFail($request->order_job_id);
+            if ($jobAssign) {
                 $jobAssign->user_id = $request->driver_id;
-                $jobAssign->status = JobAssign::NOT_ASSIGNED;
                 $jobAssign->save();
+                $this->jobOrderStatusHistory($request->order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED));
+                $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
+                $order_job->save();
+                event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
                 return back()->with('success', 'Job Assigned updated successfully');
             } else {
                 JobAssign::create([
-                    'job_id' => $request->job_id,
-                    'user_id' => $request->driver_id,
-                    'status' => JobAssign::NOT_ASSIGNED,
+                    'order_job_id' => $request->order_job_id,
+                    'user_id' => $request->driver_id
                 ]);
+                $this->jobOrderStatusHistory($request->order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED));
+                $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
+                $order_job->save();
+                event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
                 return back()->with('success', 'Job Assigned successfully');
             }
         }
@@ -231,7 +251,7 @@ class JobController extends Controller
                 $this->makeNewAddress($request->customer, $request->all(), 'to');
             }
 
-            $job = Job::create([
+            $job = OrderJob::create([
                 'user_id' => $request->customer,
                 'customer_contact_id' => $this->updateOrCreate($request->customer, $request->customer_contact),
                 'from_area_id' => $request->from_area_id,
@@ -240,7 +260,7 @@ class JobController extends Controller
                 'notes' => $request->notes,
                 'van_hire' => $vanHire,
                 'number_box' => $request->number_box,
-                'status_id' => JobStatus::ORDER_PLACED
+                'status_id' => JobStatus::getStatusId(JobStatus::NEW_JOB)
             ]);
 
             $this->makeNewJobAddress($job->id, $request->all(), 'from');
@@ -250,16 +270,11 @@ class JobController extends Controller
             $job->save();
 
             DailyJob::create([
-                'job_id' => $job->id,
-                'job_number' => $dailyJobs,
+                'order_job_id' => $job->id,
+                'job_number' => Carbon::now()->format('ymd').'-'.$dailyJobs
+
             ]);
-            if ($request->has('driver_id')) {
-                JobAssign::create([
-                    'job_id' => $job->id,
-                    'user_id' => $request->driver_id,
-                    'status' => JobAssign::NOT_ASSIGNED,
-                ]);
-            }
+            $this->jobOrderStatusHistory($job->id,Auth::id(),null,JobStatus::getStatusId(JobStatus::NEW_JOB));
             DB::commit();
             return redirect()->route('job.index')->with('success', 'Job Created successfully');
         } catch (Exception $e) {
@@ -416,9 +431,9 @@ class JobController extends Controller
      * @param $type
      * @return mixed
      */
-    private function makeNewJobAddress($job_id, $address, $type)
+    private function makeNewJobAddress($order_job_id, $address, $type)
     {
-        $newAddress = JobAddress::where('job_id', $job_id)->where('type', $type)->first();
+        $newAddress = JobAddress::where('order_job_id', $order_job_id)->where('type', $type)->first();
         if ($newAddress) {
             $newAddress->company_name = $address['company_name_' . $type];
             $newAddress->street_address = $address['street_address_' . $type];
@@ -437,7 +452,7 @@ class JobController extends Controller
             return $newAddress;
         } else {
             return JobAddress::create([
-                'job_id' => $job_id,
+                'order_job_id' => $order_job_id,
                 'type' => $type,
                 'company_name' => $address['company_name_' . $type],
                 'street_address' => $address['street_address_' . $type],
@@ -457,33 +472,14 @@ class JobController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param $job
-     * @return RedirectResponse
-     */
-    public function show($job): RedirectResponse
-    {
-        if ($job == 'notify') {
-            $jobNotify = JobAssign::where('status', JobAssign::NOT_ASSIGNED)->update(['status' => JobAssign::ASSIGNED]);
-            if ($jobNotify) {
-                return back()->with('success', 'Jobs notified successfully');
-            } else {
-                return back()->with('info', 'All drivers are notified');
-            }
-        }
-        return back()->with('error', 'Invalid param!!!');
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Job $job
+     * @param OrderJob $job
      * @return RedirectResponse
      * @throws ValidationException
      */
-    public function update(Request $request, Job $job): RedirectResponse
+    public function update(Request $request, OrderJob $job): RedirectResponse
     {
         $this->validator($request->all(), $job->id)->validate();
         $request->has('van_hire') ? $vanHire = true : $vanHire = false;
@@ -508,16 +504,33 @@ class JobController extends Controller
             $fromJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'from');
             $toJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'to');
 
+            if($job->status_id!=$request->status_id)
+            {
+                $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,$request->status_id,$request->comment);
+                $job->status_id=$request->status_id;
+                $job->save();
+            }
+
             if ($request->has('driver_id')) {
-                $jobAssign = JobAssign::where('job_id', $job->id)->where('status', JobAssign::ASSIGNED)->firstOrFail();
-                if ($jobAssign->user_id != $request->driver_id) {
-                    $jobAssign->status = JobAssign::NOT_ASSIGNED;
-                    $jobAssign->save();
+                $jobAssign = JobAssign::where('order_job_id', $job->id)->first();
+                if ($jobAssign && $jobAssign->user_id != $request->driver_id) {
                     JobAssign::create([
-                        'job_id' => $job->id,
-                        'user_id' => $request->driver_id,
-                        'status' => JobAssign::NOT_ASSIGNED,
+                        'order_job_id' => $job->id,
+                        'user_id' => $request->driver_id
                     ]);
+                    $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED));
+                    $job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
+                    $job->save();
+                }else{
+                    if($job->status_id!=$request->status_id) {
+                        JobAssign::create([
+                            'order_job_id' => $job->id,
+                            'user_id' => $request->driver_id
+                        ]);
+                        $this->jobOrderStatusHistory($job->id, Auth::id(), $job->status_id, JobStatus::getStatusId(JobStatus::ASSIGNED));
+                        $job->status_id = JobStatus::getStatusId(JobStatus::ASSIGNED);
+                        $job->save();
+                    }
                 }
             }
             DB::commit();
@@ -532,34 +545,55 @@ class JobController extends Controller
     }
 
     /**
+     * @param $order_job_id
+     * @param $user_id
+     * @param $from_status
+     * @param $to_status
+     * @param $comment
+     * @return void
+     */
+    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null): void
+    {
+        JobStatusHistory::create([
+            'order_job_id'=>$order_job_id,
+            'user_id'=>$user_id,
+            'from_status_id'=>$from_status,
+            'to_status_id'=>$to_status,
+            'comment'=>$comment,
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
-     * @param Job $job
+     * @param OrderJob $job
      * @return Application|Factory|View
      */
-    public function edit(Job $job)
+    public function edit(OrderJob $job)
     {
+        $job->load('fromAddress','toAddress','customerContact','jobStatusHistory');
         return view('template.admin.job.edit_job', compact('job'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Job $job
+     * @param OrderJob $job
      * @return Application|Factory|View
      */
-    public function view(Job $job)
+    public function view(OrderJob $job)
     {
+        $job->load('fromAddress','toAddress','customerContact','jobStatusHistory');
         return view('template.admin.job.view_job', compact('job'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Job $job
+     * @param OrderJob $job
      * @return RedirectResponse
      */
-    public function destroy(Job $job): RedirectResponse
+    public function destroy(OrderJob $job): RedirectResponse
     {
         $job->delete();
         return back()->with('success', 'Job Deleted successfully');

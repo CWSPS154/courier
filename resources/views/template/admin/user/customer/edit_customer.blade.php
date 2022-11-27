@@ -44,7 +44,6 @@
                                           id="mobile"
                                           add-class=""
                                           placeholder="Mobile"
-                                          required
                                           value="{{ $customer->mobile }}"/>
                         <x-admin.ui.select label="Street Area"
                                            name="area_id"

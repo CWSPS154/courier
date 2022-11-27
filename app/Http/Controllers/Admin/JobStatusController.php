@@ -98,7 +98,7 @@ class JobStatusController extends Controller
             'status' => $request->status,
             'identifier' => Helper::strLoU($request->identifier)
         ]);
-        return redirect()->route('job_status.index')->with('success', 'Job Status is saved successfully');
+        return redirect()->route('job_status.index')->with('success', 'OrderJob Status is saved successfully');
     }
 
     /**
@@ -138,7 +138,7 @@ class JobStatusController extends Controller
         $jobStatus->identifier = Helper::strLoU($request->identifier);
         $jobStatus->save();
         if ($jobStatus->wasChanged()) {
-            return redirect()->route('job_status.index')->with('success', 'Job Status is updated successfully');
+            return redirect()->route('job_status.index')->with('success', 'OrderJob Status is updated successfully');
         }
         return back()->with('info', 'No changes have made.');
     }
@@ -153,7 +153,7 @@ class JobStatusController extends Controller
     {
         try {
             $jobStatus->delete();
-            return back()->with('success', 'Job Status deleted successfully');
+            return back()->with('success', 'OrderJob Status deleted successfully');
         } catch (QueryException $e) {
             return back()->with(
                 'error',

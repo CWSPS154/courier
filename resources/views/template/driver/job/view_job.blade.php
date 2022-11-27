@@ -1,5 +1,5 @@
 @php use App\Models\JobAssign;use App\Models\JobStatus; @endphp
-@extends('layouts.admin.admin_layout',['title'=>'My Job'])
+@extends('layouts.admin.admin_layout',['title'=>'My OrderJob'])
 @section('content')
 
     @push('styles')
@@ -68,6 +68,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-bold">Van Hire</span> : {{ $myjob->van_hire ? 'Yes' : 'No' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-bold">No Of Boxes</span> : {{ $myjob->number_box }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -80,25 +94,43 @@
                             </div>
                         </div>
                     </div>
-                    @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))
-                        <div class="col-12">
-                            <x-admin.ui.select label="Status"
-                                               name="status"
-                                               id="status"
-                                               required
-                                               :options="Helper::getJobStatus()"
-                                               add-class="status"
-                                               :value="$myjob->status_id"
-                            />
+                    <div class="col-12">
+                        <div class="container">
+                            <h4>Job History</h4>
+                            <ul class="timeline">
+                                @foreach($myjob->jobStatusHistory as $jobStatusHistory)
+                                    {{--                                        <li>--}}
+                                    {{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
+                                    {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
+                                    {{--                                        </li>--}}
+                                    <li>
+                                        <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                        <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                        <p>{{ $jobStatusHistory->comment }}</p>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
-                    @endif
+                    </div>
+{{--                    @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))--}}
+{{--                        <div class="col-12">--}}
+{{--                            <x-admin.ui.select label="Status"--}}
+{{--                                               name="status"--}}
+{{--                                               id="status"--}}
+{{--                                               required--}}
+{{--                                               :options="Helper::getJobStatus()"--}}
+{{--                                               add-class="status"--}}
+{{--                                               :value="$myjob->status_id"--}}
+{{--                            />--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
                 </div>
             </x-slot>
-            @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))
-                <x-slot name="button">
-                    <x-admin.ui.button type="submit" btn-name="Submit" name="job_submit" id="job_submit"/>
-                </x-slot>
-            @endif
+{{--            @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))--}}
+{{--                <x-slot name="button">--}}
+{{--                    <x-admin.ui.button type="submit" btn-name="Submit" name="job_submit" id="job_submit"/>--}}
+{{--                </x-slot>--}}
+{{--            @endif--}}
         </x-admin.ui.card-form>
     </div>
     @push('scripts')

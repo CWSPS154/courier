@@ -19,7 +19,8 @@
 
 namespace App\DataTables\Driver;
 
-use App\Models\Job;
+use App\Models\JobStatus;
+use App\Models\OrderJob;
 use App\Models\JobAssign;
 use Helper;
 use Yajra\DataTables\DataTableAbstract;
@@ -40,6 +41,9 @@ class JobDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->addColumn('daily_job_number', function ($query) {
+                return $query->dailyJob->job_number ?? '';
+            })
             ->editColumn('user.id', function ($query) {
                 return $query->user->customer->company_name . ', ' . $query->user->customer->customer_id . ' - ' . $query->user->name;
             })
@@ -74,15 +78,15 @@ class JobDataTable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param Job $model
+     * @param OrderJob $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Job $model): \Illuminate\Database\Eloquent\Builder
+    public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,id')
+        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,id','dailyJob:job_number,id,order_job_id')
             ->whereHas('jobAssign', function ($q) {
-                $q->where('user_id', Auth::id())->where('status', JobAssign::ASSIGNED);
-            })->select('jobs.*')->orderBy('jobs.created_at', 'desc');
+                $q->where('user_id', Auth::id());
+            })->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::ASSIGNED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
@@ -119,10 +123,10 @@ class JobDataTable extends DataTable
     protected function getColumns(): array
     {
         return [
-            'job_increment_id' => new Column(
-                ['title' => 'Increment ID',
-                    'data' => 'job_increment_id',
-                    'name' => 'job_increment_id',
+            'daily_job_number' => new Column(
+                ['title' => 'Job Number',
+                    'data' => 'daily_job_number',
+                    'name' => 'dailyJob.job_number',
                     'searchable' => true]
             ),
             'user_id' => new Column(

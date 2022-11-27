@@ -40,8 +40,7 @@
                                           name="mobile"
                                           id="mobile"
                                           add-class=""
-                                          placeholder="Mobile"
-                                          required/>
+                                          placeholder="Mobile"/>
                         <x-admin.ui.select label="Street Area"
                                            name="area_id"
                                            id="area_id"
