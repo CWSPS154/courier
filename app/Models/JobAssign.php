@@ -31,10 +31,10 @@ class JobAssign extends Model
     use SoftDeletes;
     use CascadeSoftDeletes;
 
-    const ASSIGNED = 1;
-    const NOT_ASSIGNED = -1;
-    const JOB_ACCEPTED = 2;
-    const JOB_REJECTED = 3;
+//    const ASSIGNED = 1;
+//    const NOT_ASSIGNED = -1;
+//    const JOB_ACCEPTED = 2;
+//    const JOB_REJECTED = 3;
 
     /**
      * @var string
@@ -44,17 +44,9 @@ class JobAssign extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['job_id',
-        'user_id',
-        'status'
+    protected $fillable = ['order_job_id',
+        'user_id'
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = ['status' => 'int'];
 
     /**
      * @var string[]

@@ -60,12 +60,8 @@ class CustomerController extends Controller
         if (\request()->ajax()) {
             $search = request()->search;
             $id = request()->id;
-            $customers = User::with('customer:company_name,user_id,customer_id')->select('id', 'name', 'role_id')->when(
-                $search,
-                function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
-                }
-            )->orWhereHas('customer', function ($query) use ($search) {
+            $customers = User::with('customer:company_name,user_id,customer_id')->select('id', 'name', 'role_id')
+                ->WhereHas('customer', function ($query) use ($search) {
                 $query->when($search, function ($q) use ($search) {
                     $q->where('company_name', 'like', '%' . $search . '%')
                         ->oRwhere('customer_id', 'like', '%' . $search . '%');
@@ -77,7 +73,7 @@ class CustomerController extends Controller
             foreach ($customers as $customer) {
                 $response[] = array(
                     "id" => $customer->id,
-                    "text" => $customer->customer->company_name . ', ' . $customer->customer->customer_id . ' - ' . $customer->name
+                    "text" => $customer->customer->customer_id . ' - ' . $customer->customer->company_name
                 );
             }
             return response()->json($response);
@@ -140,13 +136,11 @@ class CustomerController extends Controller
                 'first_name' => ['required', 'string', 'max:250'],
                 'last_name' => ['required', 'string'],
                 'email' => ['required', 'email', Rule::unique('users','email')->whereNull('deleted_at')->ignore($id)],
-                'mobile' => ['required', Rule::unique('users','mobile')->whereNull('deleted_at')->ignore($id)],
                 'area_id' => ['required'],
                 'street_address_customer' => ['required'],
                 'street_number_customer' => ['required'],
                 'suburb_customer' => ['required'],
                 'city_customer' => ['required'],
-                'state_customer' => ['required'],
                 'zip_customer' => ['required'],
                 'country_customer' => ['required'],
                 'place_id_customer' => ['required'],

@@ -43,8 +43,7 @@ class JobStatusDataTable extends DataTable
             ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.button',
-                    ['edit' => Helper::getRoute('job_status.edit', $query->id),
-                        'delete' => Helper::getRoute('job_status.destroy', $query->id), 'id' => $query->id]
+                    ['edit' => Helper::getRoute('job_status.edit', $query->id)]
                 );
             })
             ->rawColumns(['action']);
@@ -74,17 +73,17 @@ class JobStatusDataTable extends DataTable
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
-            ->pagingType('numbers')
-            ->parameters([
-                'dom' => 'Bfrtip',
-                'buttons' => ['excel', 'csv', 'pdf', 'print', [
-                    'text' => 'New Status',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('job_status.create') . '";
-                     }'
-                ],]
-            ]);
+            ->pagingType('numbers');
+//            ->parameters([
+//                'dom' => 'Bfrtip',
+//                'buttons' => [ [
+//                    'text' => 'New Status',
+//                    'className' => 'bg-primary mb-lg-0 mb-3',
+//                    'action' => 'function( e, dt, button, config){
+//                         window.location = "' . Helper::getRoute('job_status.create') . '";
+//                     }'
+//                ],]
+//            ]);
     }
 
     /**

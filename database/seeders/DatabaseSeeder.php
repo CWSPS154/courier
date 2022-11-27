@@ -17,10 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call(
             [
                 RoleSeeder::class,
+                AreaSeeder::class,
                 UserSeeder::class,
                 TimeFrameSeeder::class,
-                AreaSeeder::class,
-                JobStatusSeeder::class
+                JobStatusSeeder::class,
+                AddressBookSeeder::class
             ]
         );
     }

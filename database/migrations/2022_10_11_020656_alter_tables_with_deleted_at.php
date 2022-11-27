@@ -28,7 +28,7 @@ return new class extends Migration
             Schema::table('address_books', function (Blueprint $table) {
                 $table->softDeletes();
             });
-            Schema::table('jobs', function (Blueprint $table) {
+            Schema::table('order_jobs', function (Blueprint $table) {
                 $table->softDeletes();
                 $table->foreignId('deleted_by')->nullable()->after('updated_by')->referances('id')->constrained('users');
             });
@@ -65,7 +65,7 @@ return new class extends Migration
             Schema::table('address_books', function (Blueprint $table) {
                 $table->dropSoftDeletes();
             });
-            Schema::table('jobs', function (Blueprint $table) {
+            Schema::table('order_jobs', function (Blueprint $table) {
                 $table->dropSoftDeletes();
                 $table->dropConstrainedForeignId('deleted_by');
             });

@@ -28,7 +28,7 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Auth;
 
-class JobDataTable extends DataTable
+class CompletedJobDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -74,9 +74,8 @@ class JobDataTable extends DataTable
             })
             ->addColumn('action', function ($query) {
                 return view(
-                    'components.admin.datatable.button',
-                    ['edit' => Helper::getRoute('jobs.edit', $query->id),
-                        'delete' => Helper::getRoute('jobs.destroy', $query->id), 'id' => $query->id]
+                    'components.admin.datatable.view_button',
+                    ['view' => Helper::getRoute('jobs.completed.view', $query->id)]
                 );
             })
             ->rawColumns(['assigned_to','van_hire', 'action']);
@@ -91,7 +90,7 @@ class JobDataTable extends DataTable
     public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
     {
         return $model->with('fromArea:area,id', 'toArea:area,id', 'status:status,id', 'creator:name,id', 'editor:name,id','dailyJob:job_number,id,order_job_id','jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id')
-            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->select('*')->orderBy('order_jobs.created_at', 'desc');
+            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::DELIVERED))->select('*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
@@ -110,13 +109,7 @@ class JobDataTable extends DataTable
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
-                'buttons' => ['excel', 'csv', 'pdf', 'print', [
-                    'text' => 'New OrderJob',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('jobs.create') . '";
-                     }'
-                ],]
+                'buttons' => ['excel', 'csv', 'pdf', 'print']
             ]);
     }
 

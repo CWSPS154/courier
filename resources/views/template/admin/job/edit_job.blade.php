@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'Update Job'])
+@extends('layouts.admin.admin_layout',['title'=>'Update OrderJob'])
 @section('content')
 
     @push('styles')
@@ -189,27 +189,66 @@
                     </div>
                 </div>
 				</div>
-                {{--                <div class="row">--}}
-                {{--                    <div class="col-lg-6">--}}
-                {{--                        <x-admin.ui.select label="Assign Driver"--}}
-                {{--                                           name="driver_id"--}}
-                {{--                                           id="driver_id"--}}
-                {{--                                           options="driver.list"--}}
-                {{--                                           add-class="driver_id"--}}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="container">
+                            <h4>Job History</h4>
+                            <ul class="timeline">
+                                @foreach($job->jobStatusHistory as $jobStatusHistory)
+{{--                                        <li>--}}
+{{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
+{{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
+{{--                                        </li>--}}
+                                        <li>
+                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            <p>{{ $jobStatusHistory->comment }}</p>
+                                        </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <x-admin.ui.select label="Status"
+                                           name="status_id"
+                                           id="status_id"
+                                           :options="Helper::getJobStatus()"
+                                           add-class="status"
+                                           :value="$job->status_id"
+                        />
+                    </div>
+                </div>
+                <div class="row d-none job_driver_id">
+                    <div class="col-12">
+                        <x-admin.ui.select label="Assign Driver"
+                                           name="driver_id"
+                                           id="driver_id"
+                                           options="driver.list"
+                                           add-class="driver_id"
 
-                {{--                        />--}}
-                {{--                    </div>--}}
-                {{--                    <div class="col-lg-6">--}}
-                {{--                        <x-admin.ui.select label="Time Frame"--}}
-                {{--                                           name="timeframe_id"--}}
-                {{--                                           id="timeframe_id"--}}
-                {{--                                           required--}}
-                {{--                                           options="timeframe.list"--}}
-                {{--                                           add-class="timeframe_id"--}}
+                        />
+                    </div>
+                    {{--                    <div class="col-lg-6">--}}
+                    {{--                        <x-admin.ui.select label="Time Frame"--}}
+                    {{--                                           name="timeframe_id"--}}
+                    {{--                                           id="timeframe_id"--}}
+                    {{--                                           required--}}
+                    {{--                                           options="timeframe.list"--}}
+                    {{--                                           add-class="timeframe_id"--}}
 
-                {{--                        />--}}
-                {{--                    </div>--}}
-                {{--                </div>--}}
+                    {{--                        />--}}
+                    {{--                    </div>--}}
+                </div>
+                <div class="row d-none comment">
+                    <div class="col-12">
+                        <x-admin.ui.Textarea label="Comment"
+                                             name="comment"
+                                             id="comment"
+                        />
+                    </div>
+                </div>
             </x-slot>
             <x-slot name="button">
                 <div class="d-flex justify-content-between">
@@ -533,6 +572,21 @@
                         }
                     })
                 }
+
+                $('body').on('change','#status_id',function (){
+                   if($(this).val()!='{{ $job->status_id }}')
+                   {
+                       $('.comment').removeClass('d-none');
+                   }else{
+                     $('.comment').addClass('d-none');
+                   }
+                   {{--if($(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ASSIGNED) }}')--}}
+                   {{--{--}}
+                   {{--    $('.job_driver_id').removeClass('d-none');--}}
+                   {{--}else{--}}
+                   {{--    $('.job_driver_id').addClass('d-none');--}}
+                   {{--}--}}
+                });
             </script>
     @endpush
 

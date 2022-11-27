@@ -35,7 +35,7 @@ class JobAddress extends Model
      * @var string[]
      */
     protected $fillable = [
-        'job_id',
+        'order_job_id',
         'type',
         'company_name',
         'street_address',
@@ -61,6 +61,6 @@ class JobAddress extends Model
      */
     public function job(): BelongsTo
     {
-        return $this->belongsTo(Job::class, 'job_id');
+        return $this->belongsTo(OrderJob::class, 'order_job_id');
     }
 }

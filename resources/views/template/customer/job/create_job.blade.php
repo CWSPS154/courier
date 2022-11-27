@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'Create Job'])
+@extends('layouts.admin.admin_layout',['title'=>'Create OrderJob'])
 @section('content')
 
     @push('styles')
@@ -122,7 +122,7 @@
                                         book</label><br>
                                     <x-admin.ui.bootstrap-switch name="from_add_to_address_book"
                                                                  id="from_add_to_address_book" onText="Yes"
-                                                                 offText="No" label=""/>
+                                                                 offText="No" label="" :value="true"/>
 
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                                     <label for="to_add_to_address_book">Add to address book</label><br>
                                     <x-admin.ui.bootstrap-switch name="to_add_to_address_book"
                                                                  id="to_add_to_address_book" onText="Yes"
-                                                                 offText="No" label=""/>
+                                                                 offText="No" label="" :value="true"/>
 
                                 </div>
                             </div>

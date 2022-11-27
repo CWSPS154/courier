@@ -66,7 +66,7 @@ class Area extends Model
      */
     public function fromJobs(): HasMany
     {
-        return $this->hasMany(Job::class,'from_area_id','id');
+        return $this->hasMany(OrderJob::class,'from_area_id','id');
     }
 
     /**
@@ -74,7 +74,7 @@ class Area extends Model
      */
     public function toJobs(): HasMany
     {
-        return $this->hasMany(Job::class,'to_area_id','id');
+        return $this->hasMany(OrderJob::class,'to_area_id','id');
     }
 
     public static function getAreas()

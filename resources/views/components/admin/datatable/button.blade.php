@@ -17,3 +17,4 @@
        data-target="#modal-sm-assign" data-id="{{ $id }}"><i
             class="glyphicon glyphicon-edit" role="button"></i> {{__('Assign')}}</a>
 @endif
+

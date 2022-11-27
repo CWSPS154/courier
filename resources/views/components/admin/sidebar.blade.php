@@ -24,12 +24,13 @@
                                      new="0" count="0"/>
 
                     <x-admin.ui.dropdown-menu name="Jobs" icon="fas fa-briefcase"
-                                              menus='[{"label":"Current Jobs","route":"job.index","target":"0","new":"0","count":"0"},
+                                              menus='[{"label":"Active Jobs","route":"job.index","target":"0","new":"0","count":"0"},
                                               {"label":"Completed Jobs","route":"job.completed","target":"0","new":"0","count":"0"},
                                               {"label":"Job Status","route":"job_status.index","target":"0","new":"0","count":"0"}]'/>
                 @elseif(auth()->user()->isCustomer())
-                    <x-admin.ui.menu name="Job" route="jobs.index" icon="fas fa-briefcase" target="0"
-                                     new="0" count="0"/>
+                    <x-admin.ui.dropdown-menu name="Jobs" icon="fas fa-briefcase"
+                                              menus='[{"label":"Active Jobs","route":"jobs.index","target":"0","new":"0","count":"0"},
+                                              {"label":"Completed Jobs","route":"jobs.completed","target":"0","new":"0","count":"0"}]'/>
                     <x-admin.ui.menu name="Address Book" route="address_book.index" icon="fas fa-address-book"
                                      target="0"
                                      new="0" count="0"/>

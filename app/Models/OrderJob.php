@@ -23,11 +23,12 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Wildside\Userstamps\Userstamps;
 
-class Job extends Model
+class OrderJob extends Model
 {
     use HasFactory;
     use Userstamps;
@@ -39,7 +40,7 @@ class Job extends Model
     /**
      * @var string
      */
-    protected $table = 'jobs';
+    protected $table = 'order_jobs';
 
     /**
      * @var string[]
@@ -109,7 +110,7 @@ class Job extends Model
      */
     public function jobAssign(): HasOne
     {
-        return $this->hasOne(JobAssign::class, 'job_id', 'id')->orderBy('status', 'desc');
+        return $this->hasOne(JobAssign::class, 'order_job_id', 'id');
     }
 
     /**
@@ -117,7 +118,7 @@ class Job extends Model
      */
     public function dailyJob(): HasOne
     {
-        return $this->HasOne(DailyJob::class);
+        return $this->HasOne(DailyJob::class,'order_job_id','id');
     }
 
     /**
@@ -166,6 +167,14 @@ class Job extends Model
     public function customerContact(): BelongsTo
     {
         return $this->belongsTo(CustomerContact::class, 'customer_contact_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function jobStatusHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(JobStatusHistory::class,'order_job_id','id');
     }
 
     /**

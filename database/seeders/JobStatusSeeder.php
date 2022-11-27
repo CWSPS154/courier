@@ -15,28 +15,38 @@ class JobStatusSeeder extends Seeder
     public function run()
     {
         JobStatus::create([
-            'status' => 'Order Placed',
-            'identifier' => 'order_placed',
+            'status' => 'New Job',
+            'identifier' => 'new_job',
         ]);
 
         JobStatus::create([
-            'status' => 'Driver Accepted',
-            'identifier' => 'driver_accepted',
+            'status' => 'Assigned',
+            'identifier' => 'assigned',
         ]);
 
         JobStatus::create([
-            'status' => 'Driver Rejected',
-            'identifier' => 'driver_rejected',
+            'status' => 'Accepted',
+            'identifier' => 'accepted',
         ]);
 
         JobStatus::create([
-            'status' => 'Order Delivered',
-            'identifier' => 'order_delivered',
+            'status' => 'Rejected',
+            'identifier' => 'rejected',
         ]);
 
         JobStatus::create([
-            'status' => 'Delivery Pending',
-            'identifier' => 'delivery_pending',
+            'status' => 'Picked Up',
+            'identifier' => 'picked_up',
+        ]);
+
+        JobStatus::create([
+            'status' => 'Delivered',
+            'identifier' => 'delivered',
+        ]);
+
+        JobStatus::create([
+            'status' => 'Cancelled',
+            'identifier' => 'cancelled',
         ]);
     }
 }

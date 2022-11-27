@@ -26,11 +26,19 @@ class JobStatus extends Model
 {
     use HasFactory;
 
-    const ORDER_PLACED = 1;
-    const DELIVERY_ACCEPTED = 2;
-    const DELIVERY_REJECTED = 3;
-    const ORDER_DELIVERED = 4;
-    const DELIVERY_PENDING = 5;
+//    const ORDER_PLACED = 1;
+//    const DELIVERY_ACCEPTED = 2;
+//    const DELIVERY_REJECTED = 3;
+//    const ORDER_DELIVERED = 4;
+//    const DELIVERY_PENDING = 5;
+
+    const NEW_JOB='new_job';
+    const ASSIGNED='assigned';
+    const ACCEPTED='accepted';
+    const REJECTED='rejected';
+    const PICKED_UP='picked_up';
+    const DELIVERED='delivered';
+    const CANCELLED='cancelled';
 
     /**
      * @var string
@@ -43,4 +51,10 @@ class JobStatus extends Model
     protected $fillable = ['status',
         'identifier'
     ];
+
+    public static function getStatusId($identifier)
+    {
+        $job_status=JobStatus::where('identifier',$identifier)->firstOrFail();
+        return $job_status->id;
+    }
 }
