@@ -111,7 +111,7 @@ class JobDataTable extends DataTable
             ->parameters([
                 'dom' => 'Bfrtip',
                 'buttons' => ['excel', 'csv', 'pdf', 'print', [
-                    'text' => 'New OrderJob',
+                    'text' => 'New Job',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('jobs.create') . '";
