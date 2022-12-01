@@ -297,29 +297,7 @@ class JobController extends Controller
             $newAddress->full_json_response = $address['json_response_' . $input_id];
             $newAddress->status = true;
             $newAddress->set_as_default = false;
-            if (!$newAddress->isDirty()) {
-                $newAddress->save();
-            } else {
-                AddressBook::create([
-                    'user_id' => $user_id,
-                    'company_name' => $address['company_name_' . $input_id],
-                    'street_address' => $address['street_address_' . $input_id],
-                    'street_number' => $address['street_number_' . $input_id],
-                    'suburb' => $address['suburb_' . $input_id],
-                    'city' => $address['city_' . $input_id],
-                    'state' => $address['state_' . $input_id],
-                    'zip' => $address['zip_' . $input_id],
-                    'country' => $address['country_' . $input_id],
-                    'place_id' => $address['place_id_' . $input_id],
-                    'area_id' => $address[$input_id.'_area_id'],
-                    'latitude' => $address['latitude_' . $input_id],
-                    'longitude' => $address['longitude_' . $input_id],
-                    'location_url' => $address['location_url_' . $input_id],
-                    'full_json_response' => $address['json_response_' . $input_id],
-                    'status' => true,
-                    'set_as_default' => false
-                ]);
-            }
+            $newAddress->save();
         } else {
             AddressBook::create([
                 'user_id' => $user_id,

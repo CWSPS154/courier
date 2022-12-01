@@ -1,11 +1,4 @@
 @if($noRelation && !$readonly)
-    <x-admin.ui.input label="Street Address"
-                      type="text"
-                      name="street_address_{{ $inputId }}"
-                      id="street_address_{{ $inputId }}"
-                      add-class=""
-                      placeholder="Street Address"
-                      required :value="$editData->street_address ?? ''"/>
     <x-admin.ui.input label="Street Number"
                       type="text"
                       name="street_number_{{ $inputId }}"
@@ -13,6 +6,13 @@
                       add-class=""
                       placeholder="Street Number"
                       required :value="$editData->street_number ?? ''"/>
+    <x-admin.ui.input label="Street Address"
+                      type="text"
+                      name="street_address_{{ $inputId }}"
+                      id="street_address_{{ $inputId }}"
+                      add-class=""
+                      placeholder="Street Address"
+                      required :value="$editData->street_address ?? ''"/>
     <x-admin.ui.input label="Suburb"
                       type="text"
                       name="suburb_{{ $inputId }}"
@@ -59,13 +59,6 @@
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->full_json_response ?? '') }}">
 @elseif(!$noRelation && !$readonly)
-    <x-admin.ui.input label="Street Address"
-                      type="text"
-                      name="street_address_{{ $inputId }}"
-                      id="street_address_{{ $inputId }}"
-                      add-class=""
-                      placeholder="Street Address"
-                      required :value="$editData->$relations->street_address ?? ''"/>
     <x-admin.ui.input label="Street Number"
                       type="text"
                       name="street_number_{{ $inputId }}"
@@ -73,6 +66,13 @@
                       add-class=""
                       placeholder="Street Number"
                       required :value="$editData->$relations->street_number ?? ''"/>
+    <x-admin.ui.input label="Street Address"
+                      type="text"
+                      name="street_address_{{ $inputId }}"
+                      id="street_address_{{ $inputId }}"
+                      add-class=""
+                      placeholder="Street Address"
+                      required :value="$editData->$relations->street_address ?? ''"/>
     <x-admin.ui.input label="Suburb"
                       type="text"
                       name="suburb_{{ $inputId }}"
@@ -119,13 +119,6 @@
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->$relations->full_json_response ?? '') }}">
 @else
-    <x-admin.ui.input label="Street Address"
-                      type="text"
-                      name="street_address_{{ $inputId }}"
-                      id="street_address_{{ $inputId }}"
-                      add-class="bg-white"
-                      placeholder="Street Address"
-                      :value="$editData->$relations->street_address ?? ''" readonly disable/>
     <x-admin.ui.input label="Street Number"
                       type="text"
                       name="street_number_{{ $inputId }}"
@@ -133,6 +126,13 @@
                       add-class="bg-white"
                       placeholder="Street Number"
                       :value="$editData->$relations->street_number ?? ''" readonly/>
+    <x-admin.ui.input label="Street Address"
+                      type="text"
+                      name="street_address_{{ $inputId }}"
+                      id="street_address_{{ $inputId }}"
+                      add-class="bg-white"
+                      placeholder="Street Address"
+                      :value="$editData->$relations->street_address ?? ''" readonly disable/>
     <x-admin.ui.input label="Suburb"
                       type="text"
                       name="suburb_{{ $inputId }}"
@@ -178,7 +178,7 @@
     <script>
         $(document).ready(function () {
             var autocomplete_{{ $inputId }};
-            autocomplete_{{ $inputId }} = new google.maps.places.Autocomplete((document.getElementById('street_address_{{ $inputId }}')), {
+            autocomplete_{{ $inputId }} = new google.maps.places.Autocomplete((document.getElementById('street_number_{{ $inputId }}')), {
                 types: ['address'],
                 componentRestrictions: {
                     country: {!! config('services.google_api.countries') !!}

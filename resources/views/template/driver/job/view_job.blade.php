@@ -95,9 +95,13 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="container">
-                            <h4>Job History</h4>
-                            <ul class="timeline">
+                        <div class="card container">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <h4>Job History</h4>
+                                </div>
+                            </div>
+                            <ul class="timeline p-3">
                                 @foreach($myjob->jobStatusHistory as $jobStatusHistory)
                                     {{--                                        <li>--}}
                                     {{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}

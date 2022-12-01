@@ -16,7 +16,7 @@
                         <x-admin.ui.input label="Status" type="text" name="status" id="status" add-class=""
                                           placeholder="Enter Status" required :value="$jobStatus->status"/>
                         <x-admin.ui.input label="Identifier" type="text" name="identifier" id="identifier" add-class=""
-                                          placeholder="Enter Identifier" required :value="$jobStatus->identifier">
+                                          placeholder="Enter Identifier" required :value="$jobStatus->identifier" readonly>
                             <x-slot name="hint">Please use small letters and separate two word with underscore(-). eg:order_placed</x-slot>
                         </x-admin.ui.input>
                     </x-slot>
