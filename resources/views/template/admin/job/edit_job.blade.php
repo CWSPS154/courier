@@ -169,84 +169,71 @@
                 </div>
 
 				<div class="card-body">
-                <div class="row px-3">
-                    <div class="col-12">
-                        <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
-                                          add-class=""
-                                          placeholder="Number of Boxes" required :value="$job->number_box"/>
-                    </div>
-                    <div class="col-12">
-                        <label for="van_hire">Do you need van?</label><br>
-                        <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
-                                                     offText="No" label="Need" :value="$job->van_hire"/>
-                    </div>
-                    <div class="col-12">
-                        <x-admin.ui.Textarea label="Notes"
-                                             name="notes"
-                                             id="note"
-                                             :value="$job->notes"
-                        />
-                    </div>
-                </div>
-				</div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="container">
-                            <h4>Job History</h4>
-                            <ul class="timeline">
-                                @foreach($job->jobStatusHistory as $jobStatusHistory)
-{{--                                        <li>--}}
-{{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
-{{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
-{{--                                        </li>--}}
-                                        <li>
-                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                            <p>{{ $jobStatusHistory->comment }}</p>
-                                        </li>
-                                @endforeach
-                            </ul>
+                    <div class="row px-3">
+                        <div class="col-12">
+                            <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
+                                              add-class=""
+                                              placeholder="Number of Boxes" required :value="$job->number_box"/>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <x-admin.ui.select label="Status"
-                                           name="status_id"
-                                           id="status_id"
-                                           :options="Helper::getJobStatus()"
-                                           add-class="status"
-                                           :value="$job->status_id"
-                        />
-                    </div>
-                </div>
-                <div class="row d-none job_driver_id">
-                    <div class="col-12">
-                        <x-admin.ui.select label="Assign Driver"
-                                           name="driver_id"
-                                           id="driver_id"
-                                           options="driver.list"
-                                           add-class="driver_id"
+                        <div class="col-12">
+                            <label for="van_hire">Do you need van?</label><br>
+                            <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
+                                                         offText="No" label="Need" :value="$job->van_hire"/>
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.Textarea label="Notes"
+                                                 name="notes"
+                                                 id="note"
+                                                 :value="$job->notes"
+                            />
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.select label="Status"
+                                                   name="status_id"
+                                                   id="status_id"
+                                                   :options="Helper::getJobStatus()"
+                                                   add-class="status"
+                                                   :value="$job->status_id"
+                                                   required
+                                />
+                        </div>
+                        <div class="col-12 job_driver_id {{ $job->jobAssign->user_id ?? 'd-none' }}">
+                            @if(!empty($job->jobAssign->user_id))
+                                <x-admin.ui.select label="Assign Driver"
+                                                   name="driver_id"
+                                                   id="driver_id"
+                                                   options="driver.list"
+                                                   add-class="driver_id"
+                                                   :value="$job->jobAssign->user_id"
+                                                   required
 
-                        />
-                    </div>
-                    {{--                    <div class="col-lg-6">--}}
-                    {{--                        <x-admin.ui.select label="Time Frame"--}}
-                    {{--                                           name="timeframe_id"--}}
-                    {{--                                           id="timeframe_id"--}}
-                    {{--                                           required--}}
-                    {{--                                           options="timeframe.list"--}}
-                    {{--                                           add-class="timeframe_id"--}}
+                                />
+                                @else
+                                <x-admin.ui.select label="Assign Driver"
+                                                   name="driver_id"
+                                                   id="driver_id"
+                                                   options="driver.list"
+                                                   add-class="driver_id"
 
-                    {{--                        />--}}
-                    {{--                    </div>--}}
-                </div>
-                <div class="row d-none comment">
-                    <div class="col-12">
-                        <x-admin.ui.Textarea label="Comment"
-                                             name="comment"
-                                             id="comment"
-                        />
+                                />
+                                @endif
+                        </div>
+                            {{--                    <div class="col-lg-6">--}}
+                            {{--                        <x-admin.ui.select label="Time Frame"--}}
+                            {{--                                           name="timeframe_id"--}}
+                            {{--                                           id="timeframe_id"--}}
+                            {{--                                           required--}}
+                            {{--                                           options="timeframe.list"--}}
+                            {{--                                           add-class="timeframe_id"--}}
+
+                            {{--                        />--}}
+                            {{--                    </div>--}}
+                        <div class="col-12 d-none comment">
+                                <x-admin.ui.Textarea label="Comment"
+                                                     name="comment"
+                                                     id="comment"
+                                />
+                        </div>
                     </div>
                 </div>
             </x-slot>
@@ -259,6 +246,29 @@
                     </div>
                     <div>
                         <x-admin.ui.button type="submit" btn-name="Update" name="job_submit" id="job_submit"/>
+                    </div>
+                </div>
+                <hr>
+                <div class="card-body bg-white">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="container">
+                                <h4>Job History</h4>
+                                <ul class="timeline">
+                                    @foreach($job->jobStatusHistory as $jobStatusHistory)
+                                        {{--                                        <li>--}}
+                                        {{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
+                                        {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
+                                        {{--                                        </li>--}}
+                                        <li>
+                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            <p>{!! $jobStatusHistory->comment !!}</p>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </x-slot>
@@ -580,12 +590,24 @@
                    }else{
                      $('.comment').addClass('d-none');
                    }
-                   {{--if($(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ASSIGNED) }}')--}}
-                   {{--{--}}
-                   {{--    $('.job_driver_id').removeClass('d-none');--}}
-                   {{--}else{--}}
-                   {{--    $('.job_driver_id').addClass('d-none');--}}
-                   {{--}--}}
+                   if($(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ASSIGNED) }}' || $(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ACCEPTED) }}' || '{{ $job->jobAssign->user_id ?? '' }}')
+                   {
+                       $('#driver_id').prop('required',true);
+                       $('#driver_id').prev('label').html('Assign Driver'+'<span class="text-danger">*</span>');
+                       $('.job_driver_id').removeClass('d-none');
+                   }else{
+                       $('#driver_id').prop('required',false);
+                       $('#driver_id').prev('label').html('Assign Driver');
+                       $('.job_driver_id').addClass('d-none');
+                   }
+                });
+                $('body').on('change','#driver_id',function (){
+                    if($(this).val()!='{{ $job->jobAssign->user_id ?? '' }}')
+                    {
+                        $('.comment').removeClass('d-none');
+                    }else{
+                        $('.comment').addClass('d-none');
+                    }
                 });
             </script>
     @endpush

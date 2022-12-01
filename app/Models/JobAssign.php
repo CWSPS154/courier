@@ -31,11 +31,6 @@ class JobAssign extends Model
     use SoftDeletes;
     use CascadeSoftDeletes;
 
-//    const ASSIGNED = 1;
-//    const NOT_ASSIGNED = -1;
-//    const JOB_ACCEPTED = 2;
-//    const JOB_REJECTED = 3;
-
     /**
      * @var string
      */

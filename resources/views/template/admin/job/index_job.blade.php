@@ -36,6 +36,12 @@
                                 />
                                 <input type="hidden" name="order_job_id" id="order_job_id" required>
                             </div>
+                            <div class="col-lg-12">
+                                <x-admin.ui.Textarea label="Comment"
+                                                     name="comment"
+                                                     id="comment"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
