@@ -1,17 +1,14 @@
 @if($accept)
-    <a href="{{ $accept }}" class="btn btn-xs btn-primary"><i
-            class="glyphicon glyphicon-edit" role="button"></i> {{__('Accept')}}</a>
+    <a href="{{ $accept }}" class="btn btn-xs btn-primary change-status" role="button" data-title="{{__('Accept')}}"
+       data-toggle="modal"
+       data-target="#modal-ch-status" data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::ACCEPTED) }}">
+        <i class="glyphicon glyphicon-edit" role="button"></i> {{__('Accept')}}</a>
 @endif
 @if($reject)
-    <a class="btn btn-xs btn-danger delete" href="{{ $reject }}"
-       onclick="event.preventDefault();document.getElementById('delete-form_{{ $id }}').submit();" role="button">
-        <i class="glyphicon glyphicon-edit" role="button"></i>
-        {{  __('Reject') }}
-    </a>
-    <form class="d-none delete-form" id="delete-form_{{ $id }}" action="{{ $reject }}" method="POST">
-        @csrf
-        @method('DELETE')
-    </form>
+    <a href="{{ $reject }}" class="btn btn-xs btn-danger change-status" role="button" data-title="{{__('Reject')}}"
+       data-toggle="modal"
+       data-target="#modal-ch-status" data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::REJECTED) }}">
+        <i class="glyphicon glyphicon-edit" role="button"></i> {{__('Reject')}}</a>
 @endif
 @if($view)
     <a href="{{ $view }}" class="btn btn-xs btn-info"><i

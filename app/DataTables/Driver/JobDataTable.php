@@ -66,8 +66,8 @@ class JobDataTable extends DataTable
             ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.accept_reject_button',
-                    ['accept' => Helper::getRoute('myjob.edit', $query->id),
-                        'reject' => Helper::getRoute('myjob.destroy', $query->id), 'id' => $query->id,
+                    ['accept' => Helper::getRoute('myjob.update', $query->id),
+                        'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
                         'view' => Helper::getRoute('myjob.show', $query->id),
                     ]
                 );

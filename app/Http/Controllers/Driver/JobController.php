@@ -78,14 +78,22 @@ class JobController extends Controller
      * @param $comment
      * @return void
      */
-    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null): void
+    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null,$photo=null): void
     {
+        $imageName=null;
+        if($photo)
+        {
+            $imageName = time().'.'.$photo->extension();
+            // Public Folder
+            $photo->move(public_path('images/delivered'), $imageName);
+        }
         JobStatusHistory::create([
             'order_job_id'=>$order_job_id,
             'user_id'=>$user_id,
             'from_status_id'=>$from_status,
             'to_status_id'=>$to_status,
-            'comment'=>$comment,
+            'photo'=>$imageName,
+            'comment'=>$comment
         ]);
     }
 
@@ -132,11 +140,11 @@ class JobController extends Controller
      */
     public function update(Request $request, OrderJob $myjob): RedirectResponse
     {
-        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status);
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status,$request->comment,$request->photo);
         $myjob->status_id = $request->status;
         $myjob->save();
         if ($myjob->wasChanged()) {
-            return back()->with('success', 'Job Status changed');
+            return back()->with('success', 'Job Status changed successfully');
         }
         return back()->with('info', 'Job Status is not changed');
     }

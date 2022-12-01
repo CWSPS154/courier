@@ -55,6 +55,43 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+    <div class="modal fade" id="modal-ch-status">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <form id="status_change_modal" method="post">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <input type="hidden" name="status" id="status" required>
+                            </div>
+                            <div class="col-lg-12">
+                                <x-admin.ui.Textarea label="Comment"
+                                                     name="comment"
+                                                     id="comment"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"></button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     @push('scripts')
         <script>
             $(document).ready(function () {
@@ -82,7 +119,15 @@
                 $('#order_job_id').val(JSON.stringify(order_job_id));
                 $('#modal-sm-assign').modal('show');
             });
-
+            $('body').on('click','.change-status',function (){
+                let title=$(this).data('title');
+                let url=$(this).attr('href');
+                let status_id=$(this).data('id');
+                $('#modal-ch-status').find('h4.modal-title').text(title);
+                $('#modal-ch-status').find('button[type="submit"]').text(title);
+                $('#modal-ch-status #status_change_modal').attr('action',url);
+                $('#modal-ch-status #status').val(status_id);
+            })
         </script>
     @endpush
 @endsection
