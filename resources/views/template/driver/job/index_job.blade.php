@@ -38,7 +38,7 @@
                             </div>
                             <div class="col-lg-12 image-upload d-none">
                                 <label for="photo" class="form-label">Upload Image <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control" name="photo" capture="user" accept="image/*" required>
+                                <input type="file" class="form-control" name="photo" capture="user" accept="image/*">
                             </div>
                         </div>
                     </div>
@@ -66,10 +66,12 @@
                 if(title=="Delivered")
                 {
                     $('#modal-ch-status #status_change_modal').attr('enctype',"multipart/form-data");
+                    $('.image-upload img').attr('required',true);
                     $('.image-upload').removeClass('d-none');
                 }else {
                     $('#modal-ch-status #status_change_modal').attr('enctype',"");
                     $('.image-upload').addClass('d-none');
+                    $('.image-upload img').attr('required',false);
                 }
             })
         </script>
