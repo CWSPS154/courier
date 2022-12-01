@@ -25,6 +25,7 @@ class JobStatusHistory extends Model
         'user_id',
         'from_status_id',
         'to_status_id',
+        'photo',
         'comment',
         ];
 

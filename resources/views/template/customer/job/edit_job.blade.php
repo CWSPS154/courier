@@ -204,26 +204,6 @@
                 {{--                        />--}}
                 {{--                    </div>--}}
                 {{--                </div>--}}
-                <div class="row">
-                    <div class="col-12">
-                        <div class="container">
-                            <h4>Job History</h4>
-                            <ul class="timeline">
-                                @foreach($job->jobStatusHistory as $jobStatusHistory)
-                                    {{--                                        <li>--}}
-                                    {{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
-                                    {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
-                                    {{--                                        </li>--}}
-                                    <li>
-                                        <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                        <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                        <p>{{ $jobStatusHistory->comment }}</p>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </x-slot>
             <x-slot name="button">
                 <div class="d-flex justify-content-between">
@@ -233,6 +213,32 @@
                     </div>
                     <div>
                         <x-admin.ui.button type="submit" btn-name="Update" name="job_submit" id="job_submit"/>
+                    </div>
+                </div>
+                <hr>
+                <div class="card-body bg-white">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="container">
+                                <h4>Job History</h4>
+                                <ul class="timeline">
+                                    @foreach($job->jobStatusHistory as $jobStatusHistory)
+                                        {{--                                        <li>--}}
+                                        {{--                                            <span class="text-bold">{{ $jobStatusHistory->fromStatus->status ?? 'Job Created' }}</span>--}}
+                                        {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
+                                        {{--                                        </li>--}}
+                                        <li>
+                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            <p>{!! $jobStatusHistory->comment !!}</p>
+                                            @if($jobStatusHistory->photo)
+                                                <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </x-slot>

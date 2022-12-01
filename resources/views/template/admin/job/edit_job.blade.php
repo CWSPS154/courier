@@ -264,6 +264,9 @@
                                             <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
                                             <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
                                             <p>{!! $jobStatusHistory->comment !!}</p>
+                                            @if($jobStatusHistory->photo)
+                                                <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>

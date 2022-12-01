@@ -154,6 +154,33 @@
                                              readonly="true"
                         />
                     </div>
+                    <div class="col-12">
+                        <x-admin.ui.input type="text" label="Status"
+                                           name="status_id"
+                                           id="status_id"
+                                           add-class="status bg-white"
+                                           :value="$job->status->status"
+                                          readonly="true"
+                        />
+                    </div>
+                    <div class="col-12 job_driver_id {{ $job->jobAssign->user_id ?? 'd-none' }}">
+                        @if(!empty($job->jobAssign->user_id))
+                            <x-admin.ui.input type="text" label="Assign Driver"
+                                               name="driver_id"
+                                               id="driver_id"
+                                               add-class="driver_id bg-white"
+                                               :value="$job->jobAssign->user->name"
+                                              readonly="true"
+
+                            />
+                        @else
+                            <x-admin.ui.input type="text" label="Assign Driver"
+                                              name="driver_id"
+                                              id="driver_id"
+                                              add-class="driver_id bg-white"
+                                              readonly="true"
+                        @endif
+                    </div>
                 </div>
 				</div>
                 {{--                <div class="row">--}}
@@ -177,7 +204,10 @@
                 {{--                        />--}}
                 {{--                    </div>--}}
                 {{--                </div>--}}
-                <div class="row">
+
+            </x-slot>
+            <x-slot name="button">
+                <div class="card-body bg-white">
                     <div class="col-12">
                         <div class="container">
                             <h4>Job History</h4>
@@ -190,7 +220,10 @@
                                     <li>
                                         <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
                                         <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                        <p>{{ $jobStatusHistory->comment }}</p>
+                                        <p>{!! $jobStatusHistory->comment !!}</p>
+                                        @if($jobStatusHistory->photo)
+                                            <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>

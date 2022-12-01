@@ -512,13 +512,7 @@ class JobController extends Controller
                     $job->save();
                     $msg="Job reassigned to ".$jobAssign->user->name.'<br>';
                     $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
-                }elseif ($jobAssign && $request->driver_id==null)
-                {
-                    $jobAssign->forceDelete();
-                    $job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
-                    $job->save();
-                    $msg="Job is unassigned";
-                    $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
+                    event(new JobAssignedEvent($request->driver_id,$job->job_number));
                 }
                 else{
                     $Assign = JobAssign::where('order_job_id', $job->id)->where('user_id',$request->driver_id)->first();
@@ -532,6 +526,7 @@ class JobController extends Controller
                         $job->save();
                         $msg="Job assigned to ".$jobAssign->user->name.'<br>';
                         $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
+                        event(new JobAssignedEvent($request->driver_id,$job->job_number));
                     }
                 }
             }
