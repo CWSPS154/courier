@@ -154,7 +154,7 @@ class DriverController extends Controller
                 'json_response_driver' => ['required'],
                 'is_company_driver' => ['filled'],
                 'company_email' => ['nullable', 'email'],
-                'password' => ['sometimes','confirmed','min:8']
+                'password' => ['sometimes','nullable','confirmed','min:8']
             ]
         );
     }
@@ -245,6 +245,9 @@ class DriverController extends Controller
         $driver->last_name = $request->last_name;
         $driver->email = $request->email;
         $driver->mobile = $request->mobile;
+        if($request->password_confirmation){
+            $driver->password = Hash::make($request->password_confirmation);
+        }
         $driver->is_active = $is_active;
         $driver_table = Driver::findOrFail($driver->driver->id);
         $driver_table->driver_id = $request->did;

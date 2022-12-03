@@ -58,6 +58,12 @@
                         <x-admin.address-autocomplete input-id="customer" :edit-data="$customer"
                                                       relations="defaultAddress"/>
                     </div>
+                    <div class="col-lg-12">
+                        <x-admin.ui.input label="New Password" type="password" name="password" id="password" add-class=""
+                                          placeholder="Password"/>
+                        <x-admin.ui.input label="Confirm Password" type="password" name="password_confirmation" id="password_confirmation" add-class=""
+                                          placeholder="Confirm Password"/>
+                    </div>
                 </div>
             </x-slot>
             <x-slot name="button">

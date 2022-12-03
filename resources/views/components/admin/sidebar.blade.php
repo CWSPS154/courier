@@ -12,8 +12,8 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
 
-                <x-admin.ui.menu name="Dashboard" route="dashboard" icon="fas fa-home" target="0"
-                                 new="0" count="0"/>
+{{--                <x-admin.ui.menu name="Dashboard" route="dashboard" icon="fas fa-home" target="0"--}}
+{{--                                 new="0" count="0"/>--}}
                 {{--Admin Menus--}}
                 @if(auth()->user()->isAdmin())
                     <x-admin.ui.menu name="Customers" route="customer.index" icon="fas fa-users" target="0"

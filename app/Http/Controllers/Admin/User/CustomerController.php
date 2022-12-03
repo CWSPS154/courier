@@ -68,7 +68,7 @@ class CustomerController extends Controller
                 });
             })->when($id, function ($query) use ($id) {
                 $query->where('id', $id);
-            })->where('role_id', Role::CUSTOMER)->limit(15)->get();
+            })->where('role_id', Role::CUSTOMER)->where('is_active',true)->limit(15)->get();
             $response = array();
             foreach ($customers as $customer) {
                 $response[] = array(
@@ -148,7 +148,7 @@ class CustomerController extends Controller
                 'longitude_customer' => ['required'],
                 'location_url_customer' => ['required'],
                 'json_response_customer' => ['required'],
-                'password' => ['sometimes','confirmed','min:8']
+                'password' => ['sometimes','nullable','confirmed','min:8']
             ]
         );
     }
@@ -240,6 +240,9 @@ class CustomerController extends Controller
         $customer->last_name = $request->last_name;
         $customer->email = $request->email;
         $customer->mobile = $request->mobile;
+        if($request->password_confirmation){
+            $customer->password = Hash::make($request->password_confirmation);
+        }
         $customer->is_active = $is_active;
         $customer_table = Customer::findOrFail($customer->customer->id);
         $customer_table->customer_id = $request->cid;

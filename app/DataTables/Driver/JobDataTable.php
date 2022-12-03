@@ -64,13 +64,32 @@ class JobDataTable extends DataTable
                 return $query->status->status;
             })
             ->addColumn('action', function ($query) {
-                return view(
-                    'components.admin.datatable.accept_reject_button',
-                    ['accept' => Helper::getRoute('myjob.update', $query->id),
-                        'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
-                        'view' => Helper::getRoute('myjob.show', $query->id),
-                    ]
-                );
+                if($query->status->identifier==JobStatus::ASSIGNED){
+                    return view(
+                        'components.admin.datatable.accept_reject_button',
+                        ['accept' => Helper::getRoute('myjob.update', $query->id),
+                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
+                            'view' => Helper::getRoute('myjob.show', $query->id),
+                        ]
+                    );
+                }
+                elseif($query->status->identifier==JobStatus::ACCEPTED) {
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id),'picked_up'=>Helper::getRoute('myjob.update',$query->id)]
+                    );
+                }
+                elseif($query->status->identifier==JobStatus::PICKED_UP) {
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id),'delivered'=>Helper::getRoute('myjob.update',$query->id)]
+                    );
+                }else{
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('myjob.show', $query->id)]
+                    );
+                }
             })
             ->rawColumns(['van_hire', 'action']);
     }
@@ -83,10 +102,10 @@ class JobDataTable extends DataTable
      */
     public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,id','dailyJob:job_number,id,order_job_id')
+        return $model->with('user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,identifier,id','dailyJob:job_number,id,order_job_id')
             ->whereHas('jobAssign', function ($q) {
                 $q->where('user_id', Auth::id());
-            })->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::ASSIGNED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
+            })->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::REJECTED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
@@ -102,17 +121,17 @@ class JobDataTable extends DataTable
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
-            ->pagingType('numbers')
-            ->parameters([
-                'dom' => 'Bfrtip',
-                'buttons' => [[
-                    'text' => 'Accepted Jobs',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('myjob.create') . '";
-                     }'
-                ],]
-            ]);
+            ->pagingType('numbers');
+//            ->parameters([
+//                'dom' => 'Bfrtip',
+//                'buttons' => [[
+//                    'text' => 'Accepted Jobs',
+//                    'className' => 'bg-primary mb-lg-0 mb-3',
+//                    'action' => 'function( e, dt, button, config){
+//                         window.location = "' . Helper::getRoute('myjob.create') . '";
+//                     }'
+//                ],]
+//            ]);
     }
 
     /**

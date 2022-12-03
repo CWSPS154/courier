@@ -7,6 +7,7 @@ use App\Http\Middleware\Authcheck;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\DriverMiddleware;
+use App\Http\Middleware\IsActiveMiddleware;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -86,6 +87,7 @@ class Kernel extends HttpKernel
         'customer' => CustomerMiddleware::class,
         'driver' => DriverMiddleware::class,
         'guest' => RedirectIfAuthenticated::class,
+        'is-active' => IsActiveMiddleware::class,
         'password.confirm' => RequirePassword::class,
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,

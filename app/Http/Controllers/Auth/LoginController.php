@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -36,5 +38,31 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        if(!$user->is_active)
+        {
+            Auth::logout();
+           return back()->withErrors('Your account was deactivated by the admin. Please contact the admin for more details');
+        }
+        if($user->isAdmin())
+        {
+            return redirect()->route('job.index');
+        }else if($user->isCustomer())
+        {
+            return redirect()->route('jobs.index');
+        } else
+        {
+            return redirect()->route('myjob.index');
+        }
     }
 }
