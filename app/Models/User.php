@@ -160,7 +160,7 @@ class User extends Authenticatable implements
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(OrderJob::class);
+        return $this->hasMany(OrderJob::class,'user_id','id');
     }
 
     /**

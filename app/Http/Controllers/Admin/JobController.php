@@ -168,7 +168,7 @@ class JobController extends Controller
                     if (end($order_job_ids)) {
                     }
                     if ($jobAssign) {
-                        if($jobAssign->user_id != $request->driver_id)
+                        if($jobAssign->user_id != $request->driver_id || $order_job->status_id==JobStatus::getStatusId(JobStatus::REJECTED))
                         {
                             $jobAssign->user_id = $request->driver_id;
                             $jobAssign->save();
@@ -201,7 +201,7 @@ class JobController extends Controller
             $daily_job=DailyJob::where('order_job_id',$request->order_job_id)->first();
             $order_job=OrderJob::findOrFail($request->order_job_id);
             if ($jobAssign) {
-                if($jobAssign->user_id != $request->driver_id)
+                if($jobAssign->user_id != $request->driver_id || $order_job->status_id==JobStatus::getStatusId(JobStatus::REJECTED))
                 {
                     $jobAssign->user_id = $request->driver_id;
                     $jobAssign->save();

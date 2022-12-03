@@ -19,6 +19,7 @@
 
 namespace App\DataTables\Admin\User;
 
+use App\Models\OrderJob;
 use App\Models\Role;
 use App\Models\User;
 use Helper;
@@ -48,9 +49,12 @@ class CustomerDataTable extends DataTable
             ->editColumn('email', function ($query) {
                 return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
             })
-            ->editColumn('mobile', function ($query) {
-                return $query->mobile ? '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>' : 'NA';
+            ->editColumn('area', function ($query) {
+                return $query->customer->area->area ?? 'NA';
             })
+//            ->editColumn('mobile', function ($query) {
+//                return $query->mobile ? '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>' : 'NA';
+//            })
             ->editColumn('is_active', function ($query) {
                 if ($query->is_active) {
                     return '<span class="text-success">Active</span>';
@@ -59,13 +63,20 @@ class CustomerDataTable extends DataTable
                 }
             })
             ->addColumn('action', function ($query) {
-                return view(
-                    'components.admin.datatable.button',
-                    ['edit' => Helper::getRoute('customer.edit', $query->user_id),
-                        'delete' => Helper::getRoute('customer.destroy', $query->user_id), 'id' => $query->user_id]
-                );
+                if(OrderJob::getJobsCount($query->user_id)) {
+                    return view(
+                        'components.admin.datatable.button',
+                        ['edit' => Helper::getRoute('customer.edit', $query->user_id)]
+                    );
+                }else{
+                    return view(
+                        'components.admin.datatable.button',
+                        ['edit' => Helper::getRoute('customer.edit', $query->user_id),
+                            'delete' => Helper::getRoute('customer.destroy', $query->user_id), 'id' => $query->user_id]
+                    );
+                }
             })
-            ->rawColumns(['email', 'mobile', 'is_active', 'action']);
+            ->rawColumns(['email', 'is_active', 'action']);
     }
 
     /**
@@ -76,8 +87,8 @@ class CustomerDataTable extends DataTable
      */
     public function query(User $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->where('role_id', Role::CUSTOMER)->with('customer:user_id,company_name,customer_id,id')
-            ->orderByDesc('users.created_at')->select('*');
+        return $model->select('*')->with('customer:user_id,company_name,customer_id,id,area_id','customer.area')->where('role_id', Role::CUSTOMER)
+            ->orderByDesc('users.created_at');
     }
 
     /**
@@ -129,7 +140,12 @@ class CustomerDataTable extends DataTable
             'first_name',
             'last_name',
             'email',
-            'mobile',
+            'area' => new Column(
+                ['title' => 'Area',
+                    'data' => 'area',
+                    'name' => 'customer.area.area',
+                    'searchable' => true]
+            ),
             'status' => new Column(
                 ['title' => 'Status',
                     'data' => 'is_active',

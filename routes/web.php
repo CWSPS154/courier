@@ -45,7 +45,7 @@ Route::get('/', function () {
     return redirect('login');
 });
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth','is-active']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/list_customer', [CustomerController::class, 'getCustomers'])->name('customer.list');
     Route::get('/list_driver', [DriverController::class, 'getDrivers'])->name('driver.list');
@@ -83,6 +83,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*Driver Routes */
     Route::group(['middleware' => 'driver', 'prefix' => 'driver', 'name' => 'driver' . '.'], function () {
-        Route::resource('/myjob', DriverJobController::class);
+        Route::resource('/myjob', DriverJobController::class)->except(['create','edit','destroy']);
     });
 });

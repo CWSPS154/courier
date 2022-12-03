@@ -195,4 +195,12 @@ class OrderJob extends Model
     {
         return config('auth.providers.user.model');
     }
+
+    public static function getJobsCount($user_id)
+    {
+        if($user_id)
+        {
+            return OrderJob::where('user_id',$user_id)->count();
+        }
+    }
 }
