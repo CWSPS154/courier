@@ -305,7 +305,7 @@ class JobController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      **/
-    protected function validator(array $data, int $id = null)
+    protected function validator(array $data, int|string $id = null)
     {
         \Validator::extend(
             'without_spaces',
@@ -317,7 +317,7 @@ class JobController extends Controller
         return Validator::make(
             $data,
             [
-                'customer' => ['required', 'integer'],
+                'customer' => ['required'],
                 'customer_contact' => ['string'],
                 'company_name_from' => ['required'],
                 'company_name_to' => ['required'],
@@ -333,7 +333,7 @@ class JobController extends Controller
                 'longitude_from' => ['required'],
                 'location_url_from' => ['required'],
                 'json_response_from' => ['required'],
-                'from_area_id' => ['required', 'integer'],
+                'from_area_id' => ['required'],
                 'street_address_to' => ['required'],
                 'street_number_to' => ['required'],
                 'suburb_to' => ['required'],
@@ -346,7 +346,7 @@ class JobController extends Controller
                 'longitude_to' => ['required'],
                 'location_url_to' => ['required'],
                 'json_response_to' => ['required'],
-                'to_area_id' => ['required', 'integer']
+                'to_area_id' => ['required',]
             ]
         );
     }
@@ -400,11 +400,11 @@ class JobController extends Controller
     }
 
     /**
-     * @param int $user_id
+     * @param int|string $user_id
      * @param string $customer_contact
-     * @return int
+     * @return int|string
      */
-    private function updateOrCreate(int $user_id, string $customer_contact): int
+    private function updateOrCreate(int|string $user_id, string $customer_contact): int|string
     {
         return CustomerContact::updateOrCreate(
             ['user_id' => $user_id,
@@ -418,7 +418,7 @@ class JobController extends Controller
     }
 
     /**
-     * @param $job_id
+     * @param $order_job_id
      * @param $address
      * @param $type
      * @return mixed

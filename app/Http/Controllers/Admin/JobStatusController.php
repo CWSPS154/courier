@@ -61,11 +61,11 @@ class JobStatusController extends Controller
      * Validator for validate data in the request.
      *
      * @param array $data The data
-     * @param int|null $id The identifier for update validation
+     * @param int|string|null $id The identifier for update validation
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
-     **/
-    protected function validator(array $data, int $id = null): \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
+     */
+    protected function validator(array $data, int|string $id = null): \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
     {
         \Validator::extend(
             'without_spaces',
@@ -101,16 +101,16 @@ class JobStatusController extends Controller
         return redirect()->route('job_status.index')->with('success', 'Job Status is saved successfully');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param JobStatus $jobStatus
-     * @return Response
-     */
-    public function show(JobStatus $jobStatus)
-    {
-        //
-    }
+//    /**
+//     * Display the specified resource.
+//     *
+//     * @param JobStatus $jobStatus
+//     * @return Response
+//     */
+//    public function show(JobStatus $jobStatus)
+//    {
+//        //
+//    }
 
     /**
      * Show the form for editing the specified resource.

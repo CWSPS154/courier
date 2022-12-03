@@ -68,7 +68,7 @@ class CustomerController extends Controller
                 });
             })->when($id, function ($query) use ($id) {
                 $query->where('id', $id);
-            })->where('role_id', Role::CUSTOMER)->where('is_active',true)->limit(15)->get();
+            })->where('role_id', Role::getRoleId(Role::CUSTOMER))->where('is_active',true)->limit(15)->get();
             $response = array();
             foreach ($customers as $customer) {
                 $response[] = array(
@@ -98,7 +98,7 @@ class CustomerController extends Controller
             'email' => $request->email,
             'mobile' => $request->mobile,
             'password' => Hash::make($request->password_confirmation),
-            'role_id' => Role::CUSTOMER,
+            'role_id' => Role::getRoleId(Role::CUSTOMER),
             'is_active' => $is_active,
         ]);
         $customer = Customer::create([
@@ -119,7 +119,7 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      **/
-    protected function validator(array $data, int $id = null, int $customer_id = null)
+    protected function validator(array $data, int|string $id = null, int|string $customer_id = null)
     {
         \Validator::extend(
             'without_spaces',

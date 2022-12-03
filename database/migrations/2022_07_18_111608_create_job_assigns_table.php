@@ -14,10 +14,11 @@ class CreateJobAssignsTable extends Migration
     public function up()
     {
         Schema::create('job_assigns', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_job_id')->nullable()->referances('id')->constrained('order_jobs');
-            $table->foreignId('user_id')->nullable()->referances('id')->constrained('users');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('order_job_id')->nullable()->constrained('order_jobs')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

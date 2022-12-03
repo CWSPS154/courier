@@ -14,14 +14,15 @@ class CreateDriversTable extends Migration
     public function up()
     {
         Schema::create('drivers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('driver_id')->nullable()->unique();
-            $table->foreignId('area_id')->constrained('areas');
+            $table->foreignUuid('area_id')->nullable()->constrained('areas')->nullOnDelete();
             $table->string('pager_number')->nullable();
             $table->string('company_email')->nullable();
             $table->boolean('company_driver')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -102,7 +102,7 @@ class AreaController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      **/
-    protected function validator(array $data, int $id = null)
+    protected function validator(array $data, int|string $id = null)
     {
         \Validator::extend(
             'without_spaces',

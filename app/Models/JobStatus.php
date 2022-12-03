@@ -19,18 +19,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JobStatus extends Model
 {
     use HasFactory;
-
-//    const ORDER_PLACED = 1;
-//    const DELIVERY_ACCEPTED = 2;
-//    const DELIVERY_REJECTED = 3;
-//    const ORDER_DELIVERED = 4;
-//    const DELIVERY_PENDING = 5;
+    use HasUuids;
 
     const NEW_JOB='new_job';
     const ASSIGNED='assigned';

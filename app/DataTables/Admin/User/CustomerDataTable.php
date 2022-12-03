@@ -87,7 +87,7 @@ class CustomerDataTable extends DataTable
      */
     public function query(User $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->select('*')->with('customer:user_id,company_name,customer_id,id,area_id','customer.area')->where('role_id', Role::CUSTOMER)
+        return $model->select('*')->with('customer:user_id,company_name,customer_id,id,area_id','customer.area')->where('role_id', Role::getRoleId(Role::CUSTOMER))
             ->orderByDesc('users.created_at');
     }
 

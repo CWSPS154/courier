@@ -14,12 +14,13 @@ class CreateAreasTable extends Migration
     public function up()
     {
         Schema::create('areas', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('area');
             $table->string('zone_id')->nullable();
             $table->string('dispatch')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -83,7 +83,7 @@ class DriverDataTable extends DataTable
      */
     public function query(User $model): \Illuminate\Database\Eloquent\Builder
     {
-        return $model->with('driver:user_id,driver_id,area_id','driver.area','jobAssigns')->where('role_id', Role::DRIVER)->orderBy('created_at', 'desc');
+        return $model->with('driver:user_id,driver_id,area_id','driver.area','jobAssigns')->where('role_id', Role::getRoleId(Role::DRIVER))->orderBy('created_at', 'desc');
     }
 
     /**

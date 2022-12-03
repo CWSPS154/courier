@@ -14,7 +14,7 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('role');
             $table->string('role_identifier');
             $table->string('role_level');
@@ -22,7 +22,7 @@ class CreateRolesTable extends Migration
             $table->timestamps();
         });
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('role_id')->constrained('roles');
+            $table->foreignUuid('role_id')->nullable()->after('is_admin')->constrained('roles')->nullOnDelete();
         });
     }
 

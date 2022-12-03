@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Customer;
@@ -24,7 +25,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'mobile' => '7894561230',
             'password' => Hash::make('admin@123'),
-            'role_id' => Role::ADMIN
+            'role_id' => Role::getRoleId(Role::ADMIN)
         ]);
 
         $customer_id=User::create( [
@@ -38,14 +39,14 @@ class UserSeeder extends Seeder
             'remember_token'=>NULL,
             'is_admin'=>0,
             'is_active'=>1,
-            'role_id'=>Role::CUSTOMER
+            'role_id'=>Role::getRoleId(Role::CUSTOMER)
         ] )->id;
 
         Customer::create( [
             'user_id'=>$customer_id,
             'customer_id'=>'XYZ111',
             'company_name'=>'MERZ Construction Products',
-            'area_id'=>5
+            'area_id'=>Area::all()->random()->id
         ] );
 
         $driver_id=User::create( [
@@ -59,13 +60,13 @@ class UserSeeder extends Seeder
             'remember_token'=>NULL,
             'is_admin'=>0,
             'is_active'=>1,
-            'role_id'=>Role::DRIVER
+            'role_id'=>Role::getRoleId(Role::DRIVER)
         ] )->id;
 
         Driver::create( [
             'user_id'=>$driver_id,
             'driver_id'=>'DRI1111',
-            'area_id'=>5,
+            'area_id'=>Area::all()->random()->id,
             'pager_number'=>NULL,
             'company_email'=>NULL,
             'company_driver'=>0

@@ -14,7 +14,7 @@ class CreateJobStatusesTable extends Migration
     public function up()
     {
         Schema::create('job_status', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('status')->nullable();
             $table->string('identifier')->nullable();
             $table->timestamps();

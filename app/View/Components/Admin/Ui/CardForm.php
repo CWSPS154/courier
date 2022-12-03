@@ -83,7 +83,7 @@ class CardForm extends Component
      * @param string|null $formName
      * @param string|null $smallTitle
      * @param string|null $formRoute
-     * @param int|null $formRouteId
+     * @param int|string|null $formRouteId
      * @param string $titleBgClass
      * @param string $formMethod
      * @param bool $enctype
@@ -97,7 +97,7 @@ class CardForm extends Component
         string $formName = null,
         string $smallTitle = null,
         string $formRoute = null,
-        int    $formRouteId = null,
+        int|string    $formRouteId = null,
         string $titleBgClass = 'card-primary',
         string $formMethod = 'POST',
         bool   $enctype = false,

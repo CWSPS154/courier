@@ -65,7 +65,7 @@ class DriverController extends Controller
                 }
             )->when($id, function ($query) use ($id) {
                 $query->where('id', $id);
-            })->where('role_id', Role::DRIVER)->limit(15)->get();
+            })->where('role_id', Role::getRoleId(Role::DRIVER))->limit(15)->get();
             $response = array();
             foreach ($drivers as $driver) {
                 $response[] = array(
@@ -97,7 +97,7 @@ class DriverController extends Controller
             'email' => $request->email,
             'mobile' => $request->mobile,
             'password' => Hash::make($request->password_confirmation),
-            'role_id' => Role::DRIVER,
+            'role_id' => Role::getRoleId(Role::DRIVER),
             'is_active' => $is_active,
         ]);
         $driver = Driver::create([
@@ -122,7 +122,7 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      **/
-    protected function validator(array $data, int $id = null, int $driver_id = null)
+    protected function validator(array $data, int|string $id = null, int|string $driver_id = null)
     {
         \Validator::extend(
             'without_spaces',
