@@ -20,6 +20,7 @@
 namespace App\Models;
 
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +35,7 @@ class OrderJob extends Model
     use Userstamps;
     use SoftDeletes;
     use CascadeSoftDeletes;
+    use HasUuids;
 
     public const JOB_ID_PREFIX = 'JOB';
 
@@ -178,10 +180,10 @@ class OrderJob extends Model
     }
 
     /**
-     * @param int $id
+     * @param int|string $id
      * @return string
      */
-    public function createIncrementJobId(int $id): string
+    public function createIncrementJobId(int|string $id): string
     {
         return self::JOB_ID_PREFIX . str_pad($id, 5, 0, STR_PAD_LEFT);
     }

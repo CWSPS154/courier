@@ -14,8 +14,8 @@ class CreateAddressBooksTable extends Migration
     public function up()
     {
         Schema::create('address_books', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('company_name')->nullable();
             $table->string('street_address')->nullable();
             $table->string('street_number')->nullable();
@@ -25,6 +25,7 @@ class CreateAddressBooksTable extends Migration
             $table->string('zip')->nullable();
             $table->string('country')->nullable();
             $table->longText('place_id')->nullable();
+            $table->foreignUuid('area_id')->nullable()->constrained('areas')->nullOnDelete();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('location_url')->nullable();
@@ -32,6 +33,7 @@ class CreateAddressBooksTable extends Migration
             $table->boolean('status')->default(true);
             $table->boolean('set_as_default')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

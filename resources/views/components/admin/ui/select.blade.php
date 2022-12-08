@@ -78,7 +78,7 @@
                     return data.text;
                 }@if(old($name,$value)),
                 initSelection: function (element, callback) {
-                    let id = {{ old($name,$value) }};
+                    let id = '{{ old($name,$value) }}';
                     if (id) {
                         $.ajax("{{ Helper::getRoute($options) }}", {
                             data: {id: id},

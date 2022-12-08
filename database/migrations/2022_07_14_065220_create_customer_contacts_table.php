@@ -14,9 +14,10 @@ class CreateCustomerContactsTable extends Migration
     public function up()
     {
         Schema::create('customer_contacts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->referances('id')->constrained('users');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('customer_contact');
+            $table->softDeletes();
         });
     }
 

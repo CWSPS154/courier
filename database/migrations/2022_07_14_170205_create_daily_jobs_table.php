@@ -14,10 +14,11 @@ class CreateDailyJobsTable extends Migration
     public function up()
     {
         Schema::create('daily_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_job_id')->nullable()->referances('id')->constrained('order_jobs');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('order_job_id')->nullable()->constrained('order_jobs')->onUpdate('cascade')->onDelete('cascade');
             $table->string('job_number')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

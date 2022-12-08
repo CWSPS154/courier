@@ -69,7 +69,7 @@ class CustomerDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         return $model->newQuery()->with(['customer:user_id,company_name,customer_id,id,area_id','customer.area','jobs'])->select('users.*')
-            ->where('users.role_id', Role::CUSTOMER)->orderBy('users.created_at', 'desc');;
+            ->where('users.role_id', Role::getRoleId(Role::CUSTOMER))->orderBy('users.created_at', 'desc');;
     }
 
     /**

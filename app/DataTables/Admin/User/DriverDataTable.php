@@ -69,7 +69,7 @@ class DriverDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         return $model->newQuery()->with(['driver:user_id,driver_id,area_id','driver.area:area,id','jobAssigns'])->select('users.*')
-            ->where('users.role_id', Role::DRIVER)->orderBy('users.created_at', 'desc');;
+            ->where('users.role_id', Role::getRoleId(Role::DRIVER))->orderBy('users.created_at', 'desc');;
     }
 
     /**

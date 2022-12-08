@@ -1,5 +1,5 @@
 @php use App\Models\JobAssign;use App\Models\JobStatus; @endphp
-@extends('layouts.admin.admin_layout',['title'=>'My OrderJob'])
+@extends('layouts.admin.admin_layout',['title'=>'My Job'])
 @section('content')
 
     @push('styles')
@@ -8,7 +8,7 @@
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <x-admin.title-and-breadcrumb title="My Job"
-                                      breadcrumbs='{"Home":"dashboard","Job":"myjob.index","Accepted Job":"myjob.create","Update Job":""}'/>
+                                      breadcrumbs='{"Home":"dashboard","Jobs":"myjob.index","My Job":""}'/>
         <!-- /.content-header -->
         <x-admin.ui.card-form title="" form-route="myjob.update" form-id="change_status"
                               form-route-id="{{ collect(request()->segments())->last() }}">

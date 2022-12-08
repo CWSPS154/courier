@@ -23,6 +23,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,6 +46,7 @@ class User extends Authenticatable implements
     use SoftDeletes;
     use Userstamps;
     use CascadeSoftDeletes;
+    use HasUuids;
 
     /**
      * @var string
@@ -111,7 +113,7 @@ class User extends Authenticatable implements
      */
     public function isAdmin(): bool
     {
-        return $this->role_id == Role::ADMIN;
+        return $this->role_id == Role::getRoleId(Role::ADMIN);
     }
 
     /**
@@ -119,7 +121,7 @@ class User extends Authenticatable implements
      */
     public function isCustomer(): bool
     {
-        return $this->role_id == Role::CUSTOMER;
+        return $this->role_id == Role::getRoleId(Role::CUSTOMER);
     }
 
     /**
@@ -127,7 +129,7 @@ class User extends Authenticatable implements
      */
     public function isDriver(): bool
     {
-        return $this->role_id == Role::DRIVER;
+        return $this->role_id == Role::getRoleId(Role::DRIVER);
     }
 
     /**

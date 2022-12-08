@@ -14,7 +14,7 @@ class CreateTimeFramesTable extends Migration
     public function up()
     {
         Schema::create('time_frames', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('time_frame')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
