@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\User\DriverController;
 use App\Http\Controllers\Driver\JobController as DriverJobController;
 use App\Http\Controllers\Customer\JobController as CustomerJobController;
 use App\Http\Controllers\Customer\AddressBookController as CustomerAddressBookController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,11 +43,26 @@ use Illuminate\Support\Facades\Route;
 Auth::routes(['verify' => true,'register' => false]);
 
 Route::get('/', function () {
+    if(Auth::check())
+    {
+        if(Auth::user()->isAdmin())
+        {
+            return redirect()->route('job.index');
+        }elseif (Auth::user()->isCustomer())
+        {
+            return redirect()->route('jobs.index');
+        }elseif (Auth::user()->isDriver())
+        {
+            return redirect()->route('myjob.index');
+        }else{
+            return redirect('login');
+        }
+    }
     return redirect('login');
 });
 
 Route::group(['middleware' => ['auth','is-active']], function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/list_customer', [CustomerController::class, 'getCustomers'])->name('customer.list');
     Route::get('/list_driver', [DriverController::class, 'getDrivers'])->name('driver.list');
     Route::get('/list_area', [AreaController::class, 'getAreas'])->name('area.list');

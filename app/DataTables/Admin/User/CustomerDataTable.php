@@ -1,30 +1,13 @@
 <?php
 
-/**
- * PHP Version 8.1.11
- * Laravel Framework 9.34.0
- *
- * @category DataTable
- *
- * @package Laravel
- *
- * @author CWSPS154 <codewithsps154@gmail.com>
- *
- * @license MIT License https://opensource.org/licenses/MIT
- *
- * @link https://github.com/CWSPS154
- *
- * Date 28/08/22
- * */
-
 namespace App\DataTables\Admin\User;
 
-use App\Models\OrderJob;
 use App\Models\Role;
 use App\Models\User;
 use Helper;
-use Yajra\DataTables\DataTableAbstract;
-use Yajra\DataTables\Html\Builder;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
@@ -33,28 +16,26 @@ class CustomerDataTable extends DataTable
     /**
      * Build DataTable class.
      *
-     * @param mixed $query Results from query() method.
-     * @return DataTableAbstract
+     * @param QueryBuilder $query Results from query() method.
+     * @return EloquentDataTable
      */
-    public function dataTable($query): DataTableAbstract
+    public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return datatables()
-            ->eloquent($query)
-            ->editColumn('customer.customer_id', function ($query) {
-                return $query->customer_id;
-            })
-            ->editColumn('customer.company_name', function ($query) {
-                return $query->company_name;
+        return (new EloquentDataTable($query))
+            ->setRowId('id')
+            ->addIndexColumn()
+            ->editColumn('cid', function ($query) {
+                return $query->customer->customer_id;
             })
             ->editColumn('email', function ($query) {
                 return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
             })
-            ->editColumn('area', function ($query) {
-                return $query->customer->area->area ?? 'NA';
+            ->editColumn('mobile', function ($query) {
+                return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
             })
-//            ->editColumn('mobile', function ($query) {
-//                return $query->mobile ? '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>' : 'NA';
-//            })
+            ->editColumn('area', function ($query) {
+                return $query->customer->area->area;
+            })
             ->editColumn('is_active', function ($query) {
                 if ($query->is_active) {
                     return '<span class="text-success">Active</span>';
@@ -62,48 +43,49 @@ class CustomerDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function ($query) {
-                if(OrderJob::getJobsCount($query->user_id)) {
+            ->addColumn('action', function($query){
+                if(count($query->jobs)) {
                     return view(
                         'components.admin.datatable.button',
-                        ['edit' => Helper::getRoute('customer.edit', $query->user_id)]
+                        ['edit' => Helper::getRoute('customer.edit', $query->id)]
                     );
                 }else{
                     return view(
                         'components.admin.datatable.button',
-                        ['edit' => Helper::getRoute('customer.edit', $query->user_id),
-                            'delete' => Helper::getRoute('customer.destroy', $query->user_id), 'id' => $query->user_id]
+                        ['edit' => Helper::getRoute('customer.edit', $query->id),
+                            'delete' => Helper::getRoute('customer.destroy', $query->id), 'id' => $query->id]
                     );
                 }
             })
-            ->rawColumns(['email', 'is_active', 'action']);
+            ->rawColumns(['email', 'mobile', 'is_active', 'action']);
     }
 
     /**
      * Get query source of dataTable.
      *
      * @param User $model
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return QueryBuilder
      */
-    public function query(User $model): \Illuminate\Database\Eloquent\Builder
+    public function query(User $model): QueryBuilder
     {
-        return $model->select('*')->with('customer:user_id,company_name,customer_id,id,area_id','customer.area')->where('role_id', Role::CUSTOMER)
-            ->orderByDesc('users.created_at');
+        return $model->newQuery()->with(['customer:user_id,company_name,customer_id,id,area_id','customer.area','jobs'])->select('users.*')
+            ->where('users.role_id', Role::CUSTOMER)->orderBy('users.created_at', 'desc');;
     }
 
     /**
      * Optional method if you want to use html builder.
      *
-     * @return Builder
+     * @return HtmlBuilder
      */
-    public function html(): Builder
+    public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('id')
+            ->setTableId('driver-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
+            ->selectStyleSingle()
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
@@ -118,41 +100,24 @@ class CustomerDataTable extends DataTable
     }
 
     /**
-     * Get columns.
+     * Get the dataTable columns definition.
      *
      * @return array
      */
-    protected function getColumns(): array
+    public function getColumns(): array
     {
         return [
-            'CID' => new Column(
-                ['title' => 'CID',
-                    'data' => 'customer.customer_id',
-                    'name' => 'customer.customer_id',
-                    'searchable' => true]
-            ),
-            'company_name' => new Column(
-                ['title' => 'Company Name',
-                    'data' => 'customer.company_name',
-                    'name' => 'customer.company_name',
-                    'searchable' => true]
-            ),
-            'first_name',
-            'last_name',
-            'email',
-            'area' => new Column(
-                ['title' => 'Area',
-                    'data' => 'area',
-                    'name' => 'customer.area.area',
-                    'searchable' => true]
-            ),
-            'status' => new Column(
-                ['title' => 'Status',
-                    'data' => 'is_active',
-                    'name' => 'is_active',
-                    'searchable' => false]
-            ),
-            'action'
+            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('cid')->title('CID')->name('customer.customer_id')->data('cid'),
+            Column::make('first_name'),
+            Column::make('last_name'),
+            Column::make('email'),
+            Column::make('mobile'),
+            Column::make('area')->name('customer.area.area')->data('area'),
+            Column::make('status')->name('is_active')->data('is_active'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
         ];
     }
 
@@ -163,6 +128,6 @@ class CustomerDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'User/Customer_' . date('YmdHis');
+        return 'Admin/User/Customer_' . date('YmdHis');
     }
 }

@@ -1,49 +1,34 @@
 <?php
 
-/**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
- *
- * @category DataTable
- *
- * @package Laravel
- *
- * @author CWSPS154 <codewithsps154@gmail.com>
- *
- * @license MIT License https://opensource.org/licenses/MIT
- *
- * @link https://github.com/CWSPS154
- *
- * Date 28/08/22
- * */
-
 namespace App\DataTables\Customer;
 
 use App\Models\AddressBook;
-use Helper;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\DataTableAbstract;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
+use App\Helpers\Helper;
+use Illuminate\Support\Facades\Auth;
 
 class AddressBookDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param mixed $query Results from query() method.
-     * @return DataTableAbstract
+     * @param QueryBuilder $query Results from query() method.
+     * @return EloquentDataTable
      */
-    public function dataTable($query): DataTableAbstract
+    public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return datatables()
-            ->eloquent($query)
+        return (new EloquentDataTable($query))
+            ->setRowId('id')
+            ->addIndexColumn()
             ->editColumn('set_as_default', function ($query) {
                 if ($query->set_as_default) {
-                    return '<span class="text-success">Default</span>';
+                    return '<span class="text-success"><i class="fa fa-check"></span>';
                 } else {
-                    return '<span class="text-info"></span>';
+                    return '<span class="text-danger"><i class="fa fa-minus-circle"></span>';
                 }
             })
             ->editColumn('status', function ($query) {
@@ -53,7 +38,7 @@ class AddressBookDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function ($query) {
+            ->addColumn('action', function($query){
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('address_book.edit', $query->id),
@@ -67,26 +52,27 @@ class AddressBookDataTable extends DataTable
      * Get query source of dataTable.
      *
      * @param AddressBook $model
-     * @return Builder
+     * @return QueryBuilder
      */
-    public function query(AddressBook $model): Builder
+    public function query(AddressBook $model): QueryBuilder
     {
-        return $model->select('*')->where('user_id', Auth::id())->orderBy('created_at', 'desc');
+        return $model->newQuery()->where('user_id', Auth::id())->orderBy('created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
      *
-     * @return \Yajra\DataTables\Html\Builder
+     * @return HtmlBuilder
      */
-    public function html(): \Yajra\DataTables\Html\Builder
+    public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('id')
+            ->setTableId('address-book-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
+            ->selectStyleSingle()
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
@@ -101,35 +87,27 @@ class AddressBookDataTable extends DataTable
     }
 
     /**
-     * Get columns.
+     * Get the dataTable columns definition.
      *
      * @return array
      */
-    protected function getColumns(): array
+    public function getColumns(): array
     {
         return [
-            'company_name',
-            'street_address',
-            'street_address',
-            'street_number',
-            'suburb',
-            'city',
-            'state',
-            'zip',
-            'country',
-            'set_as_default' => new Column(
-                ['title' => 'Default',
-                    'data' => 'set_as_default',
-                    'name' => 'set_as_default',
-                    'searchable' => true]
-            ),
-            'status' => new Column(
-                ['title' => 'Status',
-                    'data' => 'status',
-                    'name' => 'status',
-                    'searchable' => true]
-            ),
-            'action'
+            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('company_name'),
+            Column::make('street_number'),
+            Column::make('street_address'),
+            Column::make('suburb'),
+            Column::make('city'),
+            Column::make('state'),
+            Column::make('zip'),
+            Column::make('country'),
+            Column::make('default')->name('set_as_default')->data('set_as_default'),
+            Column::make('status'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
         ];
     }
 

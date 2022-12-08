@@ -81,14 +81,13 @@ class JobController extends Controller
             if ($request->search) {
                 $search = $request->search;
                 $id = $request->id;
+                $id = $id ?: Auth::id();
                 $addressBooks = AddressBook::when(
                     $search,
                     function ($query) use ($search) {
                         $query->where('company_name', 'like', '%' . $search . '%');
                     }
-                )->when($id, function ($query) use ($id) {
-                    $query->where('user_id', $id);
-                })->limit(15)->get();
+                )->where('user_id', $id)->limit(15)->get();
                 $response = array();
                 foreach ($addressBooks as $addressBook) {
                     $response[] = array(

@@ -1,28 +1,12 @@
 <?php
 
-/**
- * PHP Version 8.1.11
- * Laravel Framework 9.34.0
- *
- * @category DataTable
- *
- * @package Laravel
- *
- * @author CWSPS154 <codewithsps154@gmail.com>
- *
- * @license MIT License https://opensource.org/licenses/MIT
- *
- * @link https://github.com/CWSPS154
- *
- * Date 28/08/22
- * */
-
 namespace App\DataTables\Admin;
 
 use App\Models\Area;
 use Helper;
-use Yajra\DataTables\DataTableAbstract;
-use Yajra\DataTables\Html\Builder;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
@@ -31,18 +15,16 @@ class AreaDataTable extends DataTable
     /**
      * Build DataTable class.
      *
-     * @param mixed $query Results from query() method.
-     * @return DataTableAbstract
+     * @param QueryBuilder $query Results from query() method.
+     * @return EloquentDataTable
      */
-    public function dataTable($query): DataTableAbstract
+    public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return datatables()
-            ->eloquent($query)
+        return (new EloquentDataTable($query))
+            ->setRowId('id')
+            ->addIndexColumn()
             ->editColumn('created_at', function ($query) {
-                return $query->created_at->diffForHumans();
-            })
-            ->editColumn('updated_at', function ($query) {
-                return $query->updated_at->diffForHumans();
+                return $query->created_at->format('Y-m-d h:i A');
             })
             ->editColumn('status', function ($query) {
                 if ($query->status) {
@@ -51,40 +33,41 @@ class AreaDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function ($query) {
+            ->addColumn('action', function($query){
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('area.edit', $query->id),
                         'delete' => Helper::getRoute('area.destroy', $query->id), 'id' => $query->id]
                 );
             })
-            ->rawColumns(['status', 'action']);
+            ->rawColumns(['status','action']);
     }
 
     /**
      * Get query source of dataTable.
      *
      * @param Area $model
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return QueryBuilder
      */
-    public function query(Area $model): \Illuminate\Database\Eloquent\Builder
+    public function query(Area $model): QueryBuilder
     {
-        return $model->select('*')->orderBy('created_at', 'desc');
+        return $model->newQuery()->orderBy('created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
      *
-     * @return Builder
+     * @return HtmlBuilder
      */
-    public function html(): Builder
+    public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('id')
+            ->setTableId('area-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
+            ->selectStyleSingle()
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
@@ -99,23 +82,21 @@ class AreaDataTable extends DataTable
     }
 
     /**
-     * Get columns.
+     * Get the dataTable columns definition.
      *
      * @return array
      */
-    protected function getColumns(): array
+    public function getColumns(): array
     {
         return [
-            'area',
-            'zone_id',
-            'updated_at',
-            'status' => new Column(
-                ['title' => 'Status',
-                    'data' => 'status',
-                    'name' => 'status',
-                    'searchable' => true]
-            ),
-            'action'
+            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('area'),
+            Column::make('zone_id'),
+            Column::make('created_at'),
+            Column::make('status'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
         ];
     }
 
@@ -126,6 +107,6 @@ class AreaDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Area_' . date('YmdHis');
+        return 'Admin/Area_' . date('YmdHis');
     }
 }
