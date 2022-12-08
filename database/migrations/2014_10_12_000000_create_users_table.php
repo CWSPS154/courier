@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('first_name');
             $table->string('last_name')->nullable();
@@ -28,10 +28,13 @@ class CreateUsersTable extends Migration
             $table->timestamp('last_seen')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignId('created_by')->nullable()->referances('id')->constrained('users');
-            $table->foreignId('updated_by')->nullable()->referances('id')->constrained('users');
-            $table->foreignId('deleted_by')->nullable()->referances('id')->constrained('users');
         });
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+        });
+
     }
 
     /**
@@ -42,5 +45,11 @@ class CreateUsersTable extends Migration
     public function down()
     {
         Schema::dropIfExists('user');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('created_by');
+            $table->dropColumn('updated_by');
+            $table->dropColumn('deleted_by');
+        });
+
     }
 }

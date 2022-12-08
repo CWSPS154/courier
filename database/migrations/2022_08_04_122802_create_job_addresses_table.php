@@ -14,8 +14,8 @@ class CreateJobAddressesTable extends Migration
     public function up()
     {
         Schema::create('job_addresses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_job_id')->constrained('order_jobs');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('order_job_id')->nullable()->constrained('order_jobs')->onUpdate('cascade')->onDelete('cascade');
             $table->string('type')->nullable();
             $table->string('company_name')->nullable();
             $table->string('street_address')->nullable();
@@ -31,6 +31,7 @@ class CreateJobAddressesTable extends Migration
             $table->string('location_url')->nullable();
             $table->text('full_json_response')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

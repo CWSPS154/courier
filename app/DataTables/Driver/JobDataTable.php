@@ -85,7 +85,7 @@ class JobDataTable extends DataTable
                     return view(
                         'components.admin.datatable.accept_reject_button',
                         ['accept' => Helper::getRoute('myjob.update', $query->id),
-                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
+//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
                             'view' => Helper::getRoute('myjob.show', $query->id),
                         ]
                     );
@@ -122,7 +122,7 @@ class JobDataTable extends DataTable
         return $model->newQuery()->with(['user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,identifier,id','dailyJob:job_number,id,order_job_id','fromAddress','toAddress'])
             ->whereHas('jobAssign', function ($q) {
                 $q->where('user_id', Auth::id());
-            })->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::REJECTED))->orderBy('order_jobs.created_at', 'desc');
+            })->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::REJECTED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**

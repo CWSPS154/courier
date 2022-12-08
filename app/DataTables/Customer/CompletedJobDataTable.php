@@ -98,7 +98,7 @@ class CompletedJobDataTable extends DataTable
     public function query(OrderJob $model): QueryBuilder
     {
         return $model->newQuery()->with(['fromArea:area,id', 'toArea:area,id', 'status:status,id', 'creator:name,id', 'editor:name,id','dailyJob:job_number,id,order_job_id','jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id','fromAddress','toAddress'])
-            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::DELIVERED))->orderBy('order_jobs.created_at', 'desc');
+            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::DELIVERED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**

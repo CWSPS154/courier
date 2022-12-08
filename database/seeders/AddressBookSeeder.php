@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use App\Models\AddressBook;
 
@@ -15,7 +18,7 @@ class AddressBookSeeder extends Seeder
     public function run()
     {
         AddressBook::create( [
-            'user_id'=>2,
+            'user_id'=>User::where('role_id',Role::getRoleId(Role::CUSTOMER))->get()->random()->id,
             'company_name'=>'MERZ Construction Products',
             'street_address'=>'Vega Place',
             'street_number'=>'8B',
@@ -25,7 +28,7 @@ class AddressBookSeeder extends Seeder
             'zip'=>'0632',
             'country'=>'New Zealand',
             'place_id'=>'ChIJY9TB-tQ7DW0RGcQWfUdmqWA',
-            'area_id'=>4,
+            'area_id'=>Area::all()->random()->id,
             'latitude'=>'-36.7483667',
             'longitude'=>'174.7295167',
             'location_url'=>'https://maps.google.com/?q=8B+Vega+Place,+Rosedale,+Auckland+0632,+New+Zealand&ftid=0x6d0d3bd4fac1d463:0x60a966477d16c419',
@@ -37,7 +40,7 @@ class AddressBookSeeder extends Seeder
 
 
         AddressBook::create( [
-            'user_id'=>3,
+            'user_id'=>User::where('role_id',Role::getRoleId(Role::DRIVER))->get()->random()->id,
             'company_name'=>'GFC Fasteners',
             'street_address'=>'Carmen Road',
             'street_number'=>'100',
@@ -47,7 +50,7 @@ class AddressBookSeeder extends Seeder
             'zip'=>'8042',
             'country'=>'New Zealand',
             'place_id'=>'Ei0xMDAgQ2FybWVuIFJvYWQsIENhbnRlcmJ1cnkgODA0MiwgTmV3IFplYWxhbmQiMBIuChQKEgkH2nIFe_UxbRFwSkXeEXv_ARBkKhQKEgmHOEotbvUxbREmPCiSb5sXkQ',
-            'area_id'=>63,
+            'area_id'=>Area::all()->random()->id,
             'latitude'=>'-43.53845090000001',
             'longitude'=>'172.5280155',
             'location_url'=>'https://maps.google.com/?q=100+Carmen+Road,+Hornby,+Christchurch+8042,+New+Zealand&ftid=0x6d31f57b0572da07:0xf09bd451b213736a',

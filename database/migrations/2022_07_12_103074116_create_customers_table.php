@@ -14,12 +14,13 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('customer_id')->nullable()->unique();
             $table->string('company_name')->nullable();
-            $table->foreignId('area_id')->constrained('areas');
+            $table->foreignUuid('area_id')->nullable()->constrained('areas')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

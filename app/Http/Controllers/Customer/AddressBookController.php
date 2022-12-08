@@ -86,11 +86,11 @@ class AddressBookController extends Controller
      * Validator for validate data in the request.
      *
      * @param array $data The data
-     * @param int|null $id The identifier for update validation
+     * @param int|string|null $id The identifier for update validation
      *
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
-     **/
-    protected function validator(array $data, int $id = null)
+     */
+    protected function validator(array $data, int|string $id = null)
     {
         \Validator::extend(
             'without_spaces',
