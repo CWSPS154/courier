@@ -85,6 +85,12 @@
     function redirectBack() {
         location.href = '{{ url()->previous() }}';
     }
+
+    $(function(){
+        $('body').on('click','a.disabled',function(event){
+            event.preventDefault();
+        });
+    });
 </script>
 @routes
 {{ $slot }}

@@ -1,66 +1,50 @@
 <?php
 
-/**
- * PHP Version 8.1.11
- * Laravel Framework 9.34.0
- *
- * @category DataTable
- *
- * @package Laravel
- *
- * @author CWSPS154 <codewithsps154@gmail.com>
- *
- * @license MIT License https://opensource.org/licenses/MIT
- *
- * @link https://github.com/CWSPS154
- *
- * Date 28/08/22
- * */
-
 namespace App\DataTables\Admin\Job;
 
 use App\Models\OrderJob;
-use App\Models\JobAssign;
 use App\Models\JobStatus;
-use Helper;
-use Yajra\DataTables\DataTableAbstract;
-use Yajra\DataTables\Html\Builder;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
+use App\Helpers\Helper;
 
 class JobDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param mixed $query Results from query() method.
-     * @return DataTableAbstract
+     * @param QueryBuilder $query Results from query() method.
+     * @return EloquentDataTable
      */
-    public function dataTable($query): DataTableAbstract
+    public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return datatables()
-            ->eloquent($query)
-            ->addColumn('#', function ($query) {
+        return (new EloquentDataTable($query))
+            ->setRowId('id')
+            ->addIndexColumn()
+            ->editColumn('#', function ($query) {
                 if ($query->status_id != JobStatus::getStatusId(JobStatus::PICKED_UP)) {
                     return '<input type="checkbox" name="job_no" class="form-control mass-assign-checkbox" value="' . $query->id . '">';
                 } else {
                     return '<input type="checkbox" name="job_no" class="form-control mass-assign-checkbox" value="' . $query->id . '" disabled>';
                 }
             })
-            ->addColumn('daily_job_number', function ($query) {
-                return $query->dailyJob->job_number ?? '';
+            ->editColumn('daily_job_number',function ($query){
+                return $query->dailyJob->job_number;
             })
-            ->editColumn('company_name', function ($query) {
-                return $query->user->customer->company_name ;
+            ->editColumn('from_company',function ($query){
+                return $query->fromAddress->company_name;
             })
-            ->editColumn('customer_id', function ($query) {
-                return $query->user->customer->customer_id.'-'.$query->user->name;
+            ->editColumn('to_company',function ($query){
+                return $query->toAddress->company_name;
             })
-            ->editColumn('from_area_id', function ($query) {
-                return $query->fromArea->area;
+            ->editColumn('from_area_id',function ($query){
+                return '<a href="#" class="disabled" data-toggle="tooltip"  title="'.$query->fromAddress->street_number.','.$query->fromAddress->street_address.'">'.$query->fromArea->area.'</a>';
             })
-            ->editColumn('to_area_id', function ($query) {
-                return $query->toArea->area;
+            ->editColumn('to_area_id',function ($query){
+                return '<a href="#" class="disabled" data-toggle="tooltip" title="'.$query->toAddress->street_number.','.$query->toAddress->street_address.'">'.$query->toArea->area.'</a>';
             })
             ->editColumn('van_hire', function ($query) {
                 if ($query->van_hire) {
@@ -69,7 +53,7 @@ class JobDataTable extends DataTable
                     return '<span class="text-danger">No</span>';
                 }
             })
-            ->editColumn('status_id', function ($query) {
+            ->editColumn('status_id',function ($query){
                 return $query->status->status;
             })
             ->addColumn('assigned_to', function ($query) {
@@ -82,15 +66,15 @@ class JobDataTable extends DataTable
             ->editColumn('created_at', function ($query) {
                 return $query->created_at->format('Y-m-d h:i A');
             })
-            ->editColumn('creator.name', function ($query) {
+            ->editColumn('created_by', function ($query) {
                 return $query->creator->name;
             })
-            ->addColumn('action', function ($query) {
+            ->addColumn('action', function($query){
                 if ($query->status_id == JobStatus::getStatusId(JobStatus::NEW_JOB) || JobStatus::getStatusId(JobStatus::ASSIGNED) || JobStatus::getStatusId(JobStatus::ACCEPTED)) {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('job.edit', $query->id),
-                            'delete' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id,
+                            'delete' => Helper::getRoute('job.destroy', $query->id),
                             'assign' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id]
                     );
                 } else {
@@ -101,34 +85,35 @@ class JobDataTable extends DataTable
                     );
                 }
             })
-            ->rawColumns(['#', 'assigned_to', 'van_hire', 'action']);
+            ->rawColumns(['#','from_area_id','to_area_id','assigned_to', 'van_hire', 'action']);
     }
 
     /**
      * Get query source of dataTable.
      *
      * @param OrderJob $model
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return QueryBuilder
      */
-    public function query(OrderJob $model): \Illuminate\Database\Eloquent\Builder
+    public function query(OrderJob $model): QueryBuilder
     {
-        return $model->with('user:name,id', 'user.customer:company_name,id,user_id,customer_id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,order_job_id', 'jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id')
+        return $model->newQuery()->with(['user:name,id', 'user.customer:company_name,id,user_id,customer_id', 'fromArea:area,id', 'toArea:area,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,order_job_id', 'jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id','fromAddress','toAddress'])
             ->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->select('*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
      *
-     * @return Builder
+     * @return HtmlBuilder
      */
-    public function html(): Builder
+    public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('id')
+            ->setTableId('job-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
+            ->selectStyleSingle()
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
@@ -144,77 +129,39 @@ class JobDataTable extends DataTable
 //                     }'
 //                    ],
                     [
-                    'text' => 'New Job',
-                    'className' => 'bg-primary mb-lg-0 mb-3',
-                    'action' => 'function( e, dt, button, config){
+                        'text' => 'New Job',
+                        'className' => 'bg-primary mb-lg-0 mb-3',
+                        'action' => 'function( e, dt, button, config){
                          window.location = "' . Helper::getRoute('job.create') . '";
                      }'
+                    ]
                 ]
-							 ]
             ]);
     }
 
     /**
-     * Get columns.
+     * Get the dataTable columns definition.
      *
      * @return array
      */
-    protected function getColumns(): array
+    public function getColumns(): array
     {
         return [
-            '#',
-            'daily_job_number' => new Column(
-                ['title' => 'Job Number',
-                    'data' => 'daily_job_number',
-                    'name' => 'dailyJob.job_number',
-                    'searchable' => true]
-            ),
-            'company_name' => new Column(
-                ['title' => 'Company',
-                    'data' => 'company_name',
-                    'name' => 'user.customer.company_name',
-                    'searchable' => true]
-            ),
-            'customer_id' => new Column(
-                ['title' => 'Customer',
-                    'data' => 'customer_id',
-                    'name' => 'user.customer.customer_id',
-                    'searchable' => true]
-            ),
-            'from_area_id' => new Column(
-                ['title' => 'From',
-                    'data' => 'from_area_id',
-                    'name' => 'fromArea.area',
-                    'searchable' => true]
-            ),
-            'to_area_id' => new Column(
-                ['title' => 'To',
-                    'data' => 'to_area_id',
-                    'name' => 'toArea.area',
-                    'searchable' => true]
-            ),
-            'van_hire',
-            'number_box',
-            'status_id' => new Column(
-                ['title' => 'Status',
-                    'data' => 'status_id',
-                    'name' => 'status.status',
-                    'searchable' => true]
-            ),
-            'assigned_to' => new Column(
-                ['title' => 'Assigned To',
-                    'data' => 'assigned_to',
-                    'name' => 'jobAssign.user.name',
-                    'searchable' => true]
-            ),
-            'created_at',
-            'created_by' => new Column(
-                ['title' => 'Created By',
-                    'data' => 'creator.name',
-                    'name' => 'creator.name',
-                    'searchable' => false]
-            ),
-            'action'
+//            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('#')->searchable(false),
+            Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number'),
+            Column::make('from_company')->name('fromAddress.company_name')->data('from_company'),
+            Column::make('to_company')->name('toAddress.company_name')->data('to_company'),
+            Column::make('from_area')->name('fromArea.area')->data('from_area_id'),
+            Column::make('to_area')->name('toArea.area')->data('to_area_id'),
+            Column::make('van_hire'),
+            Column::make('status')->name('status.status')->data('status_id'),
+            Column::make('assigned')->name('jobAssign.user.name')->data('assigned_to'),
+            Column::make('created_at'),
+            Column::make('created_by')->name('creator.name')->data('created_by'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
         ];
     }
 

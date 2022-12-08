@@ -296,7 +296,6 @@ class JobController extends Controller
             $newAddress->location_url = $address['location_url_' . $input_id];
             $newAddress->full_json_response = $address['json_response_' . $input_id];
             $newAddress->status = true;
-            $newAddress->set_as_default = false;
             $newAddress->save();
         } else {
             AddressBook::create([
@@ -310,7 +309,7 @@ class JobController extends Controller
                 'zip' => $address['zip_' . $input_id],
                 'country' => $address['country_' . $input_id],
                 'place_id' => $address['place_id_' . $input_id],
-                'area_id' => $address[$input_id.'area_id'],
+                'area_id' => $address[$input_id.'_area_id'],
                 'latitude' => $address['latitude_' . $input_id],
                 'longitude' => $address['longitude_' . $input_id],
                 'location_url' => $address['location_url_' . $input_id],

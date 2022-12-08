@@ -1,46 +1,29 @@
 <?php
 
-/**
- * PHP Version  8.1.11
- * Laravel Framework 8.83.18
- *
- * @category DataTable
- *
- * @package Laravel
- *
- * @author CWSPS154 <codewithsps154@gmail.com>
- *
- * @license MIT License https://opensource.org/licenses/MIT
- *
- * @link https://github.com/CWSPS154
- *
- * Date 14/11/22
- * */
-
 namespace App\DataTables\Admin;
 
-use App\Helpers\Helper;
 use App\Models\JobStatus;
-use Illuminate\Database\Eloquent\Builder;
-use Yajra\DataTables\Html\Button;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use App\Helpers\Helper;
 
 class JobStatusDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param mixed $query Results from query() method.
-     * @return \Yajra\DataTables\DataTableAbstract
+     * @param QueryBuilder $query Results from query() method.
+     * @return EloquentDataTable
      */
-    public function dataTable($query)
+    public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return datatables()
-            ->eloquent($query)
-            ->addColumn('action', function ($query) {
+        return (new EloquentDataTable($query))
+            ->setRowId('id')
+            ->addIndexColumn()
+            ->addColumn('action', function($query){
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('job_status.edit', $query->id)]
@@ -53,28 +36,29 @@ class JobStatusDataTable extends DataTable
      * Get query source of dataTable.
      *
      * @param JobStatus $model
-     * @return Builder
+     * @return QueryBuilder
      */
-    public function query(JobStatus $model)
+    public function query(JobStatus $model): QueryBuilder
     {
-        return $model->select('*')->orderBy('created_at', 'desc');
+        return $model->newQuery()->orderBy('created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
      *
-     * @return \Yajra\DataTables\Html\Builder
+     * @return HtmlBuilder
      */
-    public function html()
+    public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('id')
+            ->setTableId('permission-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
             ->orderBy(1)
+            ->selectStyleSingle()
             ->pagingType('numbers');
-//            ->parameters([
+//          ->parameters([
 //                'dom' => 'Bfrtip',
 //                'buttons' => [ [
 //                    'text' => 'New Status',
@@ -87,16 +71,19 @@ class JobStatusDataTable extends DataTable
     }
 
     /**
-     * Get columns.
+     * Get the dataTable columns definition.
      *
      * @return array
      */
-    protected function getColumns()
+    public function getColumns(): array
     {
         return [
-            'status',
-            'identifier',
-            'action'
+            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('status'),
+            Column::make('identifier'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
         ];
     }
 
@@ -105,7 +92,7 @@ class JobStatusDataTable extends DataTable
      *
      * @return string
      */
-    protected function filename()
+    protected function filename(): string
     {
         return 'Admin/JobStatus_' . date('YmdHis');
     }
