@@ -100,8 +100,7 @@ class JobDataTable extends DataTable
                 } else {
                     return view(
                         'components.admin.datatable.button',
-                        ['edit' => Helper::getRoute('job.edit', $query->id),
-                            'delete' => Helper::getRoute('job.destroy', $query->id), 'id' => $query->id]
+                        ['edit' => Helper::getRoute('job.edit', $query->id)]
                     );
                 }
             })
