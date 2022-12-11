@@ -497,18 +497,19 @@
                 }
 
                 $("body").on('change', '.company_name', function () {
+                    let customerId = $('#customer').val();
                     let type = $(this).data('type');
                     let company_name = $(this).val();
-                    if (company_name) {
-                        getAddressByCompanyName(company_name, type);
+                    if (company_name && customerId) {
+                        getAddressByCompanyName(company_name,customerId, type);
                     }
                 })
 
-                function getAddressByCompanyName(company_name, type) {
+                function getAddressByCompanyName(company_name,user_id, type) {
                     $.ajax({
-                        url: '{{ Helper::getRoute('jobs.getAddress') }}',
+                        url: '{{ Helper::getRoute('job.getAddress') }}',
                         type: 'post',
-                        data: {company_name: company_name},
+                        data: {company_name: company_name,user_id:user_id},
                         dataType: 'json',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -108,9 +108,29 @@
                                     {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
                                     {{--                                        </li>--}}
                                     <li>
-                                        <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                        <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                        <p>{!! $jobStatusHistory->comment !!}</p>
+                                        <div class="d-flex justify-content-between display-comment-{{ $jobStatusHistory->id }}">
+                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                        </div>
+                                        @if($jobStatusHistory->user_id==auth()->id())
+                                        <div class="d-flex justify-content-between mt-2 show-comment-{{ $jobStatusHistory->id }}">
+                                            <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                            <div>
+                                                <a href="#" class="edit-comment mr-2" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-edit"></i></a>
+                                                <a href="#" class="delete-comment" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="d-none" id="{{ $jobStatusHistory->id }}">
+                                            <x-admin.ui.Textarea label="Comment"
+                                                                 name="update_comment"
+                                                                 id="update_comment_{{ $jobStatusHistory->id }}"
+                                                                 :value="$jobStatusHistory->comment"
+                                            />
+                                            <x-admin.ui.button type="button" class="btn-primary job_history" btn-name="Save" name="job_history_{{ $jobStatusHistory->id }}" id="job_history_{{ $jobStatusHistory->id }}" data-id="{{ $jobStatusHistory->id }}"/>
+                                        </div>
+                                        @else
+                                            <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                        @endif
                                         @if($jobStatusHistory->photo)
                                             <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
                                         @endif
@@ -119,27 +139,186 @@
                             </ul>
                         </div>
                     </div>
-{{--                    @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))--}}
-{{--                        <div class="col-12">--}}
-{{--                            <x-admin.ui.select label="Status"--}}
-{{--                                               name="status"--}}
-{{--                                               id="status"--}}
-{{--                                               required--}}
-{{--                                               :options="Helper::getJobStatus()"--}}
-{{--                                               add-class="status"--}}
-{{--                                               :value="$myjob->status_id"--}}
-{{--                            />--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
                 </div>
             </x-slot>
-{{--            @if($myjob->jobAssign->status==JobAssign::JOB_ACCEPTED && ($myjob->status_id==JobStatus::ORDER_PLACED || $myjob->status_id==JobStatus::DELIVERY_ACCEPTED))--}}
-{{--                <x-slot name="button">--}}
-{{--                    <x-admin.ui.button type="submit" btn-name="Submit" name="job_submit" id="job_submit"/>--}}
-{{--                </x-slot>--}}
-{{--            @endif--}}
+            @if($myjob->status_id==JobStatus::getStatusId(JobStatus::ASSIGNED))
+                <x-slot name="button">
+                    <x-admin.ui.button type="button"
+                                       class="btn-primary btn-block change-status"
+                                       btn-name="Accept"
+                                       name="job_status"
+                                       id="job_status"
+                                       data-title="{{__('Accept')}}"
+                                       data-toggle="modal"
+                                       data-target="#modal-ch-status"
+                                       data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::ACCEPTED) }}"
+                                       data-action="{{ Helper::getRoute('myjob.update',$myjob->id) }}"/>
+                </x-slot>
+            @elseif($myjob->status_id==JobStatus::getStatusId(JobStatus::ACCEPTED))
+                <x-slot name="button">
+                    <x-admin.ui.button type="button"
+                                       class="btn-info btn-block change-status"
+                                       btn-name="Picked Up"
+                                       name="job_status"
+                                       id="job_status"
+                                       data-title="{{__('Picked Up')}}"
+                                       data-toggle="modal"
+                                       data-target="#modal-ch-status"
+                                       data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::PICKED_UP) }}"
+                                       data-action="{{ Helper::getRoute('myjob.update',$myjob->id) }}"/>
+                </x-slot>
+            @elseif($myjob->status_id==JobStatus::getStatusId(JobStatus::PICKED_UP))
+                <x-slot name="button">
+                    <x-admin.ui.button type="button"
+                                       class="btn-success btn-block change-status"
+                                       btn-name="Delivered"
+                                       name="job_status"
+                                       id="job_status"
+                                       data-title="{{__('Delivered')}}"
+                                       data-toggle="modal"
+                                       data-target="#modal-ch-status"
+                                       data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::DELIVERED) }}"
+                                       data-action="{{ Helper::getRoute('myjob.update',$myjob->id) }}"/>
+                </x-slot>
+            @endif
         </x-admin.ui.card-form>
     </div>
+
+    <!-- /.modal -->
+    <div class="modal fade" id="modal-ch-status">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <form id="status_change_modal" method="post">
+                    @csrf
+                    @method('PATCH')
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <input type="hidden" name="status" id="status" required>
+                            </div>
+                            <div class="col-lg-12">
+                                <x-admin.ui.Textarea label="Comment"
+                                                     name="comment"
+                                                     id="comment"
+                                />
+                            </div>
+                            <div class="col-lg-12 image-upload d-none">
+                                <label for="photo" class="form-label">Upload Image <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" name="photo" capture="user" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"></button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
     @push('scripts')
+        <script>
+            $('.edit-comment').click(function (e) {
+                e.preventDefault();
+                let id = $(this).data('id');
+                $('#'+id).removeClass('d-none');
+                $('.show-comment-'+id).removeClass('d-flex');
+                $('.show-comment-'+id).addClass('d-none');
+            });
+
+            $('.job_history').click(function (){
+                let id = $(this).data('id');
+                let comment=$('#update_comment_'+id).val();
+                changeStatusHistory(comment,id);
+            });
+
+            $('.delete-comment').click(function (e){
+                e.preventDefault();
+                let id = $(this).data('id');
+                deleteStatusHistory(id);
+            });
+
+            function changeStatusHistory(comment,id)
+            {
+                $.ajax({
+                    url: '{{ Helper::getRoute('myjob.updateHistory') }}',
+                    type: 'post',
+                    data: {comment: comment,id:id},
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (result) {
+                        if(result) {
+                            $('#' + id).addClass('d-none');
+                            $('.show-comment-'+id).removeClass('d-none');
+                            $('.show-comment-'+id).addClass('d-flex');
+                            $('#comment_para_'+id).text(comment);
+                            toastr.success('Comment updated successfully');
+                        }
+                    },
+                    error:function (){
+                        $('#'+id).addClass('d-none');
+                        $('.show-comment-'+id).removeClass('d-none');
+                        $('.show-comment-'+id).addClass('d-flex');
+                        toastr.info('No changes made');
+                    }
+                });
+            }
+
+            function deleteStatusHistory(id)
+            {
+                $.ajax({
+                    url: '{{ Helper::getRoute('myjob.deleteHistory') }}',
+                    type: 'post',
+                    data: {id:id},
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (result) {
+                        if(result) {
+                            $('.display-comment-'+id).parent('li').remove();
+                            toastr.success('Comment deleted successfully');
+                        }
+                    },
+                    error:function (){
+                        toastr.error('Something went wrong!!!');
+                    }
+                });
+            }
+
+            $('body').on('click','.change-status',function (){
+                let title=$(this).data('title');
+                let url=$(this).data('action');
+                let status_id=$(this).data('id');
+                $('#modal-ch-status').find('h4.modal-title').text(title);
+                $('#modal-ch-status').find('button[type="submit"]').text(title);
+                $('#modal-ch-status #status_change_modal').attr('action',url);
+                $('#modal-ch-status #status').val(status_id);
+                if(title=="Delivered")
+            {
+                $('#modal-ch-status #status_change_modal').attr('enctype',"multipart/form-data");
+                $('.image-upload input[type="file"]').attr('required',true);
+                $('.image-upload').removeClass('d-none');
+            }else {
+                $('#modal-ch-status #status_change_modal').attr('enctype',"");
+                $('.image-upload').addClass('d-none');
+                $('.image-upload input[type="file"]').attr('required',false);
+            }
+            });
+
+        </script>
     @endpush
 @endsection

@@ -84,9 +84,10 @@ class JobDataTable extends DataTable
                 if($query->status->identifier==JobStatus::ASSIGNED){
                     return view(
                         'components.admin.datatable.accept_reject_button',
-                        ['accept' => Helper::getRoute('myjob.update', $query->id),
-//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
+                        [
                             'view' => Helper::getRoute('myjob.show', $query->id),
+                            'accept' => Helper::getRoute('myjob.update', $query->id),
+//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id
                         ]
                     );
                 }

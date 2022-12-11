@@ -261,9 +261,29 @@
                                         {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
                                         {{--                                        </li>--}}
                                         <li>
-                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                            <p>{!! $jobStatusHistory->comment !!}</p>
+                                            <div class="d-flex justify-content-between display-comment-{{ $jobStatusHistory->id }}">
+                                                <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                                <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            </div>
+                                            @if($jobStatusHistory->user_id==auth()->id())
+                                            <div class="d-flex justify-content-between mt-3 show-comment-{{ $jobStatusHistory->id }}">
+                                                <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                                <div>
+                                                    <a href="#" class="edit-comment mr-2" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-edit"></i></a>
+                                                    <a href="#" class="delete-comment" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="d-none" id="{{ $jobStatusHistory->id }}">
+                                                <x-admin.ui.Textarea label="Comment"
+                                                                     name="update_comment"
+                                                                     id="update_comment_{{ $jobStatusHistory->id }}"
+                                                                     :value="$jobStatusHistory->comment"
+                                                />
+                                                <x-admin.ui.button type="button" class="btn-primary job_history" btn-name="Save" name="job_history_{{ $jobStatusHistory->id }}" id="job_history_{{ $jobStatusHistory->id }}" data-id="{{ $jobStatusHistory->id }}"/>
+                                            </div>
+                                            @else
+                                                <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                            @endif
                                             @if($jobStatusHistory->photo)
                                                 <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
                                             @endif
@@ -319,7 +339,6 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function (result) {
-                            console.log(result);
                             setAddressData(checkedAddress, result);
                             setAreaAddress(checkedAddress, result[1]['area'].id)
                         }
@@ -563,24 +582,24 @@
                 }
 
                 $("body").on('change', '.company_name', function () {
+                    let customerId = $('#customer').val();
                     let type = $(this).data('type');
                     let company_name = $(this).val();
-                    if (company_name) {
-                        getAddressByCompanyName(company_name, type);
+                    if (company_name && customerId) {
+                        getAddressByCompanyName(company_name,customerId, type);
                     }
                 })
 
-                function getAddressByCompanyName(company_name, type) {
+                function getAddressByCompanyName(company_name,user_id, type) {
                     $.ajax({
                         url: '{{ Helper::getRoute('job.getAddress') }}',
                         type: 'post',
-                        data: {company_name: company_name},
+                        data: {company_name: company_name,user_id:user_id},
                         dataType: 'json',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function (result) {
-                            console.log(result);
                             setAddressData(type, result);
                         }
                     })
@@ -612,6 +631,76 @@
                         $('.comment').addClass('d-none');
                     }
                 });
+
+                $('.edit-comment').click(function (e) {
+                    e.preventDefault();
+                    let id = $(this).data('id');
+                    $('#'+id).removeClass('d-none');
+                    $('.show-comment-'+id).removeClass('d-flex');
+                    $('.show-comment-'+id).addClass('d-none');
+                });
+
+                $('.job_history').click(function (){
+                    let id = $(this).data('id');
+                    let comment=$('#update_comment_'+id).val();
+                    changeStatusHistory(comment,id);
+                });
+
+                $('.delete-comment').click(function (e){
+                    e.preventDefault();
+                    let id = $(this).data('id');
+                    deleteStatusHistory(id);
+                });
+
+                function changeStatusHistory(comment,id)
+                {
+                    $.ajax({
+                        url: '{{ Helper::getRoute('job.updateHistory') }}',
+                        type: 'post',
+                        data: {comment: comment,id:id},
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            if(result) {
+                                $('#' + id).addClass('d-none');
+                                $('.show-comment-'+id).removeClass('d-none');
+                                $('.show-comment-'+id).addClass('d-flex');
+                                $('#comment_para_'+id).text(comment);
+                                toastr.success('Comment updated successfully');
+                            }
+                        },
+                        error:function (){
+                            $('#'+id).addClass('d-none');
+                            $('.show-comment-'+id).removeClass('d-none');
+                            $('.show-comment-'+id).addClass('d-flex');
+                            toastr.info('No changes made');
+                        }
+                    });
+                }
+
+                function deleteStatusHistory(id)
+                {
+                    $.ajax({
+                        url: '{{ Helper::getRoute('job.deleteHistory') }}',
+                        type: 'post',
+                        data: {id:id},
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            if(result) {
+                                $('.display-comment-'+id).parent('li').remove();
+                                toastr.success('Comment deleted successfully');
+                            }
+                        },
+                        error:function (){
+                            toastr.error('Something went wrong!!!');
+                        }
+                    });
+                }
             </script>
     @endpush
 

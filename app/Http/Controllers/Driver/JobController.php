@@ -58,6 +58,32 @@ class JobController extends Controller
         return $dataTable->render('template.driver.job.index_job');
     }
 
+    public function updateHistory(Request $request)
+    {
+        if($request->ajax() && $request->id && $request->comment)
+        {
+            $comment=JobStatusHistory::where('user_id',Auth::id())->findOrFail($request->id);
+            $comment->comment=$request->comment;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
+
+    public function deleteHistory(Request $request)
+    {
+        if($request->ajax() && $request->id)
+        {
+            $comment=JobStatusHistory::findOrFail($request->id);
+            $comment->delete();
+            return true;
+        }
+    }
+
     /**
      * Display the specified resource.
      *
@@ -144,6 +170,10 @@ class JobController extends Controller
         $myjob->status_id = $request->status;
         $myjob->save();
         if ($myjob->wasChanged()) {
+            if($myjob->status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+            {
+                return redirect()->route('myjob.index')->with('success', 'Job Status changed successfully');
+            }
             return back()->with('success', 'Job Status changed successfully');
         }
         return back()->with('info', 'Job Status is not changed');

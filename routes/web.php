@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth','is-active']], function () {
         Route::post('/job/assignDriver', [JobController::class, 'assignDriver'])->name('job.assignDriver');
         Route::post('/job/getCustomerContact', [JobController::class,
             'getCustomerContact'])->name('job.getCustomerContact');
+        Route::post('/job/updateHistory', [JobController::class, 'updateHistory'])->name('job.updateHistory');
+        Route::post('/job/deleteHistory', [JobController::class, 'deleteHistory'])->name('job.deleteHistory');
         Route::resource('/job', JobController::class);
         Route::resource('/job/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
         Route::resource('/job/status/job_status', JobStatusController::class)->name('*','job_status');
@@ -87,9 +89,9 @@ Route::group(['middleware' => ['auth','is-active']], function () {
 
     /*Customer Routes */
     Route::group(['middleware' => 'customer', 'prefix' => 'customer', 'name' => 'customer' . '.'], function () {
-        Route::post('/jobs/getAddress', [JobController::class, 'getAddress'])->name('jobs.getAddress');
-        Route::post('/jobs/getAddressBook', [JobController::class, 'getAddressBook'])->name('jobs.getAddressBook');
-        Route::post('/jobs/getCustomerContact', [JobController::class,
+        Route::post('/jobs/getAddress', [CustomerJobController::class, 'getAddress'])->name('jobs.getAddress');
+        Route::post('/jobs/getAddressBook', [CustomerJobController::class, 'getAddressBook'])->name('jobs.getAddressBook');
+        Route::post('/jobs/getCustomerContact', [CustomerJobController::class,
             'getCustomerContact'])->name('jobs.getCustomerContact');
         Route::get('/jobs/completed', [CustomerJobController::class, 'completed'])->name('jobs.completed');
         Route::get('/jobs/completed/{job}/view', [CustomerJobController::class, 'view'])->name('jobs.completed.view');
@@ -99,6 +101,8 @@ Route::group(['middleware' => ['auth','is-active']], function () {
 
     /*Driver Routes */
     Route::group(['middleware' => 'driver', 'prefix' => 'driver', 'name' => 'driver' . '.'], function () {
+        Route::post('/myjob/updateHistory', [DriverJobController::class, 'updateHistory'])->name('myjob.updateHistory');
+        Route::post('/myjob/deleteHistory', [DriverJobController::class, 'deleteHistory'])->name('myjob.deleteHistory');
         Route::resource('/myjob', DriverJobController::class)->except(['create','edit','destroy']);
     });
 });

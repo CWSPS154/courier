@@ -45,7 +45,11 @@ class AddressAutocomplete extends Component
     /**
      * @var bool
      */
-    public $readonly;
+    public bool $readonly;
+    /**
+     * @var bool
+     */
+    public bool $disable;
 
     /**
      * Create a new component instance.
@@ -60,13 +64,15 @@ class AddressAutocomplete extends Component
         object $editData = null,
         string $relations = 'defaultAddress',
         bool   $noRelation = false,
-        bool   $readonly = false
+        bool   $readonly = false,
+        bool   $disable = false
     ) {
         $this->inputId = $inputId;
         $this->editData = $editData;
         $this->relations = $relations;
         $this->noRelation = $noRelation;
         $this->readonly = $readonly;
+        $this->disable = $disable;
     }
 
     /**
