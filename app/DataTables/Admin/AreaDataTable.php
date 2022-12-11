@@ -109,8 +109,8 @@ class AreaDataTable extends DataTable
             Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
             Column::make('area')->sortable(false),
             Column::make('zone_id')->sortable(false),
-            Column::make('created_at'),
-            Column::make('status'),
+            Column::make('created_at')->sortable(false),
+            Column::make('status')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

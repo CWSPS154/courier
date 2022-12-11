@@ -125,7 +125,7 @@ class DriverDataTable extends DataTable
     {
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
-            Column::make('did')->title('DID')->name('driver.driver_id')->data('did'),
+            Column::make('did')->title('DID')->name('driver.driver_id')->data('did')->sortable(false),
             Column::make('first_name')->sortable(false),
             Column::make('last_name')->sortable(false),
             Column::make('email')->sortable(false),
