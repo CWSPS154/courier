@@ -14,6 +14,27 @@
                               form-route-id="{{ collect(request()->segments())->last() }}">
             <x-slot name="input">
                 <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-bold">Job Number</span> : {{ $myjob->dailyJob->job_number }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-bold">Created By</span> : {{ $myjob->creator->name }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-bold">Created At</span> : {{ $myjob->created_at->format('Y-m-d h:i A') }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6 col-12">
                         <div class="card">
                             <div class="card-header">
@@ -95,7 +116,7 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="card container">
+                        <div class="card">
                             <div class="card-header">
                                 <div class="card-title">
                                     <h4>Job History</h4>
@@ -117,7 +138,9 @@
                                             <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
                                             <div>
                                                 <a href="#" class="edit-comment mr-2" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-edit"></i></a>
-                                                <a href="#" class="delete-comment" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-trash"></i></a>
+                                                @if($jobStatusHistory->comment)
+                                                    <a href="#" class="delete-comment" data-id="{{ $jobStatusHistory->id }}"><i class="fa fa-trash"></i></a>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="d-none" id="{{ $jobStatusHistory->id }}">
@@ -289,12 +312,18 @@
                     },
                     success: function (result) {
                         if(result) {
-                            $('.display-comment-'+id).parent('li').remove();
+                            $('#' + id).addClass('d-none');
+                            $('.show-comment-'+id).removeClass('d-none');
+                            $('.show-comment-'+id).addClass('d-flex');
+                            $('#comment_para_'+id).text('');
                             toastr.success('Comment deleted successfully');
                         }
                     },
                     error:function (){
-                        toastr.error('Something went wrong!!!');
+                        $('#'+id).addClass('d-none');
+                        $('.show-comment-'+id).removeClass('d-none');
+                        $('.show-comment-'+id).addClass('d-flex');
+                        toastr.info('No changes made');
                     }
                 });
             }

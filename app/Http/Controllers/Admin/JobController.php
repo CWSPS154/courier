@@ -249,8 +249,14 @@ class JobController extends Controller
         if($request->ajax() && $request->id)
         {
             $comment=JobStatusHistory::findOrFail($request->id);
-            $comment->delete();
-            return true;
+            $comment->comment=null;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
         }
     }
 

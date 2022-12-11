@@ -79,8 +79,14 @@ class JobController extends Controller
         if($request->ajax() && $request->id)
         {
             $comment=JobStatusHistory::findOrFail($request->id);
-            $comment->delete();
-            return true;
+            $comment->comment=null;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
         }
     }
 
@@ -92,7 +98,7 @@ class JobController extends Controller
      */
     public function show(OrderJob $myjob)
     {
-        $myjob->load('fromAddress','toAddress','jobStatusHistory');
+        $myjob->load('fromAddress','toAddress','jobStatusHistory','dailyJob','creator');
         return view('template.driver.job.view_job', compact('myjob'));
     }
 
