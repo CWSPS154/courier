@@ -127,15 +127,15 @@ class CustomerDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
             Column::make('cid')->title('CID')->name('customer.customer_id')->data('cid'),
-            Column::make('company_name')->name('customer.company_name')->data('company_name'),
-            Column::make('first_name'),
-            Column::make('last_name'),
-            Column::make('email'),
-            Column::make('mobile'),
-            Column::make('area')->name('customer.area.area')->data('area'),
-            Column::make('status')->name('is_active')->data('is_active'),
+            Column::make('company_name')->name('customer.company_name')->data('company_name')->sortable(false),
+            Column::make('first_name')->sortable(false),
+            Column::make('last_name')->sortable(false),
+            Column::make('email')->sortable(false),
+            Column::make('mobile')->sortable(false),
+            Column::make('area')->name('customer.area.area')->data('area')->sortable(false),
+            Column::make('status')->name('is_active')->data('is_active')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

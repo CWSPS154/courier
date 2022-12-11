@@ -106,9 +106,9 @@ class AreaDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('no')->data('DT_RowIndex')->searchable(false),
-            Column::make('area'),
-            Column::make('zone_id'),
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
+            Column::make('area')->sortable(false),
+            Column::make('zone_id')->sortable(false),
             Column::make('created_at'),
             Column::make('status'),
             Column::computed('action')

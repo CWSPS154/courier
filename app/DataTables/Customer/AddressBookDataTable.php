@@ -111,15 +111,15 @@ class AddressBookDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('no')->data('DT_RowIndex')->searchable(false),
-            Column::make('company_name'),
-            Column::make('street_number'),
-            Column::make('street_address'),
-            Column::make('suburb'),
-            Column::make('city'),
-            Column::make('state'),
-            Column::make('zip'),
-            Column::make('country'),
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
+            Column::make('company_name')->sortable(false),
+            Column::make('street_number')->sortable(false),
+            Column::make('street_address')->sortable(false),
+            Column::make('suburb')->sortable(false),
+            Column::make('city')->sortable(false),
+            Column::make('state')->sortable(false),
+            Column::make('zip')->sortable(false),
+            Column::make('country')->sortable(false),
             Column::make('default')->name('set_as_default')->data('set_as_default'),
             Column::make('status'),
             Column::computed('action')

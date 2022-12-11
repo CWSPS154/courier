@@ -304,7 +304,7 @@
                                             @endif
                                             @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
                                                 <img
-                                                    src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                    src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images') }}"
                                                     alt="no image" class="img-fluid">
                                             @endif
                                         </li>

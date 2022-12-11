@@ -132,16 +132,16 @@ class CompletedJobDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('no')->data('DT_RowIndex')->searchable(false),
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
             Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number'),
-            Column::make('customer')->name('user.customer.company_name')->data('customer'),
-            Column::make('from_company')->name('fromAddress.company_name')->data('from_company'),
-            Column::make('to_company')->name('toAddress.company_name')->data('to_company'),
-            Column::make('from_area')->name('fromArea.area')->data('from_area_id'),
-            Column::make('to_area')->name('toArea.area')->data('to_area_id'),
-            Column::make('van_hire'),
-            Column::make('status')->name('status.status')->data('status_id'),
-            Column::make('assigned')->name('jobAssign.user.name')->data('assigned_to'),
+            Column::make('customer')->name('user.customer.company_name')->data('customer')->sortable(false),
+            Column::make('from_company')->name('fromAddress.company_name')->data('from_company')->sortable(false),
+            Column::make('to_company')->name('toAddress.company_name')->data('to_company')->sortable(false),
+            Column::make('from_area')->name('fromArea.area')->data('from_area_id')->sortable(false),
+            Column::make('to_area')->name('toArea.area')->data('to_area_id')->sortable(false),
+            Column::make('van_hire')->sortable(false),
+            Column::make('status')->name('status.status')->data('status_id')->sortable(false),
+            Column::make('assigned')->name('jobAssign.user.name')->data('assigned_to')->sortable(false),
             Column::make('created_at'),
             Column::make('created_by')->name('creator.name')->data('created_by'),
             Column::computed('action')
