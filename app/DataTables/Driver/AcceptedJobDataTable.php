@@ -159,8 +159,8 @@ class AcceptedJobDataTable extends DataTable
             Column::make('van_hire')->sortable(false),
             Column::make('status')->name('status.status')->data('status_id')->sortable(false),
             Column::make('assigned')->name('jobAssign.user.name')->data('assigned_to')->sortable(false),
-            Column::make('created_at'),
-            Column::make('created_by')->name('creator.name')->data('created_by'),
+            Column::make('created_at')->sortable(false),
+            Column::make('created_by')->name('creator.name')->data('created_by')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

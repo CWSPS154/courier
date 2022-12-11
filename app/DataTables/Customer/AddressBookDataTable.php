@@ -120,8 +120,8 @@ class AddressBookDataTable extends DataTable
             Column::make('state')->sortable(false),
             Column::make('zip')->sortable(false),
             Column::make('country')->sortable(false),
-            Column::make('default')->name('set_as_default')->data('set_as_default'),
-            Column::make('status'),
+            Column::make('default')->name('set_as_default')->data('set_as_default')->sortable(false),
+            Column::make('status')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

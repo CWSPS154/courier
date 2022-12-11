@@ -128,7 +128,7 @@ class CustomerDataTable extends DataTable
     {
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
-            Column::make('cid')->title('CID')->name('customer.customer_id')->data('cid'),
+            Column::make('cid')->title('CID')->name('customer.customer_id')->data('cid')->sortable(false),
             Column::make('company_name')->name('customer.company_name')->data('company_name')->sortable(false),
             Column::make('first_name')->sortable(false),
             Column::make('last_name')->sortable(false),
