@@ -1,3 +1,4 @@
+@php use App\Models\JobStatus; @endphp
 @extends('layouts.admin.admin_layout',['title'=>'Edit OrderJob'])
 @section('content')
 
@@ -233,8 +234,10 @@
                                                 <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
                                             </div>
                                             <p>{!! $jobStatusHistory->comment !!}</p>
-                                            @if($jobStatusHistory->photo)
-                                                <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                            @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+                                                <img
+                                                    src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                    alt="no image" class="img-fluid">
                                             @endif
                                         </li>
                                     @endforeach
