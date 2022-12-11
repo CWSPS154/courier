@@ -145,7 +145,7 @@ class JobDataTable extends DataTable
     {
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
-            Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number'),
+            Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number')->sortable(false),
             Column::make('from_company')->name('fromAddress.company_name')->data('from_company')->sortable(false),
             Column::make('to_company')->name('toAddress.company_name')->data('to_company')->sortable(false),
             Column::make('from_area')->name('fromArea.area')->data('from_area_id')->sortable(false),
