@@ -44,6 +44,9 @@ class CustomerDataTable extends DataTable
             ->editColumn('cid', function ($query) {
                 return $query->customer->customer_id;
             })
+            ->editColumn('company_name', function ($query) {
+                return $query->customer->company_name;
+            })
             ->editColumn('email', function ($query) {
                 return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
             })
@@ -126,6 +129,7 @@ class CustomerDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false),
             Column::make('cid')->title('CID')->name('customer.customer_id')->data('cid'),
+            Column::make('company_name')->name('customer.company_name')->data('company_name'),
             Column::make('first_name'),
             Column::make('last_name'),
             Column::make('email'),
