@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.77.1
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Middleware
  *
@@ -14,7 +14,7 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 03/12/22
+ * Date 11/12/22
  * */
 
 namespace App\Http\Middleware;

@@ -1,7 +1,7 @@
 <?php
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Helper
  *
@@ -13,7 +13,7 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 28/08/22
+ * Date 11/12/22
  * */
 
 namespace App\Helpers;

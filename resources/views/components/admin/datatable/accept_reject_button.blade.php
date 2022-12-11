@@ -1,3 +1,7 @@
+@if(isset($view))
+    <a href="{{ $view }}" class="btn btn-xs btn-info"><i
+            class="glyphicon glyphicon-edit" role="button"></i> {{__('View')}}</a>
+@endif
 @if(isset($accept))
     <a href="{{ $accept }}" class="btn btn-xs btn-primary change-status" role="button" data-title="{{__('Accept')}}"
        data-toggle="modal"
@@ -9,10 +13,6 @@
        data-toggle="modal"
        data-target="#modal-ch-status" data-id="{{ \App\Models\JobStatus::getStatusId(\App\Models\JobStatus::REJECTED) }}">
         <i class="glyphicon glyphicon-edit" role="button"></i> {{__('Reject')}}</a>
-@endif
-@if(isset($view))
-    <a href="{{ $view }}" class="btn btn-xs btn-info"><i
-            class="glyphicon glyphicon-edit" role="button"></i> {{__('View')}}</a>
 @endif
 
 

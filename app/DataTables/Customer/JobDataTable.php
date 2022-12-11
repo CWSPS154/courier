@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category DataTable
  *
@@ -14,7 +14,7 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 28/08/22
+ * Date 11/12/22
  * */
 
 namespace App\DataTables\Customer;
@@ -81,11 +81,18 @@ class JobDataTable extends DataTable
                 return $query->creator->name;
             })
             ->addColumn('action', function($query){
-                return view(
-                    'components.admin.datatable.button',
-                    ['edit' => Helper::getRoute('jobs.edit', $query->id),
-                        'delete' => Helper::getRoute('jobs.destroy', $query->id), 'id' => $query->id]
-                );
+                if ($query->status_id != JobStatus::getStatusId(JobStatus::PICKED_UP) && $query->status_id != JobStatus::getStatusId(JobStatus::DELIVERED) && $query->status_id != JobStatus::getStatusId(JobStatus::CANCELLED)) {
+                    return view(
+                        'components.admin.datatable.button',
+                        ['edit' => Helper::getRoute('jobs.edit', $query->id),
+                            'delete' => Helper::getRoute('jobs.destroy', $query->id), 'id' => $query->id]
+                    );
+                }else {
+                    return view(
+                        'components.admin.datatable.view_button',
+                        ['view' => Helper::getRoute('jobs.completed.view', $query->id)]
+                    );
+                }
             })
             ->rawColumns(['from_area_id','to_area_id','van_hire','assigned_to','action']);
     }

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Controller
  *
@@ -58,6 +58,38 @@ class JobController extends Controller
         return $dataTable->render('template.driver.job.index_job');
     }
 
+    public function updateHistory(Request $request)
+    {
+        if($request->ajax() && $request->id && $request->comment)
+        {
+            $comment=JobStatusHistory::where('user_id',Auth::id())->findOrFail($request->id);
+            $comment->comment=$request->comment;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
+
+    public function deleteHistory(Request $request)
+    {
+        if($request->ajax() && $request->id)
+        {
+            $comment=JobStatusHistory::findOrFail($request->id);
+            $comment->comment=null;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
+
     /**
      * Display the specified resource.
      *
@@ -66,7 +98,7 @@ class JobController extends Controller
      */
     public function show(OrderJob $myjob)
     {
-        $myjob->load('fromAddress','toAddress','jobStatusHistory');
+        $myjob->load('fromAddress','toAddress','jobStatusHistory','dailyJob','creator');
         return view('template.driver.job.view_job', compact('myjob'));
     }
 
@@ -144,6 +176,10 @@ class JobController extends Controller
         $myjob->status_id = $request->status;
         $myjob->save();
         if ($myjob->wasChanged()) {
+            if($myjob->status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+            {
+                return redirect()->route('myjob.index')->with('success', 'Job Status changed successfully');
+            }
             return back()->with('success', 'Job Status changed successfully');
         }
         return back()->with('info', 'Job Status is not changed');

@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
+ *
+ * @category Listener
+ *
+ * @package Laravel
+ *
+ * @author CWSPS154 <codewithsps154@gmail.com>
+ *
+ * @license MIT License https://opensource.org/licenses/MIT
+ *
+ * @link https://github.com/CWSPS154
+ *
+ * Date 11/12/22
+ * */
+
 namespace App\Listeners\Admin;
 
 use App\Notifications\NewNotification;

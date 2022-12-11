@@ -66,12 +66,12 @@
                 if(title=="Delivered")
                 {
                     $('#modal-ch-status #status_change_modal').attr('enctype',"multipart/form-data");
-                    $('.image-upload img').attr('required',true);
+                    $('.image-upload input[type="file"]').attr('required',true);
                     $('.image-upload').removeClass('d-none');
                 }else {
                     $('#modal-ch-status #status_change_modal').attr('enctype',"");
                     $('.image-upload').addClass('d-none');
-                    $('.image-upload img').attr('required',false);
+                    $('.image-upload input[type="file"]').attr('required',false);
                 }
             })
         </script>

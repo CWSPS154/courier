@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Controller
  *
@@ -97,15 +97,15 @@ class JobController extends Controller
                 }
                 return response()->json($response);
             }
-            if ($request->user_id) {
+            if ($request->user_id && !$request->company_name) {
                 $user = User::with('defaultAddress', 'customer:company_name,user_id,id,area_id', 'customer.area')
                     ->findOrFail($request->user_id);
                 $data = collect($user->defaultAddress);
                 $data->push(['customer_name' => $user->customer->company_name]);
                 return $data->push(['area' => $user->customer->area]);
             }
-            if ($request->company_name) {
-                return AddressBook::where('company_name', $request->company_name)->latest()->first();
+            if ($request->company_name && $request->user_id) {
+                return AddressBook::where('company_name', $request->company_name)->where('user_id',$request->user_id)->latest()->first();
             }
             if ($request->id) {
                 return AddressBook::findOrFail($request->id);
@@ -224,6 +224,38 @@ class JobController extends Controller
                 $order_job->save();
                 event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
                 return back()->with('success', 'Job Assigned successfully');
+            }
+        }
+    }
+
+    public function updateHistory(Request $request)
+    {
+        if($request->ajax() && $request->id && $request->comment)
+        {
+            $comment=JobStatusHistory::findOrFail($request->id);
+            $comment->comment=$request->comment;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
+
+    public function deleteHistory(Request $request)
+    {
+        if($request->ajax() && $request->id)
+        {
+            $comment=JobStatusHistory::findOrFail($request->id);
+            $comment->comment=null;
+            $comment->save();
+            if($comment->wasChanged())
+            {
+                return true;
+            } else{
+                return false;
             }
         }
     }

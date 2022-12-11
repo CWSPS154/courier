@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Component
  *
@@ -14,7 +14,7 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 28/08/22
+ * Date 11/12/22
  * */
 
 namespace App\View\Components\Admin;
@@ -45,7 +45,11 @@ class AddressAutocomplete extends Component
     /**
      * @var bool
      */
-    public $readonly;
+    public bool $readonly;
+    /**
+     * @var bool
+     */
+    public bool $disable;
 
     /**
      * Create a new component instance.
@@ -60,13 +64,15 @@ class AddressAutocomplete extends Component
         object $editData = null,
         string $relations = 'defaultAddress',
         bool   $noRelation = false,
-        bool   $readonly = false
+        bool   $readonly = false,
+        bool   $disable = false
     ) {
         $this->inputId = $inputId;
         $this->editData = $editData;
         $this->relations = $relations;
         $this->noRelation = $noRelation;
         $this->readonly = $readonly;
+        $this->disable = $disable;
     }
 
     /**

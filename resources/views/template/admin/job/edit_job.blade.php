@@ -1,3 +1,4 @@
+@php use App\Models\JobStatus; @endphp
 @extends('layouts.admin.admin_layout',['title'=>'Update OrderJob'])
 @section('content')
 
@@ -67,25 +68,25 @@
                               form-route-id="{{ $job->id }}">
             <x-slot name="input">
                 <div class="row px-3">
-					<div class="card-body">
-                    <div class="col-12">
-                        <x-admin.ui.select label="Customer"
-                                           name="customer"
-                                           id="customer"
-                                           required
-                                           options="customer.list"
-                                           add-class="customer"
-                                           :value="$job->user_id"
-                        />
+                    <div class="card-body">
+                        <div class="col-12">
+                            <x-admin.ui.select label="Customer"
+                                               name="customer"
+                                               id="customer"
+                                               required
+                                               options="customer.list"
+                                               add-class="customer"
+                                               :value="$job->user_id"
+                            />
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.input label="Customer Contact" type="text" name="customer_contact"
+                                              id="customer_contact"
+                                              add-class=""
+                                              placeholder="Customer Contact" required autocomplete
+                                              :value="$job->customerContact->customer_contact"/>
+                        </div>
                     </div>
-                    <div class="col-12">
-                        <x-admin.ui.input label="Customer Contact" type="text" name="customer_contact"
-                                          id="customer_contact"
-                                          add-class=""
-                                          placeholder="Customer Contact" required autocomplete
-                                          :value="$job->customerContact->customer_contact"/>
-                    </div>
-				</div>
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
@@ -168,7 +169,7 @@
                     </div>
                 </div>
 
-				<div class="card-body">
+                <div class="card-body">
                     <div class="row px-3">
                         <div class="col-12">
                             <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
@@ -189,15 +190,16 @@
                         </div>
                         <div class="col-12">
                             <x-admin.ui.select label="Status"
-                                                   name="status_id"
-                                                   id="status_id"
-                                                   :options="Helper::getJobStatus()"
-                                                   add-class="status"
-                                                   :value="$job->status_id"
-                                                   required
-                                />
+                                               name="status_id"
+                                               id="status_id"
+                                               :options="Helper::getJobStatus()"
+                                               add-class="status"
+                                               :value="$job->status_id"
+                                               required
+                            />
                         </div>
                         <div class="col-12 job_driver_id {{ $job->jobAssign->user_id ?? 'd-none' }}">
+                            @php $disable=false; if($job->status_id==JobStatus::getStatusId(JobStatus::PICKED_UP) || $job->status_id==JobStatus::getStatusId(JobStatus::DELIVERED)){ $disable=true; } @endphp
                             @if(!empty($job->jobAssign->user_id))
                                 <x-admin.ui.select label="Assign Driver"
                                                    name="driver_id"
@@ -206,33 +208,35 @@
                                                    add-class="driver_id"
                                                    :value="$job->jobAssign->user_id"
                                                    required
+                                                   :disable="$disable"
 
                                 />
-                                @else
+                            @else
                                 <x-admin.ui.select label="Assign Driver"
                                                    name="driver_id"
                                                    id="driver_id"
                                                    options="driver.list"
                                                    add-class="driver_id"
+                                                   :disable="$disable"
 
                                 />
-                                @endif
+                            @endif
                         </div>
-                            {{--                    <div class="col-lg-6">--}}
-                            {{--                        <x-admin.ui.select label="Time Frame"--}}
-                            {{--                                           name="timeframe_id"--}}
-                            {{--                                           id="timeframe_id"--}}
-                            {{--                                           required--}}
-                            {{--                                           options="timeframe.list"--}}
-                            {{--                                           add-class="timeframe_id"--}}
+                        {{--                    <div class="col-lg-6">--}}
+                        {{--                        <x-admin.ui.select label="Time Frame"--}}
+                        {{--                                           name="timeframe_id"--}}
+                        {{--                                           id="timeframe_id"--}}
+                        {{--                                           required--}}
+                        {{--                                           options="timeframe.list"--}}
+                        {{--                                           add-class="timeframe_id"--}}
 
-                            {{--                        />--}}
-                            {{--                    </div>--}}
+                        {{--                        />--}}
+                        {{--                    </div>--}}
                         <div class="col-12 d-none comment">
-                                <x-admin.ui.Textarea label="Comment"
-                                                     name="comment"
-                                                     id="comment"
-                                />
+                            <x-admin.ui.Textarea label="Comment"
+                                                 name="comment"
+                                                 id="comment"
+                            />
                         </div>
                     </div>
                 </div>
@@ -261,11 +265,46 @@
                                         {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
                                         {{--                                        </li>--}}
                                         <li>
-                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
-                                            <p>{!! $jobStatusHistory->comment !!}</p>
+                                            <div
+                                                class="d-flex justify-content-between display-comment-{{ $jobStatusHistory->id }}">
+                                                <span
+                                                    class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                                <span
+                                                    class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            </div>
+                                            @if($jobStatusHistory->user_id==auth()->id())
+                                                <div
+                                                    class="d-flex justify-content-between mt-3 show-comment-{{ $jobStatusHistory->id }}">
+                                                    <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                                    <div>
+                                                        <a href="#" class="edit-comment mr-2"
+                                                           data-id="{{ $jobStatusHistory->id }}"><i
+                                                                class="fa fa-edit"></i></a>
+                                                        @if($jobStatusHistory->comment)
+                                                            <a href="#" class="delete-comment"
+                                                               data-id="{{ $jobStatusHistory->id }}"><i
+                                                                    class="fa fa-trash"></i></a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="d-none" id="{{ $jobStatusHistory->id }}">
+                                                    <x-admin.ui.Textarea label="Comment"
+                                                                         name="update_comment"
+                                                                         id="update_comment_{{ $jobStatusHistory->id }}"
+                                                                         :value="$jobStatusHistory->comment"
+                                                    />
+                                                    <x-admin.ui.button type="button" class="btn-primary job_history"
+                                                                       btn-name="Save"
+                                                                       name="job_history_{{ $jobStatusHistory->id }}"
+                                                                       id="job_history_{{ $jobStatusHistory->id }}"
+                                                                       data-id="{{ $jobStatusHistory->id }}"/>
+                                                </div>
+                                            @else
+                                                <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
+                                            @endif
                                             @if($jobStatusHistory->photo)
-                                                <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                                <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}"
+                                                     alt="no image" class="img-fluid">
                                             @endif
                                         </li>
                                     @endforeach
@@ -319,7 +358,6 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function (result) {
-                            console.log(result);
                             setAddressData(checkedAddress, result);
                             setAreaAddress(checkedAddress, result[1]['area'].id)
                         }
@@ -340,7 +378,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
-                    setAreaAddress(type,data.area_id);
+                    setAreaAddress(type, data.area_id);
                 }
 
                 function unSetAddressData(type) {
@@ -474,7 +512,7 @@
                                         <dd class="col-sm-8">${address.area.area}</dd>
                                     </dl>
                                 </div>
-                                <div class="card-footer"><a href="${route('edit_address_book.edit',address.id)}" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
+                                <div class="card-footer"><a href="${route('edit_address_book.edit', address.id)}" class="btn btn-link"><i class="fa fa-edit"></i>Edit</a></div>
                                 <!-- /.card-body -->
                             </div>
                             <!-- /.card -->
@@ -563,55 +601,126 @@
                 }
 
                 $("body").on('change', '.company_name', function () {
+                    let customerId = $('#customer').val();
                     let type = $(this).data('type');
                     let company_name = $(this).val();
-                    if (company_name) {
-                        getAddressByCompanyName(company_name, type);
+                    if (company_name && customerId) {
+                        getAddressByCompanyName(company_name, customerId, type);
                     }
                 })
 
-                function getAddressByCompanyName(company_name, type) {
+                function getAddressByCompanyName(company_name, user_id, type) {
                     $.ajax({
                         url: '{{ Helper::getRoute('job.getAddress') }}',
                         type: 'post',
-                        data: {company_name: company_name},
+                        data: {company_name: company_name, user_id: user_id},
                         dataType: 'json',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function (result) {
-                            console.log(result);
                             setAddressData(type, result);
                         }
                     })
                 }
 
-                $('body').on('change','#status_id',function (){
-                   if($(this).val()!='{{ $job->status_id }}')
-                   {
-                       $('.comment').removeClass('d-none');
-                   }else{
-                     $('.comment').addClass('d-none');
-                   }
-                   if($(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ASSIGNED) }}' || $(this).val()=='{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ACCEPTED) }}' || '{{ $job->jobAssign->user_id ?? '' }}')
-                   {
-                       $('#driver_id').prop('required',true);
-                       $('#driver_id').prev('label').html('Assign Driver'+'<span class="text-danger">*</span>');
-                       $('.job_driver_id').removeClass('d-none');
-                   }else{
-                       $('#driver_id').prop('required',false);
-                       $('#driver_id').prev('label').html('Assign Driver');
-                       $('.job_driver_id').addClass('d-none');
-                   }
-                });
-                $('body').on('change','#driver_id',function (){
-                    if($(this).val()!='{{ $job->jobAssign->user_id ?? '' }}')
-                    {
+                $('body').on('change', '#status_id', function () {
+                    if ($(this).val() != '{{ $job->status_id }}') {
                         $('.comment').removeClass('d-none');
-                    }else{
+                    } else {
+                        $('.comment').addClass('d-none');
+                    }
+                    if ($(this).val() == '{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ASSIGNED) }}' || $(this).val() == '{{  App\Models\JobStatus::getStatusId(App\Models\JobStatus::ACCEPTED) }}' || '{{ $job->jobAssign->user_id ?? '' }}') {
+                        $('#driver_id').prop('required', true);
+                        $('#driver_id').prev('label').html('Assign Driver' + '<span class="text-danger">*</span>');
+                        $('.job_driver_id').removeClass('d-none');
+                    } else {
+                        $('#driver_id').prop('required', false);
+                        $('#driver_id').prev('label').html('Assign Driver');
+                        $('.job_driver_id').addClass('d-none');
+                    }
+                });
+                $('body').on('change', '#driver_id', function () {
+                    if ($(this).val() != '{{ $job->jobAssign->user_id ?? '' }}') {
+                        $('.comment').removeClass('d-none');
+                    } else {
                         $('.comment').addClass('d-none');
                     }
                 });
+
+                $('.edit-comment').click(function (e) {
+                    e.preventDefault();
+                    let id = $(this).data('id');
+                    $('#' + id).removeClass('d-none');
+                    $('.show-comment-' + id).removeClass('d-flex');
+                    $('.show-comment-' + id).addClass('d-none');
+                });
+
+                $('.job_history').click(function () {
+                    let id = $(this).data('id');
+                    let comment = $('#update_comment_' + id).val();
+                    changeStatusHistory(comment, id);
+                });
+
+                $('.delete-comment').click(function (e) {
+                    e.preventDefault();
+                    let id = $(this).data('id');
+                    deleteStatusHistory(id);
+                });
+
+                function changeStatusHistory(comment, id) {
+                    $.ajax({
+                        url: '{{ Helper::getRoute('job.updateHistory') }}',
+                        type: 'post',
+                        data: {comment: comment, id: id},
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#' + id).addClass('d-none');
+                                $('.show-comment-' + id).removeClass('d-none');
+                                $('.show-comment-' + id).addClass('d-flex');
+                                $('#comment_para_' + id).text(comment);
+                                toastr.success('Comment updated successfully');
+                            }
+                        },
+                        error: function () {
+                            $('#' + id).addClass('d-none');
+                            $('.show-comment-' + id).removeClass('d-none');
+                            $('.show-comment-' + id).addClass('d-flex');
+                            toastr.info('No changes made');
+                        }
+                    });
+                }
+
+                function deleteStatusHistory(id) {
+                    $.ajax({
+                        url: '{{ Helper::getRoute('job.deleteHistory') }}',
+                        type: 'post',
+                        data: {id: id},
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#' + id).addClass('d-none');
+                                $('.show-comment-' + id).removeClass('d-none');
+                                $('.show-comment-' + id).addClass('d-flex');
+                                $('#comment_para_' + id).text('');
+                                toastr.success('Comment deleted successfully');
+                            }
+                        },
+                        error: function () {
+                            $('#' + id).addClass('d-none');
+                            $('.show-comment-' + id).removeClass('d-none');
+                            $('.show-comment-' + id).addClass('d-flex');
+                            toastr.info('No changes made');
+                        }
+                    });
+                }
             </script>
     @endpush
 

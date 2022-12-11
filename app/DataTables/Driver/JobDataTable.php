@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category DataTable
  *
@@ -14,7 +14,7 @@
  *
  * @link https://github.com/CWSPS154
  *
- * Date 28/08/22
+ * Date 11/12/22
  * */
 
 namespace App\DataTables\Driver;
@@ -84,9 +84,10 @@ class JobDataTable extends DataTable
                 if($query->status->identifier==JobStatus::ASSIGNED){
                     return view(
                         'components.admin.datatable.accept_reject_button',
-                        ['accept' => Helper::getRoute('myjob.update', $query->id),
-//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id,
+                        [
                             'view' => Helper::getRoute('myjob.show', $query->id),
+                            'accept' => Helper::getRoute('myjob.update', $query->id),
+//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id
                         ]
                     );
                 }

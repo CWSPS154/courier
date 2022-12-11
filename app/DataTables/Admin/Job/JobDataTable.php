@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
+ *
+ * @category DataTable
+ *
+ * @package Laravel
+ *
+ * @author CWSPS154 <codewithsps154@gmail.com>
+ *
+ * @license MIT License https://opensource.org/licenses/MIT
+ *
+ * @link https://github.com/CWSPS154
+ *
+ * Date 11/12/22
+ * */
+
 namespace App\DataTables\Admin\Job;
 
 use App\Models\OrderJob;
@@ -33,6 +50,9 @@ class JobDataTable extends DataTable
             })
             ->editColumn('daily_job_number',function ($query){
                 return $query->dailyJob->job_number;
+            })
+            ->editColumn('customer', function ($query) {
+                return $query->user->customer->company_name.', '.$query->user->customer->customer_id.' - '.$query->user->name ;
             })
             ->editColumn('from_company',function ($query){
                 return $query->fromAddress->company_name;
@@ -70,7 +90,7 @@ class JobDataTable extends DataTable
                 return $query->creator->name;
             })
             ->addColumn('action', function($query){
-                if ($query->status_id == JobStatus::getStatusId(JobStatus::NEW_JOB) || JobStatus::getStatusId(JobStatus::ASSIGNED) || JobStatus::getStatusId(JobStatus::ACCEPTED)) {
+                if ($query->status_id == JobStatus::getStatusId(JobStatus::NEW_JOB) || $query->status_id == JobStatus::getStatusId(JobStatus::ASSIGNED) || $query->status_id == JobStatus::getStatusId(JobStatus::ACCEPTED)) {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('job.edit', $query->id),
@@ -150,6 +170,7 @@ class JobDataTable extends DataTable
 //            Column::make('no')->data('DT_RowIndex')->searchable(false),
             Column::make('#')->searchable(false),
             Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number'),
+            Column::make('customer')->name('user.customer.company_name')->data('customer'),
             Column::make('from_company')->name('fromAddress.company_name')->data('from_company'),
             Column::make('to_company')->name('toAddress.company_name')->data('to_company'),
             Column::make('from_area')->name('fromArea.area')->data('from_area_id'),

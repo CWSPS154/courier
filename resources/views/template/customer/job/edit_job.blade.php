@@ -228,8 +228,10 @@
                                         {{--                                            <p class="mt-3">{{ 'Updated By - '.$jobStatusHistory->user->name }}</p>--}}
                                         {{--                                        </li>--}}
                                         <li>
-                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                                <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            </div>
                                             <p>{!! $jobStatusHistory->comment !!}</p>
                                             @if($jobStatusHistory->photo)
                                                 <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
@@ -530,18 +532,19 @@
                 }
 
                 $("body").on('change', '.company_name', function () {
+                    let customerId = $('#customer').val();
                     let type = $(this).data('type');
                     let company_name = $(this).val();
-                    if (company_name) {
-                        getAddressByCompanyName(company_name, type);
+                    if (company_name && customerId) {
+                        getAddressByCompanyName(company_name,customerId, type);
                     }
                 })
 
-                function getAddressByCompanyName(company_name, type) {
+                function getAddressByCompanyName(company_name,user_id, type) {
                     $.ajax({
-                        url: '{{ Helper::getRoute('jobs.getAddress') }}',
+                        url: '{{ Helper::getRoute('job.getAddress') }}',
                         type: 'post',
-                        data: {company_name: company_name},
+                        data: {company_name: company_name,user_id:user_id},
                         dataType: 'json',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * PHP Version 7.4.25
- * Laravel Framework 8.83.18
+ * PHP Version 8.1.11
+ * Laravel Framework 9.43.0
  *
  * @category Controller
  *
@@ -87,7 +87,7 @@ class JobController extends Controller
                     }
                 )->when($id, function ($query) use ($id) {
                     $query->where('user_id', $id);
-                })->limit(15)->get();
+                })->where('user_id',Auth::id())->limit(15)->get();
                 $response = array();
                 foreach ($addressBooks as $addressBook) {
                     $response[] = array(
@@ -97,18 +97,18 @@ class JobController extends Controller
                 }
                 return response()->json($response);
             }
-            if ($request->user_id) {
+            if ($request->user_id && !$request->company_name) {
                 $user = User::with('defaultAddress', 'customer:company_name,user_id,id,area_id', 'customer.area')
                     ->findOrFail($request->user_id);
                 $data = collect($user->defaultAddress);
                 $data->push(['customer_name' => $user->customer->company_name]);
                 return $data->push(['area' => $user->customer->area]);
             }
-            if ($request->company_name) {
-                return AddressBook::where('company_name', $request->company_name)->latest()->first();
+            if ($request->company_name && $request->user_id) {
+                return AddressBook::where('company_name', $request->company_name)->where('user_id',$request->user_id)->latest()->first();
             }
             if ($request->id) {
-                return AddressBook::findOrFail($request->id);
+                return AddressBook::where('user_id',Auth::id())->findOrFail($request->id);
             }
         }
     }
@@ -464,12 +464,17 @@ class JobController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param OrderJob $job
-     * @return Application|Factory|View
+     * @return Application|Factory|View|RedirectResponse
      */
     public function edit(OrderJob $job)
     {
-        $job->load('fromAddress','toAddress','customerContact','jobStatusHistory');
-        return view('template.customer.job.edit_job', compact('job'));
+        if($job->status_id!=JobStatus::getStatusId(JobStatus::PICKED_UP) && $job->status_id!=JobStatus::getStatusId(JobStatus::DELIVERED) && $job->status_id!=JobStatus::getStatusId(JobStatus::CANCELLED))
+        {
+            $job->load('fromAddress','toAddress','customerContact','jobStatusHistory');
+            return view('template.customer.job.edit_job', compact('job'));
+        }else{
+            return redirect()->route('jobs.index')->with('error',"You don't have permission to edit the page");
+        }
     }
 
     /**

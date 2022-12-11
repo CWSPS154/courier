@@ -125,14 +125,14 @@
                       id="street_number_{{ $inputId }}"
                       add-class="bg-white"
                       placeholder="Street Number"
-                      :value="$editData->$relations->street_number ?? ''" readonly/>
+                      :value="$editData->$relations->street_number ?? ''" readonly disable/>
     <x-admin.ui.input label="Street Address"
                       type="text"
                       name="street_address_{{ $inputId }}"
                       id="street_address_{{ $inputId }}"
                       add-class="bg-white"
                       placeholder="Street Address"
-                      :value="$editData->$relations->street_address ?? ''" readonly disable/>
+                      :value="$editData->$relations->street_address ?? ''" readonly/>
     <x-admin.ui.input label="Suburb"
                       type="text"
                       name="suburb_{{ $inputId }}"
