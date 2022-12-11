@@ -1,3 +1,4 @@
+@php use App\Models\JobStatus; @endphp
 @extends('layouts.admin.admin_layout',['title'=>'View OrderJob'])
 @section('content')
 
@@ -66,24 +67,24 @@
         <x-admin.ui.card-form title="Job Details" form-route="" form-id="view_job" autocomplete>
             <x-slot name="input">
                 <div class="row px-3">
-					<div class="card-body">
-                    <div class="col-12">
-                        <x-admin.ui.input type="text" label="Customer"
-                                           name="customer"
-                                           id="customer"
-                                           add-class="customer bg-white"
-                                           :value="$job->user->name"
-                                           readonly
-                        />
+                    <div class="card-body">
+                        <div class="col-12">
+                            <x-admin.ui.input type="text" label="Customer"
+                                              name="customer"
+                                              id="customer"
+                                              add-class="customer bg-white"
+                                              :value="$job->user->name"
+                                              readonly
+                            />
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.input label="Customer Contact" type="text" name="customer_contact"
+                                              id="customer_contact"
+                                              add-class="bg-white"
+                                              placeholder="Customer Contact" autocomplete
+                                              :value="$job->customerContact->customer_contact" readonly/>
+                        </div>
                     </div>
-                    <div class="col-12">
-                        <x-admin.ui.input label="Customer Contact" type="text" name="customer_contact"
-                                          id="customer_contact"
-                                          add-class="bg-white"
-                                          placeholder="Customer Contact" autocomplete
-                                          :value="$job->customerContact->customer_contact" readonly/>
-                    </div>
-				</div>
                 </div>
                 <div class="container-fluid">
                     <div class="card-body pt-2">
@@ -99,13 +100,13 @@
                                     <x-admin.address-autocomplete input-id="from" :edit-data="$job"
                                                                   relations="fromAddress" readonly="true"/>
                                     <x-admin.ui.input type="text" label="Area"
-                                                       name="from_area_id"
-                                                       id="from_area_id"
+                                                      name="from_area_id"
+                                                      id="from_area_id"
 
-                                                       add-class="from_area bg-white"
+                                                      add-class="from_area bg-white"
 
-                                                       :value="$job->fromArea->area"
-                                                       readonly
+                                                      :value="$job->fromArea->area"
+                                                      readonly
                                     />
                                 </div>
                             </div>
@@ -120,13 +121,13 @@
                                     <x-admin.address-autocomplete input-id="to" :edit-data="$job"
                                                                   relations="toAddress" readonly="true"/>
                                     <x-admin.ui.input type="text" label="Area"
-                                                       name="to_area_id"
-                                                       id="to_area_id"
+                                                      name="to_area_id"
+                                                      id="to_area_id"
 
-                                                       add-class="to_area bg-white"
+                                                      add-class="to_area bg-white"
 
-                                                       :value="$job->toArea->area"
-                                                       readonly
+                                                      :value="$job->toArea->area"
+                                                      readonly
                                     />
                                 </div>
                             </div>
@@ -134,55 +135,55 @@
                     </div>
                 </div>
 
-				<div class="card-body">
-                <div class="row px-3">
-                    <div class="col-12">
-                        <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
-                                          add-class="bg-white"
-                                          placeholder="Number of Boxes" :value="$job->number_box" readonly/>
-                    </div>
-                    <div class="col-12">
-                        <label for="van_hire">Do you need van?</label><br>
-                        <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
-                                                     offText="No" label="Need" :value="$job->van_hire" disable/>
-                    </div>
-                    <div class="col-12">
-                        <x-admin.ui.Textarea label="Notes"
-                                             name="notes"
-                                             id="note"
-                                             :value="$job->notes"
-                                             readonly="true"
-                        />
-                    </div>
-                    <div class="col-12">
-                        <x-admin.ui.input type="text" label="Status"
-                                           name="status_id"
-                                           id="status_id"
-                                           add-class="status bg-white"
-                                           :value="$job->status->status"
-                                          readonly="true"
-                        />
-                    </div>
-                    <div class="col-12 job_driver_id {{ $job->jobAssign->user_id ?? 'd-none' }}">
-                        @if(!empty($job->jobAssign->user_id))
-                            <x-admin.ui.input type="text" label="Assign Driver"
-                                               name="driver_id"
-                                               id="driver_id"
-                                               add-class="driver_id bg-white"
-                                               :value="$job->jobAssign->user->name"
-                                              readonly="true"
-
+                <div class="card-body">
+                    <div class="row px-3">
+                        <div class="col-12">
+                            <x-admin.ui.input label="Number of Boxes" type="number" name="number_box" id="number_box"
+                                              add-class="bg-white"
+                                              placeholder="Number of Boxes" :value="$job->number_box" readonly/>
+                        </div>
+                        <div class="col-12">
+                            <label for="van_hire">Do you need van?</label><br>
+                            <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
+                                                         offText="No" label="Need" :value="$job->van_hire" disable/>
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.Textarea label="Notes"
+                                                 name="notes"
+                                                 id="note"
+                                                 :value="$job->notes"
+                                                 readonly="true"
                             />
-                        @else
-                            <x-admin.ui.input type="text" label="Assign Driver"
-                                              name="driver_id"
-                                              id="driver_id"
-                                              add-class="driver_id bg-white"
+                        </div>
+                        <div class="col-12">
+                            <x-admin.ui.input type="text" label="Status"
+                                              name="status_id"
+                                              id="status_id"
+                                              add-class="status bg-white"
+                                              :value="$job->status->status"
                                               readonly="true"
-                        @endif
+                            />
+                        </div>
+                        <div class="col-12 job_driver_id {{ $job->jobAssign->user_id ?? 'd-none' }}">
+                            @if(!empty($job->jobAssign->user_id))
+                                <x-admin.ui.input type="text" label="Assign Driver"
+                                                  name="driver_id"
+                                                  id="driver_id"
+                                                  add-class="driver_id bg-white"
+                                                  :value="$job->jobAssign->user->name"
+                                                  readonly="true"
+
+                                />
+                            @else
+                                <x-admin.ui.input type="text" label="Assign Driver"
+                                                  name="driver_id"
+                                                  id="driver_id"
+                                                  add-class="driver_id bg-white"
+                                                  readonly="true"
+                            @endif
+                        </div>
                     </div>
                 </div>
-				</div>
                 {{--                <div class="row">--}}
                 {{--                    <div class="col-lg-6">--}}
                 {{--                        <x-admin.ui.select label="Assign Driver"--}}
@@ -219,12 +220,16 @@
                                     {{--                                        </li>--}}
                                     <li>
                                         <div class="d-flex justify-content-between">
-                                            <span class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
-                                            <span class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
+                                            <span
+                                                class="text-bold">{{ $jobStatusHistory->toStatus->status .'(Updated By - '.$jobStatusHistory->user->name.')' }} </span>
+                                            <span
+                                                class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
                                         </div>
                                         <p>{!! $jobStatusHistory->comment !!}</p>
-                                        @if($jobStatusHistory->photo)
-                                            <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                        @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+                                            <img
+                                                src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                alt="no image" class="img-fluid">
                                         @endif
                                     </li>
                                 @endforeach

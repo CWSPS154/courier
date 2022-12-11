@@ -1,4 +1,4 @@
-@php use App\Models\JobAssign;use App\Models\JobStatus; @endphp
+@php use App\Models\JobAssign; use App\Models\JobStatus; @endphp
 @extends('layouts.admin.admin_layout',['title'=>'My Job'])
 @section('content')
 
@@ -154,8 +154,10 @@
                                         @else
                                             <p id="comment_para_{{ $jobStatusHistory->id }}">{!! $jobStatusHistory->comment !!}</p>
                                         @endif
-                                        @if($jobStatusHistory->photo)
-                                            <img src="{{ asset('images/delivered/'.$jobStatusHistory->photo) }}" alt="no image" class="img-fluid">
+                                        @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+                                            <img
+                                                src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                alt="no image" class="img-fluid">
                                         @endif
                                     </li>
                                 @endforeach

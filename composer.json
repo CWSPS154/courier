@@ -19,6 +19,7 @@
         "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "~5.7.3",
         "psr/simple-cache": "^2.0",
+        "spatie/laravel-medialibrary": "^10.0.0",
         "tightenco/ziggy": "^1.5",
         "wildside/userstamps": "^2.2",
         "yajra/laravel-datatables-buttons": "^4.0",

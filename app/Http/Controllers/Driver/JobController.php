@@ -112,21 +112,20 @@ class JobController extends Controller
      */
     private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null,$photo=null): void
     {
-        $imageName=null;
-        if($photo)
-        {
-            $imageName = time().'.'.$photo->extension();
-            // Public Folder
-            $photo->move(public_path('images/delivered'), $imageName);
-        }
-        JobStatusHistory::create([
+        $jobStatusHistory=JobStatusHistory::create([
             'order_job_id'=>$order_job_id,
             'user_id'=>$user_id,
             'from_status_id'=>$from_status,
             'to_status_id'=>$to_status,
-            'photo'=>$imageName,
             'comment'=>$comment
         ]);
+        if($photo)
+        {
+            $jobStatusHistory
+                ->addMedia($photo)
+                ->preservingOriginal()
+                ->toMediaCollection('job_status_images');
+        }
     }
 
     /**
