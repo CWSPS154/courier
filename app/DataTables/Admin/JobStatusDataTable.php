@@ -95,9 +95,9 @@ class JobStatusDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('no')->data('DT_RowIndex')->searchable(false),
-            Column::make('status'),
-            Column::make('identifier'),
+            Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
+            Column::make('status')->sortable(false),
+            Column::make('identifier')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
