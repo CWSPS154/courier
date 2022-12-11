@@ -132,7 +132,6 @@ class JobDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->responsive()
-            ->orderBy(1)
             ->selectStyleSingle()
             ->pagingType('numbers')
             ->parameters([
