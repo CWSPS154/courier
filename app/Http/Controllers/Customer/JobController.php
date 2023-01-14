@@ -179,11 +179,12 @@ class JobController extends Controller
         }
         DB::beginTransaction();
         try {
+            $address_book_id = null;
             if ($request->from_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'from');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'from');
             }
             if ($request->to_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'to');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'to');
             }
 
             $job = OrderJob::create([
@@ -198,8 +199,8 @@ class JobController extends Controller
                 'status_id' => JobStatus::getStatusId(JobStatus::NEW_JOB)
             ]);
 
-            $this->makeNewJobAddress($job->id, $request->all(), 'from');
-            $this->makeNewJobAddress($job->id, $request->all(), 'to');
+            $this->makeNewJobAddress($job->id, $request->all(), 'from',$address_book_id);
+            $this->makeNewJobAddress($job->id, $request->all(), 'to',$address_book_id);
 
             $job->job_increment_id = $job->createIncrementJobId($job->id);
             $job->save();
@@ -281,9 +282,9 @@ class JobController extends Controller
     {
         if (isset($address['edit_id_' . $input_id]) && !empty($address['edit_id_' . $input_id])) {
             $newAddress = AddressBook::find($address['edit_id_' . $input_id]);
-            if(!$newAddress)
+            if($newAddress==null)
             {
-                AddressBook::create([
+                $newAddress=AddressBook::create([
                     'user_id' => $user_id,
                     'company_name' => $address['company_name_' . $input_id],
                     'street_address' => $address['street_address_' . $input_id],
@@ -317,9 +318,9 @@ class JobController extends Controller
                 $newAddress->longitude = $address['longitude_' . $input_id];
                 $newAddress->location_url = $address['location_url_' . $input_id];
                 $newAddress->full_json_response = $address['json_response_' . $input_id];
-                if($newAddress->isDirty())
+                if($newAddress->isDirty('company_name') || $newAddress->isDirty('street_address') || $newAddress->isDirty('street_number') || $newAddress->isDirty('suburb') || $newAddress->isDirty('city') || $newAddress->isDirty('state') || $newAddress->isDirty('zip') || $newAddress->isDirty('country') || $newAddress->isDirty('area_id'))
                 {
-                    AddressBook::create([
+                    $newAddress=AddressBook::create([
                         'user_id' => $user_id,
                         'company_name' => $address['company_name_' . $input_id],
                         'street_address' => $address['street_address_' . $input_id],
@@ -343,7 +344,7 @@ class JobController extends Controller
                 }
             }
         } else {
-            AddressBook::create([
+            $newAddress=AddressBook::create([
                 'user_id' => $user_id,
                 'company_name' => $address['company_name_' . $input_id],
                 'street_address' => $address['street_address_' . $input_id],
@@ -363,6 +364,7 @@ class JobController extends Controller
                 'set_as_default' => false
             ]);
         }
+        return $newAddress->id;
     }
 
     /**
@@ -389,10 +391,11 @@ class JobController extends Controller
      * @param $type
      * @return mixed
      */
-    private function makeNewJobAddress($job_id, $address, $type)
+    private function makeNewJobAddress($order_job_id, $address, $type,$address_book_id=null)
     {
-        $newAddress = JobAddress::where('order_job_id', $job_id)->where('type', $type)->first();
+        $newAddress = JobAddress::where('order_job_id', $order_job_id)->where('type', $type)->first();
         if ($newAddress) {
+            $newAddress->address_book_id = $address_book_id;
             $newAddress->company_name = $address['company_name_' . $type];
             $newAddress->street_address = $address['street_address_' . $type];
             $newAddress->street_number = $address['street_number_' . $type];
@@ -410,7 +413,8 @@ class JobController extends Controller
             return $newAddress;
         } else {
             return JobAddress::create([
-                'order_job_id' => $job_id,
+                'order_job_id' => $order_job_id,
+                'address_book_id' => $address_book_id,
                 'type' => $type,
                 'company_name' => $address['company_name_' . $type],
                 'street_address' => $address['street_address_' . $type],
@@ -443,11 +447,12 @@ class JobController extends Controller
         $request->has('van_hire') ? $vanHire = true : $vanHire = false;
         DB::beginTransaction();
         try {
+            $address_book_id = null;
             if ($request->from_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'from');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'from');
             }
             if ($request->to_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'to');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'to');
             }
             $job->user_id = $request->customer;
             $job->customer_contact_id = $this->updateOrCreate($request->customer, $request->customer_contact);
@@ -459,8 +464,8 @@ class JobController extends Controller
             $job->number_box = $request->number_box;
             $job->save();
 
-            $fromJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'from');
-            $toJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'to');
+            $fromJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'from',$address_book_id);
+            $toJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'to',$address_book_id);
 
             if ($request->has('driver_id')) {
                 $jobAssign = JobAssign::where('order_job_id', $job->id)->firstOrFail();
