@@ -38,6 +38,7 @@ class JobAddress extends Model
      */
     protected $fillable = [
         'order_job_id',
+        'address_book_id',
         'type',
         'company_name',
         'street_address',
