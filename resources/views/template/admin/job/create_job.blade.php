@@ -258,7 +258,6 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function (result) {
-                            console.log(result);
                             setAddressData(checkedAddress, result);
                             setAreaAddress(checkedAddress, result[1]['area'].id)
                         }
@@ -279,6 +278,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
+                    $('#edit_id_' + type).val(data.id).change();
                     setAreaAddress(type,data.area_id);
                 }
 
@@ -296,6 +296,7 @@
                     $('#longitude_' + type).val('').change();
                     $('#location_url_' + type).val('').change();
                     $('#json_response_' + type).val('').change();
+                    $('#edit_id_' + type).val('').change();
                     $('#' + type + '_area_id').val('').change();
                 }
 
@@ -525,6 +526,7 @@
                         }
                     })
                 }
+
             </script>
     @endpush
 

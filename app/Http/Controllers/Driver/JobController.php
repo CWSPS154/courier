@@ -33,6 +33,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Auth;
+use DB;
 
 class JobController extends Controller
 {
@@ -80,6 +81,7 @@ class JobController extends Controller
         {
             $comment=JobStatusHistory::findOrFail($request->id);
             $comment->comment=null;
+            $comment->clearMediaCollection('job_status_images');
             $comment->save();
             if($comment->wasChanged())
             {
@@ -171,16 +173,24 @@ class JobController extends Controller
      */
     public function update(Request $request, OrderJob $myjob): RedirectResponse
     {
-        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status,$request->comment,$request->photo);
-        $myjob->status_id = $request->status;
-        $myjob->save();
-        if ($myjob->wasChanged()) {
-            if($myjob->status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
-            {
-                return redirect()->route('myjob.index')->with('success', 'Job Status changed successfully');
+        DB::beginTransaction();
+        try {
+            $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status,$request->comment,$request->photo);
+            $myjob->status_id = $request->status;
+            $myjob->save();
+            DB::commit();
+            if ($myjob->wasChanged()) {
+                if($myjob->status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
+                {
+                    return redirect()->route('myjob.index')->with('success', 'Job Status changed successfully');
+                }
+                return back()->with('success', 'Job Status changed successfully');
             }
-            return back()->with('success', 'Job Status changed successfully');
+            return back()->with('info', 'Job Status is not changed');
+        }catch (\Exception $e)
+        {
+            DB::rollback();
+            return back()->with('error', $e->getMessage());
         }
-        return back()->with('info', 'Job Status is not changed');
     }
 }

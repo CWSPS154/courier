@@ -228,8 +228,8 @@
                                         <p>{!! $jobStatusHistory->comment !!}</p>
                                         @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
                                             <img
-                                                src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images') }}"
-                                                alt="no image" class="img-fluid">
+                                                src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                alt="no image" class="img-fluid img-thumbnail">
                                         @endif
                                     </li>
                                 @endforeach

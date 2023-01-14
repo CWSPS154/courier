@@ -279,24 +279,69 @@ class JobController extends Controller
      */
     private function makeNewAddress($user_id, $address, $input_id)
     {
-        $newAddress = AddressBook::where('place_id', $address['place_id_' . $input_id])->first();
-        if ($newAddress) {
-            $newAddress->company_name = $address['company_name_' . $input_id];
-            $newAddress->street_address = $address['street_address_' . $input_id];
-            $newAddress->street_number = $address['street_number_' . $input_id];
-            $newAddress->suburb = $address['suburb_' . $input_id];
-            $newAddress->city = $address['city_' . $input_id];
-            $newAddress->state = $address['state_' . $input_id];
-            $newAddress->zip = $address['zip_' . $input_id];
-            $newAddress->country = $address['country_' . $input_id];
-            $newAddress->place_id = $address['place_id_' . $input_id];
-            $newAddress->area_id = $address[$input_id.'_area_id'];
-            $newAddress->latitude = $address['latitude_' . $input_id];
-            $newAddress->longitude = $address['longitude_' . $input_id];
-            $newAddress->location_url = $address['location_url_' . $input_id];
-            $newAddress->full_json_response = $address['json_response_' . $input_id];
-            $newAddress->status = true;
-            $newAddress->save();
+        if (isset($address['edit_id_' . $input_id]) && !empty($address['edit_id_' . $input_id])) {
+            $newAddress = AddressBook::find($address['edit_id_' . $input_id]);
+            if(!$newAddress)
+            {
+                AddressBook::create([
+                    'user_id' => $user_id,
+                    'company_name' => $address['company_name_' . $input_id],
+                    'street_address' => $address['street_address_' . $input_id],
+                    'street_number' => $address['street_number_' . $input_id],
+                    'suburb' => $address['suburb_' . $input_id],
+                    'city' => $address['city_' . $input_id],
+                    'state' => $address['state_' . $input_id],
+                    'zip' => $address['zip_' . $input_id],
+                    'country' => $address['country_' . $input_id],
+                    'place_id' => $address['place_id_' . $input_id],
+                    'area_id' => $address[$input_id.'_area_id'],
+                    'latitude' => $address['latitude_' . $input_id],
+                    'longitude' => $address['longitude_' . $input_id],
+                    'location_url' => $address['location_url_' . $input_id],
+                    'full_json_response' => $address['json_response_' . $input_id],
+                    'status' => true,
+                    'set_as_default' => false
+                ]);
+            }else{
+                $newAddress->company_name = $address['company_name_' . $input_id];
+                $newAddress->street_address = $address['street_address_' . $input_id];
+                $newAddress->street_number = $address['street_number_' . $input_id];
+                $newAddress->suburb = $address['suburb_' . $input_id];
+                $newAddress->city = $address['city_' . $input_id];
+                $newAddress->state = $address['state_' . $input_id];
+                $newAddress->zip = $address['zip_' . $input_id];
+                $newAddress->country = $address['country_' . $input_id];
+                $newAddress->place_id = $address['place_id_' . $input_id];
+                $newAddress->area_id = $address[$input_id.'_area_id'];
+                $newAddress->latitude = $address['latitude_' . $input_id];
+                $newAddress->longitude = $address['longitude_' . $input_id];
+                $newAddress->location_url = $address['location_url_' . $input_id];
+                $newAddress->full_json_response = $address['json_response_' . $input_id];
+                if($newAddress->isDirty())
+                {
+                    AddressBook::create([
+                        'user_id' => $user_id,
+                        'company_name' => $address['company_name_' . $input_id],
+                        'street_address' => $address['street_address_' . $input_id],
+                        'street_number' => $address['street_number_' . $input_id],
+                        'suburb' => $address['suburb_' . $input_id],
+                        'city' => $address['city_' . $input_id],
+                        'state' => $address['state_' . $input_id],
+                        'zip' => $address['zip_' . $input_id],
+                        'country' => $address['country_' . $input_id],
+                        'place_id' => $address['place_id_' . $input_id],
+                        'area_id' => $address[$input_id.'_area_id'],
+                        'latitude' => $address['latitude_' . $input_id],
+                        'longitude' => $address['longitude_' . $input_id],
+                        'location_url' => $address['location_url_' . $input_id],
+                        'full_json_response' => $address['json_response_' . $input_id],
+                        'status' => true,
+                        'set_as_default' => false
+                    ]);
+                }else{
+                    $newAddress->save();
+                }
+            }
         } else {
             AddressBook::create([
                 'user_id' => $user_id,

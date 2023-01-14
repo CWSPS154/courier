@@ -236,8 +236,8 @@
                                             <p>{!! $jobStatusHistory->comment !!}</p>
                                             @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
                                                 <img
-                                                    src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images') }}"
-                                                    alt="no image" class="img-fluid">
+                                                    src="{{ $jobStatusHistory->getFirstMediaUrl('job_status_images','base-image') }}"
+                                                    alt="no image" class="img-fluid img-thumbnail">
                                             @endif
                                         </li>
                                     @endforeach
@@ -312,6 +312,7 @@
                     $('#longitude_' + type).val(data.longitude).change();
                     $('#location_url_' + type).val(data.location_url).change();
                     $('#json_response_' + type).val(data.full_json_response).change();
+                    $('#edit_id_' + type).val(data.id).change();
                     setAreaAddress(type,data.area_id);
                 }
 
@@ -329,6 +330,7 @@
                     $('#longitude_' + type).val('').change();
                     $('#location_url_' + type).val('').change();
                     $('#json_response_' + type).val('').change();
+                    $('#edit_id_' + type).val('').change();
                     $('#' + type + '_area_id').val('').change();
                 }
 
