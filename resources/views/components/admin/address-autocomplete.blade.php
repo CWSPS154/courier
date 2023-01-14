@@ -59,7 +59,7 @@
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->full_json_response ?? '') }}" class="address_data_{{ $inputId }}">
     <input type="hidden" name="edit_id_{{ $inputId }}" id="edit_id_{{ $inputId }}"
-           value="{{ old('edit_id_'.$inputId,$editData->id ?? '') }}" class="address_data_{{ $inputId }}">
+           value="{{ old('edit_id_'.$inputId,$editData->address_book_id ?? '') }}" class="address_data_{{ $inputId }}">
 @elseif(!$noRelation && !$readonly)
     <x-admin.ui.input label="Street Number"
                       type="text"
@@ -121,7 +121,7 @@
     <input type="hidden" name="json_response_{{ $inputId }}" id="json_response_{{ $inputId }}" required
            value="{{ old('json_response_'.$inputId,$editData->$relations->full_json_response ?? '') }}" address_data_{{ $inputId }}>
     <input type="hidden" name="edit_id_{{ $inputId }}" id="edit_id_{{ $inputId }}" required
-           value="{{ old('edit_id_'.$inputId,$editData->id ?? '') }}" address_data_{{ $inputId }}>
+           value="{{ old('edit_id_'.$inputId,$editData->$relations->address_book_id ?? '') }}" address_data_{{ $inputId }}>
 @else
     <x-admin.ui.input label="Street Number"
                       type="text"

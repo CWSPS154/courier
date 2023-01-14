@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
                 UserSeeder::class,
                 TimeFrameSeeder::class,
                 JobStatusSeeder::class,
-                AddressBookSeeder::class
             ]
         );
     }

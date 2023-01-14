@@ -16,6 +16,7 @@ class CreateJobAddressesTable extends Migration
         Schema::create('job_addresses', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('order_job_id')->nullable()->constrained('order_jobs')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('address_book_id')->nullable()->constrained('address_books')->nullOnDelete();
             $table->string('type')->nullable();
             $table->string('company_name')->nullable();
             $table->string('street_address')->nullable();
