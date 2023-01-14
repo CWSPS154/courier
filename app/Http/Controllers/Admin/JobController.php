@@ -559,11 +559,12 @@ class JobController extends Controller
         $request->has('van_hire') ? $vanHire = true : $vanHire = false;
         DB::beginTransaction();
         try {
+            $address_book_id = null;
             if ($request->from_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'from');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'from');
             }
             if ($request->to_add_to_address_book) {
-                $this->makeNewAddress($request->customer, $request->all(), 'to');
+                $address_book_id=$this->makeNewAddress($request->customer, $request->all(), 'to');
             }
             $job->user_id = $request->customer;
             $job->customer_contact_id = $this->updateOrCreate($request->customer, $request->customer_contact);
@@ -575,8 +576,8 @@ class JobController extends Controller
             $job->number_box = $request->number_box;
             $job->save();
 
-            $fromJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'from');
-            $toJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'to');
+            $fromJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'from',$address_book_id);
+            $toJobAddress = $this->makeNewJobAddress($job->id, $request->all(), 'to',$address_book_id);
 
             if($job->status_id!=$request->status_id && $request->status_id!=JobStatus::getStatusId(JobStatus::ASSIGNED))
             {
