@@ -23,7 +23,9 @@ use App\Notifications\NewNotification;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use App\Mail\SendToDriverCompany;
 
 class JobAssignedListener
 {
@@ -47,6 +49,10 @@ class JobAssignedListener
     {
         $notification = 'You have assigned to a new job, Job ID:'.$event->order_job_id ;
         $user=User::findOrFail($event->user);
+        $content = 'Your driver '.$user->name.' has been assigned to a new job, Job ID:'.$event->order_job_id ;
         Notification::send($user, new NewNotification($notification));
+        if($user->driver->company_email) {
+            Mail::to($user->driver->company_email)->send(new SendToDriverCompany($content));
+        }
     }
 }
