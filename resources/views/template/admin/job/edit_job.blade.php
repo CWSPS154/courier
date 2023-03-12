@@ -101,7 +101,7 @@
                             </label>
                             <label class="btn btn-primary job-radio">
                                 <input type="radio" name="default_address" id="neither" value="neither"
-                                       autocomplete="off" class="default_address">Custom job
+                                       autocomplete="off" class="default_address">3rd Party
                             </label>
                         </div>
                         <div class="row">
@@ -129,7 +129,7 @@
                                                        :value="$job->from_area_id"
                                     />
                                     <label for="from_add_to_address_book">Add to address
-                                        book</label><br>
+                                        book (default Yes)</label><br>
                                     <x-admin.ui.bootstrap-switch name="from_add_to_address_book"
                                                                  id="from_add_to_address_book" onText="Yes"
                                                                  offText="No" label=""/>
@@ -158,7 +158,7 @@
                                                        required
                                                        :value="$job->to_area_id"
                                     />
-                                    <label for="to_add_to_address_book">Add to address book</label><br>
+                                    <label for="to_add_to_address_book">Add to address book (default Yes)</label><br>
                                     <x-admin.ui.bootstrap-switch name="to_add_to_address_book"
                                                                  id="to_add_to_address_book" onText="Yes"
                                                                  offText="No" label=""/>
@@ -177,12 +177,12 @@
                                               placeholder="Number of Boxes" required :value="$job->number_box"/>
                         </div>
                         <div class="col-12">
-                            <label for="van_hire">Do you need van?</label><br>
+                            <label for="van_hire">Do you need van? (default to No,leave as it is if you don't need a van)</label><br>
                             <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
                                                          offText="No" label="Need" :value="$job->van_hire"/>
                         </div>
-                        <div class="col-12">
-                            <x-admin.ui.Textarea label="Notes"
+                        <div class="col-12 mt-3">
+                            <x-admin.ui.Textarea label="Notes (any special instruction you want the driver to know)"
                                                  name="notes"
                                                  id="note"
                                                  :value="$job->notes"

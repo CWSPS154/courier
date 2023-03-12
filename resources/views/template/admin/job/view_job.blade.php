@@ -1,5 +1,5 @@
 @php use App\Models\JobStatus; @endphp
-@extends('layouts.admin.admin_layout',['title'=>'View OrderJob'])
+@extends('layouts.admin.admin_layout',['title'=>'View Job'])
 @section('content')
 
     @push('styles')
@@ -143,12 +143,12 @@
                                               placeholder="Number of Boxes" :value="$job->number_box" readonly/>
                         </div>
                         <div class="col-12">
-                            <label for="van_hire">Do you need van?</label><br>
+                            <label for="van_hire">Do you need van? (default to No,leave as it is if you don't need a van)</label><br>
                             <x-admin.ui.bootstrap-switch name="van_hire" id="van_hire" onText="Yes"
                                                          offText="No" label="Need" :value="$job->van_hire" disable/>
                         </div>
-                        <div class="col-12">
-                            <x-admin.ui.Textarea label="Notes"
+                        <div class="col-12 mt-3">
+                            <x-admin.ui.Textarea label="Notes (any special instruction you want the driver to know)"
                                                  name="notes"
                                                  id="note"
                                                  :value="$job->notes"

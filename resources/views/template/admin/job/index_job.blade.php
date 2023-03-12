@@ -141,7 +141,12 @@
                     $('.image-upload').addClass('d-none');
                     $('.image-upload input[type="file"]').attr('required',false);
                 }
-            })
+            });
+            $(document).ready(function() {
+                setInterval(function() {
+                    location.reload();
+                }, 60000);
+            });
         </script>
     @endpush
 @endsection
