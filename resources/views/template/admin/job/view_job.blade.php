@@ -225,7 +225,11 @@
                                             <span
                                                 class="text-bold float-right">{{ $jobStatusHistory->created_at->format('Y-M-d h:i A') }}</span>
                                         </div>
-                                        @if($jobStatusHistory->to_status_id!=JobStatus::getStatusId(JobStatus::ASSIGNED) && !auth()->user()->isCustomer())
+                                        @if(auth()->user()->isCustomer())
+                                            @if($jobStatusHistory->to_status_id!=JobStatus::getStatusId(JobStatus::ASSIGNED))
+                                                <p>{!! $jobStatusHistory->comment !!}</p>
+                                            @endif
+                                        @else
                                             <p>{!! $jobStatusHistory->comment !!}</p>
                                         @endif
                                         @if($jobStatusHistory->getFirstMediaUrl('job_status_images') && $jobStatusHistory->to_status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
