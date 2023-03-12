@@ -86,7 +86,7 @@ class JobDataTable extends DataTable
                         'components.admin.datatable.accept_reject_button',
                         [
                             'view' => Helper::getRoute('myjob.show', $query->id),
-                            'accept' => Helper::getRoute('myjob.update', $query->id),
+//                            'accept' => Helper::getRoute('myjob.update', $query->id),
 //                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id
                         ]
                     );
@@ -152,12 +152,12 @@ class JobDataTable extends DataTable
         return [
             Column::make('no')->data('DT_RowIndex')->searchable(false)->sortable(false),
             Column::make('job_number')->name('dailyJob.job_number')->data('daily_job_number')->sortable(false),
+            Column::make('status')->name('status.status')->data('status_id')->sortable(false),
             Column::make('from_company')->name('fromAddress.company_name')->data('from_company')->sortable(false),
             Column::make('to_company')->name('toAddress.company_name')->data('to_company')->sortable(false),
             Column::make('from_area')->name('fromArea.area')->data('from_area_id')->sortable(false),
             Column::make('to_area')->name('toArea.area')->data('to_area_id')->sortable(false),
             Column::make('van_hire')->sortable(false),
-            Column::make('status')->name('status.status')->data('status_id')->sortable(false),
             Column::make('assigned')->name('jobAssign.user.name')->data('assigned_to')->sortable(false),
             Column::make('created_at')->sortable(false),
             Column::make('created_by')->name('creator.name')->data('created_by')->sortable(false),

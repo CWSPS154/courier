@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin_layout',['title'=>'OrderJob Listing'])
+@extends('layouts.admin.admin_layout',['title'=>'Job Listing'])
 @section('content')
 
     @push('styles')
@@ -11,7 +11,13 @@
         </x-slot>
     </x-admin.ui.datatable>
     @push('scripts')
-        {{--Custom JS--}}
+        <script>
+            $(document).ready(function() {
+                setInterval(function() {
+                    location.reload();
+                }, 60000);
+            });
+        </script>
     @endpush
     `
 @endsection
