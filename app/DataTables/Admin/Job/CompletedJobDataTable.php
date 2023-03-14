@@ -45,7 +45,7 @@ class CompletedJobDataTable extends DataTable
                 return $query->dailyJob->job_number;
             })
             ->editColumn('customer', function ($query) {
-                return $query->user->customer->company_name.', '.$query->user->customer->customer_id.' - '.$query->user->name ;
+                return $query->user->customer->company_name.', '.$query->user->customer->customer_id;
             })
             ->editColumn('from_company',function ($query){
                 return $query->fromAddress->company_name;

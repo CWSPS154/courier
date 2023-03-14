@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\OrderJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -9,21 +10,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendToDriverCompany extends Mailable implements ShouldQueue
+class SendToDriver extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
-    public $content;
 
 
     /**
      * Create a new message instance.
      *
-     * @param $content
+     * @param $user_name
+     * @param $job_id
+     * @param OrderJob  $job
      */
-    public function __construct($content)
+    public function __construct(public $user_name, public $job_id, public OrderJob $job)
     {
-        $this->content = $content;
 
     }//end __construct()
 
@@ -36,7 +36,7 @@ class SendToDriverCompany extends Mailable implements ShouldQueue
     public function envelope()
     {
         return new Envelope(
-            subject: 'New Job Assigned',
+            subject: 'New Job Assigned -'.$this->job_id,
         );
 
     }//end envelope()
@@ -50,7 +50,7 @@ class SendToDriverCompany extends Mailable implements ShouldQueue
     public function content()
     {
         return new Content(
-            markdown: 'emails.driver.company',
+            view: 'emails.driver.company',
         );
 
     }//end content()

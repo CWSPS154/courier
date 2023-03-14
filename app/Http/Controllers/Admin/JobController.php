@@ -175,7 +175,7 @@ class JobController extends Controller
                             $order_job->save();
                             $msg='Job reassigned to '.$jobAssign->user->name.'<br>';
                             $this->jobOrderStatusHistory($order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
-                            event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
+                            event(new JobAssignedEvent($request->driver_id,$daily_job->job_number,$order_job));
                             $result = back()->with('success', 'Mass jobs assigned updated successfully');
                         }else{
                             $result = back()->with('info', "Can't assign the same driver again!!!");
@@ -189,7 +189,7 @@ class JobController extends Controller
                         $this->jobOrderStatusHistory($order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
                         $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
                         $order_job->save();
-                        event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
+                        event(new JobAssignedEvent($request->driver_id,$daily_job->job_number,$order_job));
                         $result = back()->with('success', 'Mass jobs assigned successfully');
                     }
                 }
@@ -208,7 +208,7 @@ class JobController extends Controller
                     $order_job->save();
                     $msg="Job reassigned to ".$jobAssign->user->name.'<br>';
                     $this->jobOrderStatusHistory($request->order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
-                    event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
+                    event(new JobAssignedEvent($request->driver_id,$daily_job->job_number,$order_job));
                     return back()->with('success', 'Job Assigned updated successfully');
                 } else{
                     return back()->with('info', "Can't assign the same driver again!!!");
@@ -222,7 +222,7 @@ class JobController extends Controller
                 $this->jobOrderStatusHistory($request->order_job_id,Auth::id(),$order_job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
                 $order_job->status_id=JobStatus::getStatusId(JobStatus::ASSIGNED);
                 $order_job->save();
-                event(new JobAssignedEvent($request->driver_id,$daily_job->job_number));
+                event(new JobAssignedEvent($request->driver_id,$daily_job->job_number,$order_job));
                 return back()->with('success', 'Job Assigned successfully');
             }
         }
@@ -595,7 +595,7 @@ class JobController extends Controller
                     $job->save();
                     $msg="Job reassigned to ".$jobAssign->user->name.'<br>';
                     $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
-                    event(new JobAssignedEvent($request->driver_id,$job->job_number));
+                    event(new JobAssignedEvent($request->driver_id,$job->job_number,$job));
                 }
                 else{
                     $Assign = JobAssign::where('order_job_id', $job->id)->where('user_id',$request->driver_id)->first();
@@ -609,7 +609,7 @@ class JobController extends Controller
                         $job->save();
                         $msg="Job assigned to ".$jobAssign->user->name.'<br>';
                         $this->jobOrderStatusHistory($job->id,Auth::id(),$job->status_id,JobStatus::getStatusId(JobStatus::ASSIGNED),$msg.$request->comment);
-                        event(new JobAssignedEvent($request->driver_id,$job->job_number));
+                        event(new JobAssignedEvent($request->driver_id,$job->job_number,$job));
                     }
                 }
             }
