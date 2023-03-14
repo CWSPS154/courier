@@ -36,9 +36,11 @@ class JobAssignedEvent
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param $user
+     * @param $order_job_id
+     * @param OrderJob $job
      */
-    public function __construct(public $user, public $order_job_id)
+    public function __construct(public $user, public $order_job_id, public OrderJob $job)
     {
         //
     }

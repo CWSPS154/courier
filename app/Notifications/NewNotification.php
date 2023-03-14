@@ -65,9 +65,7 @@ class NewNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage())
             ->subject('Notification')
-            ->line($this->notification)
-//            ->action('Notifications', route(Helper::getRoute('notifications')->route))
-            ->line('Thank you for using our application!');
+            ->view('emails.notifications.company.new_job_assigned',['data'=>$this->notification]);
     }
 
     /**
