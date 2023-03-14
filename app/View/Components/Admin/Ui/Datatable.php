@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -26,21 +23,12 @@ use Illuminate\View\Component;
 
 class Datatable extends Component
 {
-    /**
-     * @var
-     */
     public $dataTable;
 
-    /**
-     * @var
-     */
     public $title;
 
     /**
      * Create a new component instance.
-     *
-     * @param $dataTable
-     * @param $title
      */
     public function __construct($dataTable, $title)
     {

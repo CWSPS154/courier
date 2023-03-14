@@ -6,10 +6,7 @@
  *
  * @category Controller
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -32,7 +29,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -61,18 +57,19 @@ class DriverController extends Controller
             $drivers = User::select('id', 'name', 'role_id')->when(
                 $search,
                 function ($query) use ($search) {
-                    $query->where('name', 'like', '%' . $search . '%');
+                    $query->where('name', 'like', '%'.$search.'%');
                 }
             )->when($id, function ($query) use ($id) {
                 $query->where('id', $id);
             })->where('role_id', Role::getRoleId(Role::DRIVER))->limit(15)->get();
-            $response = array();
+            $response = [];
             foreach ($drivers as $driver) {
-                $response[] = array(
-                    "id" => $driver->id,
-                    "text" => $driver->name
-                );
+                $response[] = [
+                    'id' => $driver->id,
+                    'text' => $driver->name,
+                ];
             }
+
             return response()->json($response);
         }
     }
@@ -80,8 +77,6 @@ class DriverController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
@@ -91,7 +86,7 @@ class DriverController extends Controller
         $request->has('is_company_driver') ? $is_company_driver = true : $is_company_driver = false;
         $user = User::create([
 
-            'name' => $request->first_name . ' ' . $request->last_name,
+            'name' => $request->first_name.' '.$request->last_name,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -106,7 +101,7 @@ class DriverController extends Controller
             'area_id' => $request->area_id,
             'pager_number' => $request->pager_number,
             'company_driver' => $is_company_driver,
-            'company_email' => $request->company_email
+            'company_email' => $request->company_email,
         ]);
         $this->addAddress($request->all(), $user->id);
 //        $driver->driver_id = $driver->createIncrementDriverId($driver->id);
@@ -117,9 +112,8 @@ class DriverController extends Controller
     /**
      * Validator for validate data in the request.
      *
-     * @param array $data The data
-     * @param int|null $id The identifier for update validation
-     *
+     * @param  array  $data The data
+     * @param  int|null  $id The identifier for update validation
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      **/
     protected function validator(array $data, int|string $id = null, int|string $driver_id = null)
@@ -134,11 +128,11 @@ class DriverController extends Controller
         return Validator::make(
             $data,
             [
-                'did' => ['required', 'string', Rule::unique('drivers','driver_id')->whereNull('deleted_at')->ignore($driver_id)],
+                'did' => ['required', 'string', Rule::unique('drivers', 'driver_id')->whereNull('deleted_at')->ignore($driver_id)],
                 'first_name' => ['required', 'string', 'max:250'],
                 'last_name' => ['required', 'string'],
-                'email' => ['required', 'email', Rule::unique('users','email')->whereNull('deleted_at')->ignore($id)],
-                'mobile' => ['required', Rule::unique('users','mobile')->whereNull('deleted_at')->ignore($id)],
+                'email' => ['required', 'email', Rule::unique('users', 'email')->whereNull('deleted_at')->ignore($id)],
+                'mobile' => ['required', Rule::unique('users', 'mobile')->whereNull('deleted_at')->ignore($id)],
                 'area_id' => ['required'],
                 'street_address_driver' => ['required'],
                 'street_number_driver' => ['required'],
@@ -154,7 +148,7 @@ class DriverController extends Controller
                 'json_response_driver' => ['required'],
                 'is_company_driver' => ['filled'],
                 'company_email' => ['nullable', 'email'],
-                'password' => ['sometimes','nullable','confirmed','min:8']
+                'password' => ['sometimes', 'nullable', 'confirmed', 'min:8'],
             ]
         );
     }
@@ -170,48 +164,46 @@ class DriverController extends Controller
     }
 
     /**
-     * @param $address
-     * @param null $user_id
-     * @param bool $update
-     * @return AddressBook
+     * @param  null  $user_id
      */
     private function addAddress($address, $user_id = null, bool $update = false): AddressBook
     {
-        if (!$update) {
+        if (! $update) {
             return AddressBook::create([
                 'user_id' => $user_id,
-                'street_address' => $address['street_address_' . 'driver'],
-                'street_number' => $address['street_number_' . 'driver'],
-                'suburb' => $address['suburb_' . 'driver'],
-                'city' => $address['city_' . 'driver'],
-                'state' => $address['state_' . 'driver'],
-                'zip' => $address['zip_' . 'driver'],
-                'country' => $address['country_' . 'driver'],
-                'place_id' => $address['place_id_' . 'driver'],
+                'street_address' => $address['street_address_'.'driver'],
+                'street_number' => $address['street_number_'.'driver'],
+                'suburb' => $address['suburb_'.'driver'],
+                'city' => $address['city_'.'driver'],
+                'state' => $address['state_'.'driver'],
+                'zip' => $address['zip_'.'driver'],
+                'country' => $address['country_'.'driver'],
+                'place_id' => $address['place_id_'.'driver'],
                 'area_id' => $address['area_id'],
-                'latitude' => $address['latitude_' . 'driver'],
-                'longitude' => $address['longitude_' . 'driver'],
-                'location_url' => $address['location_url_' . 'driver'],
-                'full_json_response' => $address['json_response_' . 'driver'],
+                'latitude' => $address['latitude_'.'driver'],
+                'longitude' => $address['longitude_'.'driver'],
+                'location_url' => $address['location_url_'.'driver'],
+                'full_json_response' => $address['json_response_'.'driver'],
                 'status' => true,
-                'set_as_default' => true
+                'set_as_default' => true,
             ]);
         } else {
             $editAddress = AddressBook::findOrFail($user_id->defaultAddress->id);
-            $editAddress->street_address = $address['street_address_' . 'driver'];
-            $editAddress->street_number = $address['street_number_' . 'driver'];
-            $editAddress->suburb = $address['suburb_' . 'driver'];
-            $editAddress->city = $address['city_' . 'driver'];
-            $editAddress->state = $address['state_' . 'driver'];
-            $editAddress->zip = $address['zip_' . 'driver'];
-            $editAddress->country = $address['country_' . 'driver'];
-            $editAddress->place_id = $address['place_id_' . 'driver'];
+            $editAddress->street_address = $address['street_address_'.'driver'];
+            $editAddress->street_number = $address['street_number_'.'driver'];
+            $editAddress->suburb = $address['suburb_'.'driver'];
+            $editAddress->city = $address['city_'.'driver'];
+            $editAddress->state = $address['state_'.'driver'];
+            $editAddress->zip = $address['zip_'.'driver'];
+            $editAddress->country = $address['country_'.'driver'];
+            $editAddress->place_id = $address['place_id_'.'driver'];
             $editAddress->area_id = $address['area_id'];
-            $editAddress->latitude = $address['latitude_' . 'driver'];
-            $editAddress->longitude = $address['longitude_' . 'driver'];
-            $editAddress->location_url = $address['location_url_' . 'driver'];
-            $editAddress->full_json_response = $address['json_response_' . 'driver'];
+            $editAddress->latitude = $address['latitude_'.'driver'];
+            $editAddress->longitude = $address['longitude_'.'driver'];
+            $editAddress->location_url = $address['location_url_'.'driver'];
+            $editAddress->full_json_response = $address['json_response_'.'driver'];
             $editAddress->save();
+
             return $editAddress;
         }
     }
@@ -219,7 +211,6 @@ class DriverController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param User $driver
      * @return Application|Factory|View
      */
     public function edit(User $driver)
@@ -230,9 +221,6 @@ class DriverController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param User $driver
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function update(Request $request, User $driver): RedirectResponse
@@ -240,12 +228,12 @@ class DriverController extends Controller
         $this->validator($request->all(), $driver->id, $driver->driver->id)->validate();
         $request->has('is_active') ? $is_active = true : $is_active = false;
         $request->has('is_company_driver') ? $is_company_driver = true : $is_company_driver = false;
-        $driver->name = $request->first_name . ' ' . $request->last_name;
+        $driver->name = $request->first_name.' '.$request->last_name;
         $driver->first_name = $request->first_name;
         $driver->last_name = $request->last_name;
         $driver->email = $request->email;
         $driver->mobile = $request->mobile;
-        if($request->password_confirmation){
+        if ($request->password_confirmation) {
             $driver->password = Hash::make($request->password_confirmation);
         }
         $driver->is_active = $is_active;
@@ -261,24 +249,23 @@ class DriverController extends Controller
         if ($driver->wasChanged() || $driver_table->wasChanged() || $address->wasChanged()) {
             return redirect()->route('driver.index')->with('success', 'Driver details updated successfully');
         }
+
         return back()->with('info', 'No changes have made.');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param User $driver
-     * @return RedirectResponse
      */
     public function destroy(User $driver): RedirectResponse
     {
         try {
             $driver->delete();
+
             return back()->with('success', 'Driver details deleted successfully');
         } catch (QueryException $e) {
             return back()->with(
                 'error',
-                'You Can not delete this driver due  to data integrity violation, Error:' . $e->getMessage()
+                'You Can not delete this driver due  to data integrity violation, Error:'.$e->getMessage()
             );
         }
     }

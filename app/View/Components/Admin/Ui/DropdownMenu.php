@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -44,10 +41,6 @@ class DropdownMenu extends Component
 
     /**
      * Create a new component instance.
-     *
-     * @param string $name
-     * @param string $icon
-     * @param string $menus
      */
     public function __construct(string $name, string $icon, string $menus)
     {

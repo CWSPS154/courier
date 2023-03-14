@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -59,9 +56,6 @@ class JobAddress extends Model
      */
     protected $dates = ['deleted_at'];
 
-    /**
-     * @return BelongsTo
-     */
     public function job(): BelongsTo
     {
         return $this->belongsTo(OrderJob::class, 'order_job_id');

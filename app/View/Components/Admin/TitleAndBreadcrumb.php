@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,7 +16,6 @@
 
 namespace App\View\Components\Admin;
 
-use Closure;
 use Helper;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -32,10 +28,12 @@ class TitleAndBreadcrumb extends Component
      * @var string
      */
     public $title;
+
     /**
      * @var int
      */
     public $breadcrumbOn;
+
     /**
      * @var string
      */
@@ -43,10 +41,6 @@ class TitleAndBreadcrumb extends Component
 
     /**
      * Create a new component instance.
-     *
-     * @param string $title
-     * @param int $breadcrumbOn
-     * @param string|null $breadcrumbs
      */
     public function __construct(string $title, int $breadcrumbOn = 1, string $breadcrumbs = null)
     {

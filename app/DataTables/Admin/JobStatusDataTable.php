@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,28 +16,27 @@
 
 namespace App\DataTables\Admin;
 
+use App\Helpers\Helper;
 use App\Models\JobStatus;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
-use App\Helpers\Helper;
 
 class JobStatusDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
             ->addIndexColumn()
-            ->addColumn('action', function($query){
+            ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('job_status.edit', $query->id)]
@@ -51,9 +47,6 @@ class JobStatusDataTable extends DataTable
 
     /**
      * Get query source of dataTable.
-     *
-     * @param JobStatus $model
-     * @return QueryBuilder
      */
     public function query(JobStatus $model): QueryBuilder
     {
@@ -62,8 +55,6 @@ class JobStatusDataTable extends DataTable
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -88,8 +79,6 @@ class JobStatusDataTable extends DataTable
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -99,17 +88,15 @@ class JobStatusDataTable extends DataTable
             Column::make('identifier')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Admin/JobStatus_' . date('YmdHis');
+        return 'Admin/JobStatus_'.date('YmdHis');
     }
 }

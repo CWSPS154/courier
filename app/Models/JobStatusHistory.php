@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -36,7 +33,7 @@ class JobStatusHistory extends Model implements HasMedia
     use HasUuids;
     use InteractsWithMedia;
 
-    public const DEFAULT_IMAGE='/images/default/camera.png';
+    public const DEFAULT_IMAGE = '/images/default/camera.png';
 
     /**
      * @var string
@@ -52,51 +49,38 @@ class JobStatusHistory extends Model implements HasMedia
         'from_status_id',
         'to_status_id',
         'comment',
-        ];
+    ];
 
     /**
      * @var string[]
      */
     protected $dates = ['deleted_at'];
 
-    /**
-     * @return BelongsTo
-     */
-    public function job(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function job(): BelongsTo
     {
-        return $this->belongsTo(OrderJob::class,'order_job_id','id');
+        return $this->belongsTo(OrderJob::class, 'order_job_id', 'id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function fromStatus(): BelongsTo
     {
-        return $this->belongsTo(JobStatus::class,'from_status_id','id');
+        return $this->belongsTo(JobStatus::class, 'from_status_id', 'id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function toStatus(): BelongsTo
     {
-        return $this->belongsTo(JobStatus::class,'to_status_id','id');
+        return $this->belongsTo(JobStatus::class, 'to_status_id', 'id');
     }
 
     /**
      * Media conversion to avatar.
      *
-     * @param Media|null $media The media
+     * @param  Media|null  $media The media
      *
-     * @return void
      * @throws InvalidManipulation
      */
     public function registerMediaConversions(Media $media = null): void
@@ -109,8 +93,6 @@ class JobStatusHistory extends Model implements HasMedia
 
     /**
      * Register media collection.
-     *
-     * @return void
      */
     public function registerMediaCollections(): void
     {

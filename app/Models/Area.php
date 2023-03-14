@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -62,21 +59,14 @@ class Area extends Model
     /**
      * @return mixed
      */
-
-    /**
-     * @return HasMany
-     */
     public function fromJobs(): HasMany
     {
-        return $this->hasMany(OrderJob::class,'from_area_id','id');
+        return $this->hasMany(OrderJob::class, 'from_area_id', 'id');
     }
 
-    /**
-     * @return HasMany
-     */
     public function toJobs(): HasMany
     {
-        return $this->hasMany(OrderJob::class,'to_area_id','id');
+        return $this->hasMany(OrderJob::class, 'to_area_id', 'id');
     }
 
     public static function getAreas()
@@ -84,17 +74,11 @@ class Area extends Model
         return Area::where('status', true)->pluck('area', 'id')->toArray();
     }
 
-    /**
-     * @return HasOne
-     */
     public function customer(): HasOne
     {
         return $this->hasOne(Customer::class);
     }
 
-    /**
-     * @return HasOne
-     */
     public function driver(): HasOne
     {
         return $this->hasOne(Driver::class);

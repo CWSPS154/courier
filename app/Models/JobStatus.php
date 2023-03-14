@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -28,13 +25,19 @@ class JobStatus extends Model
     use HasFactory;
     use HasUuids;
 
-    const NEW_JOB='new_job';
-    const ASSIGNED='assigned';
-    const ACCEPTED='accepted';
-    const REJECTED='rejected';
-    const PICKED_UP='picked_up';
-    const DELIVERED='delivered';
-    const CANCELLED='cancelled';
+    const NEW_JOB = 'new_job';
+
+    const ASSIGNED = 'assigned';
+
+    const ACCEPTED = 'accepted';
+
+    const REJECTED = 'rejected';
+
+    const PICKED_UP = 'picked_up';
+
+    const DELIVERED = 'delivered';
+
+    const CANCELLED = 'cancelled';
 
     /**
      * @var string
@@ -45,12 +48,13 @@ class JobStatus extends Model
      * @var string[]
      */
     protected $fillable = ['status',
-        'identifier'
+        'identifier',
     ];
 
     public static function getStatusId($identifier)
     {
-        $job_status=JobStatus::where('identifier',$identifier)->firstOrFail();
+        $job_status = JobStatus::where('identifier', $identifier)->firstOrFail();
+
         return $job_status->id;
     }
 }

@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -31,22 +28,24 @@ class Menu extends Component
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $route;
+
     /**
      * @var string
      */
     public $icon;
-    /**
-     * @var
-     */
+
     public $target;
+
     /**
      * @var bool|int
      */
     public $new;
+
     /**
      * @var int
      */
@@ -54,21 +53,14 @@ class Menu extends Component
 
     /**
      * Create a new component instance.
-     *
-     * @param string $name
-     * @param string $route
-     * @param string $icon
-     * @param int $target
-     * @param int $new
-     * @param int $count
      */
     public function __construct(
         string $name,
         string $route,
         string $icon,
-        int    $target = 0,
-        int    $new = 0,
-        int    $count = 0
+        int $target = 0,
+        int $new = 0,
+        int $count = 0
     ) {
         $this->name = $name;
         $this->route = $route;

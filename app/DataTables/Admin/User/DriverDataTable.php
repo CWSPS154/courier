@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -33,8 +30,7 @@ class DriverDataTable extends DataTable
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -45,10 +41,10 @@ class DriverDataTable extends DataTable
                 return $query->driver->driver_id;
             })
             ->editColumn('email', function ($query) {
-                return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
+                return '<a href="mailto:'.$query->email.'">'.$query->email.'</a> ';
             })
             ->editColumn('mobile', function ($query) {
-                return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
+                return '<a href="tel:'.$query->mobile.'">'.$query->mobile.'</a>';
             })
             ->editColumn('area', function ($query) {
                 return $query->driver->area->area;
@@ -60,13 +56,13 @@ class DriverDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function($query){
-                if(count($query->jobAssigns)) {
+            ->addColumn('action', function ($query) {
+                if (count($query->jobAssigns)) {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('driver.edit', $query->id)]
                     );
-                }else{
+                } else {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('driver.edit', $query->id),
@@ -79,20 +75,15 @@ class DriverDataTable extends DataTable
 
     /**
      * Get query source of dataTable.
-     *
-     * @param User $model
-     * @return QueryBuilder
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->with(['driver:user_id,driver_id,area_id','driver.area:area,id','jobAssigns'])->select('users.*')
-            ->where('users.role_id', Role::getRoleId(Role::DRIVER))->orderBy('users.created_at', 'desc');;
+        return $model->newQuery()->with(['driver:user_id,driver_id,area_id', 'driver.area:area,id', 'jobAssigns'])->select('users.*')
+            ->where('users.role_id', Role::getRoleId(Role::DRIVER))->orderBy('users.created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -109,16 +100,14 @@ class DriverDataTable extends DataTable
                     'text' => 'New Driver',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('driver.create') . '";
-                     }'
-                ],]
+                         window.location = "'.Helper::getRoute('driver.create').'";
+                     }',
+                ], ],
             ]);
     }
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -133,17 +122,15 @@ class DriverDataTable extends DataTable
             Column::make('status')->name('is_active')->data('is_active')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Admin/User/Driver_' . date('YmdHis');
+        return 'Admin/User/Driver_'.date('YmdHis');
     }
 }

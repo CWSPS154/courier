@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,42 +16,41 @@
 
 namespace App\DataTables\Driver;
 
-use App\Models\OrderJob;
 use App\Models\JobStatus;
+use App\Models\OrderJob;
+use Helper;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
-use Helper;
-use Illuminate\Support\Facades\Auth;
 
 class JobDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
             ->addIndexColumn()
-            ->editColumn('daily_job_number',function ($query){
+            ->editColumn('daily_job_number', function ($query) {
                 return $query->dailyJob->job_number;
             })
-            ->editColumn('from_company',function ($query){
+            ->editColumn('from_company', function ($query) {
                 return $query->fromAddress->company_name;
             })
-            ->editColumn('to_company',function ($query){
+            ->editColumn('to_company', function ($query) {
                 return $query->toAddress->company_name;
             })
-            ->editColumn('from_area_id',function ($query){
+            ->editColumn('from_area_id', function ($query) {
                 return '<a href="#" class="disabled" data-toggle="tooltip"  title="'.$query->fromAddress->street_number.','.$query->fromAddress->street_address.'">'.$query->fromArea->area.'</a>';
             })
-            ->editColumn('to_area_id',function ($query){
+            ->editColumn('to_area_id', function ($query) {
                 return '<a href="#" class="disabled" data-toggle="tooltip" title="'.$query->toAddress->street_number.','.$query->toAddress->street_address.'">'.$query->toArea->area.'</a>';
             })
             ->editColumn('van_hire', function ($query) {
@@ -64,12 +60,12 @@ class JobDataTable extends DataTable
                     return '<span class="text-danger">No</span>';
                 }
             })
-            ->editColumn('status_id',function ($query){
+            ->editColumn('status_id', function ($query) {
                 return $query->status->status;
             })
             ->addColumn('assigned_to', function ($query) {
                 if (isset($query->jobAssign)) {
-                    return '<span class="text-success">' . $query->jobAssign->user->name . '</span>';
+                    return '<span class="text-success">'.$query->jobAssign->user->name.'</span>';
                 } else {
                     return '<span class="text-warning">Not Assigned</span>';
                 }
@@ -81,55 +77,48 @@ class JobDataTable extends DataTable
                 return $query->creator->name;
             })
             ->addColumn('action', function ($query) {
-                if($query->status->identifier==JobStatus::ASSIGNED){
+                if ($query->status->identifier == JobStatus::ASSIGNED) {
                     return view(
                         'components.admin.datatable.accept_reject_button',
                         [
                             'view' => Helper::getRoute('myjob.show', $query->id),
-//                            'accept' => Helper::getRoute('myjob.update', $query->id),
-//                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id
+                            //                            'accept' => Helper::getRoute('myjob.update', $query->id),
+                            //                            'reject' => Helper::getRoute('myjob.update', $query->id), 'id' => $query->id
                         ]
                     );
-                }
-                elseif($query->status->identifier==JobStatus::ACCEPTED) {
+                } elseif ($query->status->identifier == JobStatus::ACCEPTED) {
                     return view(
                         'components.admin.datatable.view_button',
-                        ['view' => Helper::getRoute('myjob.show', $query->id),'picked_up'=>Helper::getRoute('myjob.update',$query->id)]
+                        ['view' => Helper::getRoute('myjob.show', $query->id), 'picked_up' => Helper::getRoute('myjob.update', $query->id)]
                     );
-                }
-                elseif($query->status->identifier==JobStatus::PICKED_UP) {
+                } elseif ($query->status->identifier == JobStatus::PICKED_UP) {
                     return view(
                         'components.admin.datatable.view_button',
-                        ['view' => Helper::getRoute('myjob.show', $query->id),'delivered'=>Helper::getRoute('myjob.update',$query->id)]
+                        ['view' => Helper::getRoute('myjob.show', $query->id), 'delivered' => Helper::getRoute('myjob.update', $query->id)]
                     );
-                }else{
+                } else {
                     return view(
                         'components.admin.datatable.view_button',
                         ['view' => Helper::getRoute('myjob.show', $query->id)]
                     );
                 }
             })
-            ->rawColumns(['from_area_id','to_area_id','van_hire','assigned_to','action']);
+            ->rawColumns(['from_area_id', 'to_area_id', 'van_hire', 'assigned_to', 'action']);
     }
 
     /**
      * Get query source of dataTable.
-     *
-     * @param OrderJob $model
-     * @return QueryBuilder
      */
     public function query(OrderJob $model): QueryBuilder
     {
-        return $model->newQuery()->with(['user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,identifier,id','dailyJob:job_number,id,order_job_id','fromAddress','toAddress'])
+        return $model->newQuery()->with(['user:name,id', 'fromArea:area,id', 'toArea:area,id', 'timeFrame:time_frame,id', 'jobAssign', 'status:status,identifier,id', 'dailyJob:job_number,id,order_job_id', 'fromAddress', 'toAddress'])
             ->whereHas('jobAssign', function ($q) {
                 $q->where('user_id', Auth::id());
-            })->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::DELIVERED))->where('order_jobs.status_id','!=',JobStatus::getStatusId(JobStatus::REJECTED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
+            })->where('order_jobs.status_id', '!=', JobStatus::getStatusId(JobStatus::DELIVERED))->where('order_jobs.status_id', '!=', JobStatus::getStatusId(JobStatus::REJECTED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -144,8 +133,6 @@ class JobDataTable extends DataTable
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -163,17 +150,15 @@ class JobDataTable extends DataTable
             Column::make('created_by')->name('creator.name')->data('created_by')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Driver/Job_' . date('YmdHis');
+        return 'Driver/Job_'.date('YmdHis');
     }
 }

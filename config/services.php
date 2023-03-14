@@ -33,5 +33,5 @@ return [
         'key' => env('GOOGLE_API_KEY'),
         'params' => env('GOOGLE_API_PARAMS'),
         'countries' => env('GOOGLE_API_COUNTRIES'),
-    ]
+    ],
 ];

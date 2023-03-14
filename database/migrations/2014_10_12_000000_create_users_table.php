@@ -34,7 +34,6 @@ class CreateUsersTable extends Migration
             $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignUuid('deleted_by')->nullable()->constrained('users')->nullOnDelete();
         });
-
     }
 
     /**
@@ -50,6 +49,5 @@ class CreateUsersTable extends Migration
             $table->dropColumn('updated_by');
             $table->dropColumn('deleted_by');
         });
-
     }
 }

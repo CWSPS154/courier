@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -30,42 +27,36 @@ class AddressAutocomplete extends Component
      * @var string
      */
     public $inputId;
+
     /**
      * @var object|null
      */
     public $editData;
+
     /**
      * @var string
      */
     public $relations;
+
     /**
      * @var false|mixed
      */
     public $noRelation;
-    /**
-     * @var bool
-     */
+
     public bool $readonly;
-    /**
-     * @var bool
-     */
+
     public bool $disable;
 
     /**
      * Create a new component instance.
-     *
-     * @param string|null $inputId
-     * @param object|null $editData
-     * @param string $relations
-     * @param bool $noRelation
      */
     public function __construct(
         string $inputId = null,
         object $editData = null,
         string $relations = 'defaultAddress',
-        bool   $noRelation = false,
-        bool   $readonly = false,
-        bool   $disable = false
+        bool $noRelation = false,
+        bool $readonly = false,
+        bool $disable = false
     ) {
         $this->inputId = $inputId;
         $this->editData = $editData;

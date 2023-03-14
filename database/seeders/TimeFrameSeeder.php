@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\TimeFrame;
-
 use Illuminate\Database\Seeder;
 
 class TimeFrameSeeder extends Seeder

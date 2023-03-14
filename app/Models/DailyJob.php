@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -48,9 +45,6 @@ class DailyJob extends Model
      */
     protected $dates = ['deleted_at'];
 
-    /**
-     * @return int
-     */
     public static function getTodaysJobCount(): int
     {
         return DailyJob::whereDate('created_at', Carbon\Carbon::today())->count();

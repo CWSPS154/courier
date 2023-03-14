@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -31,38 +28,47 @@ class Select extends Component
      * @var string
      */
     public $label;
+
     /**
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $id;
+
     /**
      * @var string|array|null
      */
     public $options;
+
     /**
      * @var string|null
      */
     public $addClass;
+
     /**
      * @var bool
      */
     public $disable;
+
     /**
      * @var bool
      */
     public $required;
+
     /**
      * @var bool
      */
     public $multiple;
+
     /**
      * @var string|null
      */
     public $value;
+
     /**
      * @var bool
      */
@@ -71,16 +77,7 @@ class Select extends Component
     /**
      * Create a new component instance.
      *
-     * @param string $label
-     * @param string $name
-     * @param string $id
-     * @param string|array|null $options
-     * @param string|null $addClass
-     * @param bool $required
-     * @param bool $disable
-     * @param bool $multiple
-     * @param string|null $value
-     * @param string $default
+     * @param  string|array|null  $options
      */
     public function __construct(
         string $label,
@@ -88,9 +85,9 @@ class Select extends Component
         string $id,
         $options = null,
         string $addClass = null,
-        bool   $required = false,
-        bool   $disable = false,
-        bool   $multiple = false,
+        bool $required = false,
+        bool $disable = false,
+        bool $multiple = false,
         string $value = null,
         string $default = '-- select --'
     ) {

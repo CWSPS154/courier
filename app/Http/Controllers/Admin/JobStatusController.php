@@ -6,10 +6,7 @@
  *
  * @category Controller
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -38,9 +35,6 @@ class JobStatusController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param JobStatusDataTable $dataTable
-     * @return Application|Factory|View|JsonResponse
      */
     public function index(JobStatusDataTable $dataTable): View|Factory|JsonResponse|Application
     {
@@ -49,8 +43,6 @@ class JobStatusController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Application|Factory|View
      */
     public function create(): View|Factory|Application
     {
@@ -60,10 +52,8 @@ class JobStatusController extends Controller
     /**
      * Validator for validate data in the request.
      *
-     * @param array $data The data
-     * @param int|string|null $id The identifier for update validation
-     *
-     * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
+     * @param  array  $data The data
+     * @param  int|string|null  $id The identifier for update validation
      */
     protected function validator(array $data, int|string $id = null): \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
     {
@@ -78,7 +68,7 @@ class JobStatusController extends Controller
             $data,
             [
                 'status' => ['required', 'string', 'max:250'],
-                'identifier' => ['required', 'string','unique:job_status,identifier,'.$id],
+                'identifier' => ['required', 'string', 'unique:job_status,identifier,'.$id],
 
             ]
         );
@@ -87,8 +77,6 @@ class JobStatusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
@@ -96,8 +84,9 @@ class JobStatusController extends Controller
         $this->validator($request->all())->validate();
         JobStatus::create([
             'status' => $request->status,
-            'identifier' => Helper::strLoU($request->identifier)
+            'identifier' => Helper::strLoU($request->identifier),
         ]);
+
         return redirect()->route('job_status.index')->with('success', 'Job Status is saved successfully');
     }
 
@@ -114,9 +103,6 @@ class JobStatusController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param JobStatus $jobStatus
-     * @return Application|Factory|View
      */
     public function edit(JobStatus $jobStatus): View|Factory|Application
     {
@@ -126,9 +112,6 @@ class JobStatusController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param JobStatus $jobStatus
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function update(Request $request, JobStatus $jobStatus): RedirectResponse
@@ -140,24 +123,23 @@ class JobStatusController extends Controller
         if ($jobStatus->wasChanged()) {
             return redirect()->route('job_status.index')->with('success', 'Job Status is updated successfully');
         }
+
         return back()->with('info', 'No changes have made.');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param JobStatus $jobStatus
-     * @return RedirectResponse
      */
     public function destroy(JobStatus $jobStatus): RedirectResponse
     {
         try {
             $jobStatus->delete();
+
             return back()->with('success', 'Job Status deleted successfully');
         } catch (QueryException $e) {
             return back()->with(
                 'error',
-                'You Can not delete this job status due to data integrity violation, Error:' . $e->getMessage()
+                'You Can not delete this job status due to data integrity violation, Error:'.$e->getMessage()
             );
         }
     }

@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,42 +16,41 @@
 
 namespace App\DataTables\Customer;
 
-use App\Models\OrderJob;
 use App\Models\JobStatus;
+use App\Models\OrderJob;
+use Helper;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
-use Helper;
-use Illuminate\Support\Facades\Auth;
 
 class CompletedJobDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
             ->addIndexColumn()
-            ->editColumn('daily_job_number',function ($query){
+            ->editColumn('daily_job_number', function ($query) {
                 return $query->dailyJob->job_number;
             })
-            ->editColumn('from_company',function ($query){
+            ->editColumn('from_company', function ($query) {
                 return $query->fromAddress->company_name;
             })
-            ->editColumn('to_company',function ($query){
+            ->editColumn('to_company', function ($query) {
                 return $query->toAddress->company_name;
             })
-            ->editColumn('from_area_id',function ($query){
+            ->editColumn('from_area_id', function ($query) {
                 return '<a href="#" class="disabled" data-toggle="tooltip"  title="'.$query->fromAddress->street_number.','.$query->fromAddress->street_address.'">'.$query->fromArea->area.'</a>';
             })
-            ->editColumn('to_area_id',function ($query){
+            ->editColumn('to_area_id', function ($query) {
                 return '<a href="#" class="disabled" data-toggle="tooltip" title="'.$query->toAddress->street_number.','.$query->toAddress->street_address.'">'.$query->toArea->area.'</a>';
             })
             ->editColumn('van_hire', function ($query) {
@@ -64,12 +60,12 @@ class CompletedJobDataTable extends DataTable
                     return '<span class="text-danger">No</span>';
                 }
             })
-            ->editColumn('status_id',function ($query){
+            ->editColumn('status_id', function ($query) {
                 return $query->status->status;
             })
             ->addColumn('assigned_to', function ($query) {
                 if (isset($query->jobAssign)) {
-                    return '<span class="text-success">' . $query->jobAssign->user->name . '</span>';
+                    return '<span class="text-success">'.$query->jobAssign->user->name.'</span>';
                 } else {
                     return '<span class="text-warning">Not Assigned</span>';
                 }
@@ -80,31 +76,26 @@ class CompletedJobDataTable extends DataTable
             ->editColumn('created_by', function ($query) {
                 return $query->creator->name;
             })
-            ->addColumn('action', function($query){
+            ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.view_button',
                     ['view' => Helper::getRoute('jobs.completed.view', $query->id)]
                 );
             })
-            ->rawColumns(['from_area_id','to_area_id','van_hire','assigned_to','action']);
+            ->rawColumns(['from_area_id', 'to_area_id', 'van_hire', 'assigned_to', 'action']);
     }
 
     /**
      * Get query source of dataTable.
-     *
-     * @param OrderJob $model
-     * @return QueryBuilder
      */
     public function query(OrderJob $model): QueryBuilder
     {
-        return $model->newQuery()->with(['fromArea:area,id', 'toArea:area,id', 'status:status,id', 'creator:name,id', 'editor:name,id','dailyJob:job_number,id,order_job_id','jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id','fromAddress','toAddress'])
-            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id',JobStatus::getStatusId(JobStatus::DELIVERED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
+        return $model->newQuery()->with(['fromArea:area,id', 'toArea:area,id', 'status:status,id', 'creator:name,id', 'editor:name,id', 'dailyJob:job_number,id,order_job_id', 'jobAssign:order_job_id,user_id,id', 'jobAssign.user:name,id', 'fromAddress', 'toAddress'])
+            ->where('order_jobs.user_id', Auth::id())->where('order_jobs.status_id', JobStatus::getStatusId(JobStatus::DELIVERED))->select('order_jobs.*')->orderBy('order_jobs.created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -117,14 +108,12 @@ class CompletedJobDataTable extends DataTable
             ->pagingType('numbers')
             ->parameters([
                 'dom' => 'Bfrtip',
-                'buttons' => ['excel', 'csv', 'pdf', 'print']
+                'buttons' => ['excel', 'csv', 'pdf', 'print'],
             ]);
     }
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -142,17 +131,15 @@ class CompletedJobDataTable extends DataTable
             Column::make('created_by')->name('creator.name')->data('created_by')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Customer/CompletedJob_' . date('YmdHis');
+        return 'Customer/CompletedJob_'.date('YmdHis');
     }
 }
