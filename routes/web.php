@@ -6,10 +6,7 @@
  *
  * @category Web
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -24,9 +21,9 @@ use App\Http\Controllers\Admin\JobStatusController;
 use App\Http\Controllers\Admin\TimeFrameController;
 use App\Http\Controllers\Admin\User\CustomerController;
 use App\Http\Controllers\Admin\User\DriverController;
-use App\Http\Controllers\Driver\JobController as DriverJobController;
-use App\Http\Controllers\Customer\JobController as CustomerJobController;
 use App\Http\Controllers\Customer\AddressBookController as CustomerAddressBookController;
+use App\Http\Controllers\Customer\JobController as CustomerJobController;
+use App\Http\Controllers\Driver\JobController as DriverJobController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -40,28 +37,25 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes(['verify' => true,'register' => false]);
+Auth::routes(['verify' => true, 'register' => false]);
 
 Route::get('/', function () {
-    if(Auth::check())
-    {
-        if(Auth::user()->isAdmin())
-        {
+    if (Auth::check()) {
+        if (Auth::user()->isAdmin()) {
             return redirect()->route('job.index');
-        }elseif (Auth::user()->isCustomer())
-        {
+        } elseif (Auth::user()->isCustomer()) {
             return redirect()->route('jobs.index');
-        }elseif (Auth::user()->isDriver())
-        {
+        } elseif (Auth::user()->isDriver()) {
             return redirect()->route('myjob.index');
-        }else{
+        } else {
             return redirect('login');
         }
     }
+
     return redirect('login');
 });
 
-Route::group(['middleware' => ['auth','is-active']], function () {
+Route::group(['middleware' => ['auth', 'is-active']], function () {
 //    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/list_customer', [CustomerController::class, 'getCustomers'])->name('customer.list');
     Route::get('/list_driver', [DriverController::class, 'getDrivers'])->name('driver.list');
@@ -69,7 +63,7 @@ Route::group(['middleware' => ['auth','is-active']], function () {
     Route::get('/list_timeframe', [TimeFrameController::class, 'getTimeframe'])->name('timeframe.list');
 
     /*Admin Routes */
-    Route::group(['middleware' => 'admin', 'prefix' => 'admin', 'name' => 'admin' . '.'], function () {
+    Route::group(['middleware' => 'admin', 'prefix' => 'admin', 'name' => 'admin'.'.'], function () {
         Route::resource('/user/customer', CustomerController::class);
         Route::resource('/user/driver', DriverController::class);
         Route::resource('/area', AreaController::class);
@@ -84,11 +78,11 @@ Route::group(['middleware' => ['auth','is-active']], function () {
         Route::post('/job/deleteHistory', [JobController::class, 'deleteHistory'])->name('job.deleteHistory');
         Route::resource('/job', JobController::class);
         Route::resource('/job/edit_address_book', CustomerAddressBookController::class)->only(['edit', 'update']);
-        Route::resource('/job/status/job_status', JobStatusController::class)->name('*','job_status');
+        Route::resource('/job/status/job_status', JobStatusController::class)->name('*', 'job_status');
     });
 
     /*Customer Routes */
-    Route::group(['middleware' => 'customer', 'prefix' => 'customer', 'name' => 'customer' . '.'], function () {
+    Route::group(['middleware' => 'customer', 'prefix' => 'customer', 'name' => 'customer'.'.'], function () {
         Route::post('/jobs/getAddress', [CustomerJobController::class, 'getAddress'])->name('jobs.getAddress');
         Route::post('/jobs/getAddressBook', [CustomerJobController::class, 'getAddressBook'])->name('jobs.getAddressBook');
         Route::post('/jobs/getCustomerContact', [CustomerJobController::class,
@@ -100,9 +94,9 @@ Route::group(['middleware' => ['auth','is-active']], function () {
     });
 
     /*Driver Routes */
-    Route::group(['middleware' => 'driver', 'prefix' => 'driver', 'name' => 'driver' . '.'], function () {
+    Route::group(['middleware' => 'driver', 'prefix' => 'driver', 'name' => 'driver'.'.'], function () {
         Route::post('/myjob/updateHistory', [DriverJobController::class, 'updateHistory'])->name('myjob.updateHistory');
         Route::post('/myjob/deleteHistory', [DriverJobController::class, 'deleteHistory'])->name('myjob.deleteHistory');
-        Route::resource('/myjob', DriverJobController::class)->except(['create','edit','destroy']);
+        Route::resource('/myjob', DriverJobController::class)->except(['create', 'edit', 'destroy']);
     });
 });

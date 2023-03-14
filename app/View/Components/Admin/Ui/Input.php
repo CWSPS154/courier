@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -30,50 +27,62 @@ class Input extends Component
      * @var string
      */
     public $label;
+
     /**
      * @var string
      */
     public $type;
+
     /**
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $id;
+
     /**
      * @var string|null
      */
     public $addClass;
+
     /**
      * @var string|null
      */
     public $placeholder;
+
     /**
      * @var bool
      */
     public $autocomplete;
+
     /**
      * @var bool
      */
     public $required;
+
     /**
      * @var bool
      */
     public $disable;
+
     /**
      * @var bool
      */
     public $readonly;
+
     /**
      * @var mixed|null
      */
     public $value;
+
     /**
      * @var string|null
      */
     public $other;
+
     /**
      * @var string|null
      */
@@ -82,19 +91,7 @@ class Input extends Component
     /**
      * Create a new component instance.
      *
-     * @param string $label
-     * @param string $type
-     * @param string $name
-     * @param string $id
-     * @param null $value
-     * @param string|null $other
-     * @param string|null $addClass
-     * @param string|null $formGroupClass
-     * @param string|null $placeholder
-     * @param bool $required
-     * @param bool $readonly
-     * @param bool $disable
-     * @param bool $autocomplete
+     * @param  null  $value
      */
     public function __construct(
         string $label,
@@ -106,10 +103,10 @@ class Input extends Component
         string $addClass = null,
         string $formGroupClass = null,
         string $placeholder = null,
-        bool   $required = false,
-        bool   $readonly = false,
-        bool   $disable = false,
-        bool   $autocomplete = false
+        bool $required = false,
+        bool $readonly = false,
+        bool $disable = false,
+        bool $autocomplete = false
     ) {
         $this->label = $label;
         $this->type = $type;

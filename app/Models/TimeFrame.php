@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -37,7 +34,7 @@ class TimeFrame extends Model
      * @var string[]
      */
     protected $fillable = ['time_frame',
-        'status'
+        'status',
     ];
 
     /**

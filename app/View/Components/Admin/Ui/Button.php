@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -30,26 +27,32 @@ class Button extends Component
      * @var string
      */
     public $type;
+
     /**
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $id;
+
     /**
      * @var string
      */
     public $btnName;
+
     /**
      * @var string
      */
     public $class;
+
     /**
      * @var bool
      */
     public $disable;
+
     /**
      * @var string|null
      */
@@ -57,14 +60,6 @@ class Button extends Component
 
     /**
      * Create a new component instance.
-     *
-     * @param string $type
-     * @param string $name
-     * @param string $id
-     * @param string $btnName
-     * @param string $class
-     * @param bool $disable
-     * @param string|null $other
      */
     public function __construct(
         string $type,
@@ -72,7 +67,7 @@ class Button extends Component
         string $id,
         string $btnName,
         string $class = 'btn-primary',
-        bool   $disable = false,
+        bool $disable = false,
         string $other = null
     ) {
         $this->type = $type;

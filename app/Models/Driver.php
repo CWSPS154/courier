@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -57,28 +54,18 @@ class Driver extends Model
      */
     protected $dates = ['deleted_at'];
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'area_id');
     }
 
-    /**
-     * @param int $id
-     * @return string
-     */
     public function createIncrementDriverId(int $id): string
     {
-        return self::DRIVER_ID_PREFIX . str_pad($id, 5, 0, STR_PAD_LEFT);
+        return self::DRIVER_ID_PREFIX.str_pad($id, 5, 0, STR_PAD_LEFT);
     }
 }

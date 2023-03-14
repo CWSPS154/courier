@@ -6,10 +6,7 @@
  *
  * @category Notification
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -26,18 +23,12 @@ use Illuminate\Notifications\Notification;
 
 class NewNotification extends Notification implements ShouldQueue
 {
-
     use Queueable;
 
-    /**
-     * @var string
-     */
     public string $notification;
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $notification
      */
     public function __construct(string $notification)
     {
@@ -47,8 +38,7 @@ class NewNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function via($notifiable): array
     {
@@ -58,28 +48,26 @@ class NewNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable
-     * @return MailMessage
+     * @param  mixed  $notifiable
      */
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage())
             ->subject('Notification')
-            ->view('emails.notifications.company.new_job_assigned',['data'=>$this->notification]);
+            ->view('emails.notifications.company.new_job_assigned', ['data' => $this->notification]);
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function toArray($notifiable): array
     {
         return [
             'data' => $this->notification,
             'icon' => 'icon-bell',
-            'bg' => 'bg-warning'
+            'bg' => 'bg-warning',
         ];
     }
 }

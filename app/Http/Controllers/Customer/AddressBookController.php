@@ -6,10 +6,7 @@
  *
  * @category Controller
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -26,7 +23,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -36,7 +32,6 @@ class AddressBookController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param AddressBookDataTable $dataTable
      * @return mixed
      */
     public function index(AddressBookDataTable $dataTable)
@@ -47,8 +42,6 @@ class AddressBookController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
@@ -77,17 +70,17 @@ class AddressBookController extends Controller
             'location_url' => $request->location_url_address_book,
             'full_json_response' => $request->json_response_address_book,
             'status' => $status,
-            'set_as_default' => $set_as_default
+            'set_as_default' => $set_as_default,
         ]);
+
         return redirect()->route('address_book.index')->with('success', 'Address is created successfully');
     }
 
     /**
      * Validator for validate data in the request.
      *
-     * @param array $data The data
-     * @param int|string|null $id The identifier for update validation
-     *
+     * @param  array  $data The data
+     * @param  int|string|null  $id The identifier for update validation
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      */
     protected function validator(array $data, int|string $id = null)
@@ -115,7 +108,7 @@ class AddressBookController extends Controller
                 'longitude_address_book' => ['required'],
                 'location_url_address_book' => ['required'],
                 'json_response_address_book' => ['required'],
-                'area_id' => ['required']
+                'area_id' => ['required'],
             ]
         );
     }
@@ -123,9 +116,6 @@ class AddressBookController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param  $addressBook
-     * @return RedirectResponse
      * @throws ValidationException
      */
     public function update(Request $request, $addressBook): RedirectResponse
@@ -135,7 +125,7 @@ class AddressBookController extends Controller
         $request->has('status') ? $status = true : $status = false;
         $request->has('set_as_default') ? $set_as_default = true : $set_as_default = false;
         if ($set_as_default) {
-            AddressBook::where('id','!=',$addressBook->id)->where('set_as_default', true)->where('user_id', Auth::id())
+            AddressBook::where('id', '!=', $addressBook->id)->where('set_as_default', true)->where('user_id', Auth::id())
                 ->update(['set_as_default' => false]);
         }
         $addressBook->company_name = $request->company_name_address_book;
@@ -162,6 +152,7 @@ class AddressBookController extends Controller
                 return back()->with('success', 'Address is updated successfully');
             }
         }
+
         return back()->with('info', 'No changes have made.');
     }
 
@@ -178,7 +169,6 @@ class AddressBookController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param $addressBook
      * @return Application|Factory
      */
     public function edit($addressBook)
@@ -193,13 +183,11 @@ class AddressBookController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param AddressBook $addressBook
-     * @return RedirectResponse
      */
     public function destroy(AddressBook $addressBook): RedirectResponse
     {
         $addressBook->delete();
+
         return back()->with('success', 'Address details deleted successfully');
     }
 }

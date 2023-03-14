@@ -43,25 +43,21 @@ class LoginController extends Controller
     /**
      * The user has been authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $user
      * @return mixed
      */
     protected function authenticated(Request $request, $user)
     {
-        if(!$user->is_active)
-        {
+        if (! $user->is_active) {
             Auth::logout();
-           return back()->withErrors('Your account was deactivated by the admin. Please contact the admin for more details');
+
+            return back()->withErrors('Your account was deactivated by the admin. Please contact the admin for more details');
         }
-        if($user->isAdmin())
-        {
+        if ($user->isAdmin()) {
             return redirect()->route('job.index');
-        }else if($user->isCustomer())
-        {
+        } elseif ($user->isCustomer()) {
             return redirect()->route('jobs.index');
-        } else
-        {
+        } else {
             return redirect()->route('myjob.index');
         }
     }

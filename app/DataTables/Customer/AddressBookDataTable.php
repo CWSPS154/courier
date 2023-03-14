@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,22 +16,21 @@
 
 namespace App\DataTables\Customer;
 
+use App\Helpers\Helper;
 use App\Models\AddressBook;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
-use App\Helpers\Helper;
-use Illuminate\Support\Facades\Auth;
 
 class AddressBookDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -55,7 +51,7 @@ class AddressBookDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function($query){
+            ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('address_book.edit', $query->id),
@@ -67,9 +63,6 @@ class AddressBookDataTable extends DataTable
 
     /**
      * Get query source of dataTable.
-     *
-     * @param AddressBook $model
-     * @return QueryBuilder
      */
     public function query(AddressBook $model): QueryBuilder
     {
@@ -78,8 +71,6 @@ class AddressBookDataTable extends DataTable
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -96,16 +87,14 @@ class AddressBookDataTable extends DataTable
                     'text' => 'Create New Address',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('address_book.create') . '";
-                     }'
-                ],]
+                         window.location = "'.Helper::getRoute('address_book.create').'";
+                     }',
+                ], ],
             ]);
     }
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -123,17 +112,15 @@ class AddressBookDataTable extends DataTable
             Column::make('status')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Customer/AddressBook_' . date('YmdHis');
+        return 'Customer/AddressBook_'.date('YmdHis');
     }
 }

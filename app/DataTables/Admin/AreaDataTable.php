@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -32,8 +29,7 @@ class AreaDataTable extends DataTable
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -50,21 +46,18 @@ class AreaDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function($query){
+            ->addColumn('action', function ($query) {
                 return view(
                     'components.admin.datatable.button',
                     ['edit' => Helper::getRoute('area.edit', $query->id),
                         'delete' => Helper::getRoute('area.destroy', $query->id), 'id' => $query->id]
                 );
             })
-            ->rawColumns(['status','action']);
+            ->rawColumns(['status', 'action']);
     }
 
     /**
      * Get query source of dataTable.
-     *
-     * @param Area $model
-     * @return QueryBuilder
      */
     public function query(Area $model): QueryBuilder
     {
@@ -73,8 +66,6 @@ class AreaDataTable extends DataTable
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -91,16 +82,14 @@ class AreaDataTable extends DataTable
                     'text' => 'New Area',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('area.create') . '";
-                     }'
-                ],]
+                         window.location = "'.Helper::getRoute('area.create').'";
+                     }',
+                ], ],
             ]);
     }
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -112,17 +101,15 @@ class AreaDataTable extends DataTable
             Column::make('status')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Admin/Area_' . date('YmdHis');
+        return 'Admin/Area_'.date('YmdHis');
     }
 }

@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -30,7 +27,9 @@ class Role extends Model
     use HasUuids;
 
     public const ADMIN = 'admin';
+
     public const CUSTOMER = 'customer';
+
     public const DRIVER = 'driver';
 
     /**
@@ -45,7 +44,7 @@ class Role extends Model
         'role',
         'role_identifier',
         'role_level',
-        'status'
+        'status',
     ];
 
     /**
@@ -67,7 +66,8 @@ class Role extends Model
 
     public static function getRoleId($identifier)
     {
-        $role=Role::where('role_identifier',$identifier)->firstOrFail();
+        $role = Role::where('role_identifier', $identifier)->firstOrFail();
+
         return $role->id;
     }
 }

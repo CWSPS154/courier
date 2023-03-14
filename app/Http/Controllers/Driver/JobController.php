@@ -6,10 +6,7 @@
  *
  * @category Controller
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -19,28 +16,25 @@
 
 namespace App\Http\Controllers\Driver;
 
-use App\DataTables\Driver\JobDataTable;
 use App\DataTables\Driver\AcceptedJobDataTable;
+use App\DataTables\Driver\JobDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\JobStatus;
 use App\Models\JobStatusHistory;
 use App\Models\OrderJob;
-use App\Models\JobAssign;
-use App\Models\JobStatus;
+use Auth;
+use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Auth;
-use DB;
 
 class JobController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @param JobDataTable $dataTable
      * @return Application|Factory|View
      */
     public function index(JobDataTable $dataTable)
@@ -51,7 +45,6 @@ class JobController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param AcceptedJobDataTable $dataTable
      * @return Application|Factory|View
      */
     public function create(AcceptedJobDataTable $dataTable)
@@ -61,15 +54,13 @@ class JobController extends Controller
 
     public function updateHistory(Request $request)
     {
-        if($request->ajax() && $request->id && $request->comment)
-        {
-            $comment=JobStatusHistory::where('user_id',Auth::id())->findOrFail($request->id);
-            $comment->comment=$request->comment;
+        if ($request->ajax() && $request->id && $request->comment) {
+            $comment = JobStatusHistory::where('user_id', Auth::id())->findOrFail($request->id);
+            $comment->comment = $request->comment;
             $comment->save();
-            if($comment->wasChanged())
-            {
+            if ($comment->wasChanged()) {
                 return true;
-            } else{
+            } else {
                 return false;
             }
         }
@@ -77,16 +68,14 @@ class JobController extends Controller
 
     public function deleteHistory(Request $request)
     {
-        if($request->ajax() && $request->id)
-        {
-            $comment=JobStatusHistory::findOrFail($request->id);
-            $comment->comment=null;
+        if ($request->ajax() && $request->id) {
+            $comment = JobStatusHistory::findOrFail($request->id);
+            $comment->comment = null;
             $comment->clearMediaCollection('job_status_images');
             $comment->save();
-            if($comment->wasChanged())
-            {
+            if ($comment->wasChanged()) {
                 return true;
-            } else{
+            } else {
                 return false;
             }
         }
@@ -95,34 +84,25 @@ class JobController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param OrderJob $myjob
      * @return Application|Factory|View
      */
     public function show(OrderJob $myjob)
     {
-        $myjob->load('fromAddress','toAddress','jobStatusHistory','dailyJob','creator');
+        $myjob->load('fromAddress', 'toAddress', 'jobStatusHistory', 'dailyJob', 'creator');
+
         return view('template.driver.job.view_job', compact('myjob'));
     }
 
-    /**
-     * @param $order_job_id
-     * @param $user_id
-     * @param $from_status
-     * @param $to_status
-     * @param $comment
-     * @return void
-     */
-    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment=null,$photo=null): void
+    private function jobOrderStatusHistory($order_job_id, $user_id, $from_status, $to_status, $comment = null, $photo = null): void
     {
-        $jobStatusHistory=JobStatusHistory::create([
-            'order_job_id'=>$order_job_id,
-            'user_id'=>$user_id,
-            'from_status_id'=>$from_status,
-            'to_status_id'=>$to_status,
-            'comment'=>$comment
+        $jobStatusHistory = JobStatusHistory::create([
+            'order_job_id' => $order_job_id,
+            'user_id' => $user_id,
+            'from_status_id' => $from_status,
+            'to_status_id' => $to_status,
+            'comment' => $comment,
         ]);
-        if($photo)
-        {
+        if ($photo) {
             $jobStatusHistory
                 ->addMedia($photo)
                 ->preservingOriginal()
@@ -132,64 +112,57 @@ class JobController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param OrderJob $myjob
-     * @return RedirectResponse
      */
     public function edit(OrderJob $myjob): RedirectResponse
     {
-        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,JobStatus::getStatusId(JobStatus::ACCEPTED));
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(), $myjob->status_id, JobStatus::getStatusId(JobStatus::ACCEPTED));
         $myjob->status_id = JobStatus::getStatusId(JobStatus::ACCEPTED);
         $myjob->save();
         if ($myjob->wasChanged()) {
             return back()->with('success', 'Job Accepted successfully');
         }
+
         return back()->with('info', 'Job Is Not Accepted');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param OrderJob $myjob
-     * @return RedirectResponse
      */
     public function destroy(OrderJob $myjob): RedirectResponse
     {
-        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,JobStatus::getStatusId(JobStatus::REJECTED));
+        $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(), $myjob->status_id, JobStatus::getStatusId(JobStatus::REJECTED));
         $myjob->status_id = JobStatus::getStatusId(JobStatus::REJECTED);
         $myjob->save();
         if ($myjob->wasChanged()) {
             return back()->with('success', 'Job Rejected successfully');
         }
+
         return back()->with('info', 'Job Is Not Rejected');
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param OrderJob $myjob
-     * @return RedirectResponse
      */
     public function update(Request $request, OrderJob $myjob): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(),$myjob->status_id,$request->status,$request->comment,$request->photo);
+            $this->jobOrderStatusHistory($myjob->id, \Illuminate\Support\Facades\Auth::id(), $myjob->status_id, $request->status, $request->comment, $request->photo);
             $myjob->status_id = $request->status;
             $myjob->save();
             DB::commit();
             if ($myjob->wasChanged()) {
-                if($myjob->status_id==JobStatus::getStatusId(JobStatus::DELIVERED))
-                {
+                if ($myjob->status_id == JobStatus::getStatusId(JobStatus::DELIVERED)) {
                     return redirect()->route('myjob.index')->with('success', 'Job Status changed successfully');
                 }
+
                 return back()->with('success', 'Job Status changed successfully');
             }
+
             return back()->with('info', 'Job Status is not changed');
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollback();
+
             return back()->with('error', $e->getMessage());
         }
     }

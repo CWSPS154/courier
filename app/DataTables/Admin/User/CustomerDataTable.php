@@ -6,10 +6,7 @@
  *
  * @category DataTable
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -33,8 +30,7 @@ class CustomerDataTable extends DataTable
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return EloquentDataTable
+     * @param  QueryBuilder  $query Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -48,10 +44,10 @@ class CustomerDataTable extends DataTable
                 return $query->customer->company_name;
             })
             ->editColumn('email', function ($query) {
-                return '<a href="mailto:' . $query->email . '">' . $query->email . '</a> ';
+                return '<a href="mailto:'.$query->email.'">'.$query->email.'</a> ';
             })
             ->editColumn('mobile', function ($query) {
-                return '<a href="tel:' . $query->mobile . '">' . $query->mobile . '</a>';
+                return '<a href="tel:'.$query->mobile.'">'.$query->mobile.'</a>';
             })
             ->editColumn('area', function ($query) {
                 return $query->customer->area->area;
@@ -63,13 +59,13 @@ class CustomerDataTable extends DataTable
                     return '<span class="text-danger">Inactive</span>';
                 }
             })
-            ->addColumn('action', function($query){
-                if(count($query->jobs)) {
+            ->addColumn('action', function ($query) {
+                if (count($query->jobs)) {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('customer.edit', $query->id)]
                     );
-                }else{
+                } else {
                     return view(
                         'components.admin.datatable.button',
                         ['edit' => Helper::getRoute('customer.edit', $query->id),
@@ -82,20 +78,15 @@ class CustomerDataTable extends DataTable
 
     /**
      * Get query source of dataTable.
-     *
-     * @param User $model
-     * @return QueryBuilder
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()->with(['customer:user_id,company_name,customer_id,id,area_id','customer.area','jobs'])->select('users.*')
-            ->where('users.role_id', Role::getRoleId(Role::CUSTOMER))->orderBy('users.created_at', 'desc');;
+        return $model->newQuery()->with(['customer:user_id,company_name,customer_id,id,area_id', 'customer.area', 'jobs'])->select('users.*')
+            ->where('users.role_id', Role::getRoleId(Role::CUSTOMER))->orderBy('users.created_at', 'desc');
     }
 
     /**
      * Optional method if you want to use html builder.
-     *
-     * @return HtmlBuilder
      */
     public function html(): HtmlBuilder
     {
@@ -112,16 +103,14 @@ class CustomerDataTable extends DataTable
                     'text' => 'New Customer',
                     'className' => 'bg-primary mb-lg-0 mb-3',
                     'action' => 'function( e, dt, button, config){
-                         window.location = "' . Helper::getRoute('customer.create') . '";
-                     }'
-                ],]
+                         window.location = "'.Helper::getRoute('customer.create').'";
+                     }',
+                ], ],
             ]);
     }
 
     /**
      * Get the dataTable columns definition.
-     *
-     * @return array
      */
     public function getColumns(): array
     {
@@ -137,17 +126,15 @@ class CustomerDataTable extends DataTable
             Column::make('status')->name('is_active')->data('is_active')->sortable(false),
             Column::computed('action')
                 ->exportable(false)
-                ->printable(false)
+                ->printable(false),
         ];
     }
 
     /**
      * Get filename for export.
-     *
-     * @return string
      */
     protected function filename(): string
     {
-        return 'Admin/User/Customer_' . date('YmdHis');
+        return 'Admin/User/Customer_'.date('YmdHis');
     }
 }

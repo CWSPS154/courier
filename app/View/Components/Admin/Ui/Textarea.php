@@ -6,10 +6,7 @@
  *
  * @category Component
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -30,30 +27,37 @@ class Textarea extends Component
      * @var string
      */
     public $label;
+
     /**
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $id;
+
     /**
      * @var string|null
      */
     public $placeholder;
+
     /**
      * @var bool
      */
     public $required;
+
     /**
      * @var string|null
      */
     public $value;
+
     /**
      * @var string|null
      */
     public $addClass;
+
     /**
      * @var bool
      */
@@ -70,7 +74,7 @@ class Textarea extends Component
         string $id,
         string $value = null,
         string $placeholder = '',
-        bool   $required = false,
+        bool $required = false,
         string $addClass = null,
         bool $readonly = false
     ) {

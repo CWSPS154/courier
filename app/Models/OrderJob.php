@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -56,7 +53,7 @@ class OrderJob extends Model
         'van_hire',
         'number_box',
         'job_increment_id',
-        'status_id'
+        'status_id',
     ];
 
     /**
@@ -69,7 +66,7 @@ class OrderJob extends Model
     /**
      * @var array|string[]
      */
-    protected array $cascadeDeletes = ['fromAddress','toAddress','jobAssign','dailyJob'];
+    protected array $cascadeDeletes = ['fromAddress', 'toAddress', 'jobAssign', 'dailyJob'];
 
     /**
      * @var string[]
@@ -91,107 +88,68 @@ class OrderJob extends Model
         });
     }
 
-    /**
-     * @return HasOne
-     */
     public function fromAddress(): HasOne
     {
         return $this->hasOne(JobAddress::class)->where('type', 'from');
     }
 
-    /**
-     * @return HasOne
-     */
     public function toAddress(): HasOne
     {
         return $this->hasOne(JobAddress::class)->where('type', 'to');
     }
 
-    /**
-     * @return HasOne
-     */
     public function jobAssign(): HasOne
     {
         return $this->hasOne(JobAssign::class, 'order_job_id', 'id');
     }
 
-    /**
-     * @return HasOne
-     */
     public function dailyJob(): HasOne
     {
-        return $this->HasOne(DailyJob::class,'order_job_id','id');
+        return $this->HasOne(DailyJob::class, 'order_job_id', 'id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function fromArea(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'from_area_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function toArea(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'to_area_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function timeFrame(): BelongsTo
     {
         return $this->belongsTo(TimeFrame::class, 'timeframe_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(JobStatus::class, 'status_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function customerContact(): BelongsTo
     {
         return $this->belongsTo(CustomerContact::class, 'customer_contact_id');
     }
 
-    /**
-     * @return HasMany
-     */
-    public function jobStatusHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function jobStatusHistory(): HasMany
     {
-        return $this->hasMany(JobStatusHistory::class,'order_job_id','id');
+        return $this->hasMany(JobStatusHistory::class, 'order_job_id', 'id');
     }
 
-    /**
-     * @param int|string $id
-     * @return string
-     */
     public function createIncrementJobId(int|string $id): string
     {
-        return self::JOB_ID_PREFIX . str_pad($id, 5, 0, STR_PAD_LEFT);
+        return self::JOB_ID_PREFIX.str_pad($id, 5, 0, STR_PAD_LEFT);
     }
 
     /**
      * Get the class being used to provide a User.
-     *
-     * @return string
      */
     protected function getUserClass(): string
     {
@@ -200,9 +158,8 @@ class OrderJob extends Model
 
     public static function getJobsCount($user_id)
     {
-        if($user_id)
-        {
-            return OrderJob::where('user_id',$user_id)->count();
+        if ($user_id) {
+            return OrderJob::where('user_id', $user_id)->count();
         }
     }
 }

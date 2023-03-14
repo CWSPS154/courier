@@ -14,19 +14,12 @@ class SendToDriver extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-
     /**
      * Create a new message instance.
-     *
-     * @param $user_name
-     * @param $job_id
-     * @param OrderJob  $job
      */
     public function __construct(public $user_name, public $job_id, public OrderJob $job)
     {
-
     }//end __construct()
-
 
     /**
      * Get the message envelope.
@@ -38,9 +31,7 @@ class SendToDriver extends Mailable implements ShouldQueue
         return new Envelope(
             subject: 'New Job Assigned -'.$this->job_id,
         );
-
     }//end envelope()
-
 
     /**
      * Get the message content definition.
@@ -52,9 +43,7 @@ class SendToDriver extends Mailable implements ShouldQueue
         return new Content(
             view: 'emails.driver.company',
         );
-
     }//end content()
-
 
     /**
      * Get the attachments for the message.
@@ -64,8 +53,5 @@ class SendToDriver extends Mailable implements ShouldQueue
     public function attachments()
     {
         return [];
-
     }//end attachments()
-
-
 }//end class

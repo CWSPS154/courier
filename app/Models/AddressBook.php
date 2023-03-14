@@ -6,10 +6,7 @@
  *
  * @category Model
  *
- * @package Laravel
- *
  * @author CWSPS154 <codewithsps154@gmail.com>
- *
  * @license MIT License https://opensource.org/licenses/MIT
  *
  * @link https://github.com/CWSPS154
@@ -71,17 +68,11 @@ class AddressBook extends Model
      */
     protected $dates = ['deleted_at'];
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class, 'area_id');
