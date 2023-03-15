@@ -43,11 +43,11 @@ class JobAssignedListener
     public function handle($event)
     {
         $user = User::findOrFail($event->user);
-        $notification = 'Your driver '.$user->name.' has been assigned to a new job, Job ID:'.$event->order_job_id;
         Mail::to($user->email)->send(new SendToDriver($user->name, $event->order_job_id, $event->job));
-        if ($user->driver->company_email) {
-            Notification::route('mail', $user->driver->company_email)
-                ->notify(new NewNotification($notification));
-        }
+//        if ($user->driver->company_email) {
+//            $notification = 'Your driver '.$user->name.' has been assigned to a new job, Job ID:'.$event->order_job_id;
+//            Notification::route('mail', $user->driver->company_email)
+//                ->notify(new NewNotification($notification));
+//        }
     }
 }
