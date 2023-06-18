@@ -16,26 +16,31 @@
 
 namespace App\Http\Middleware;
 
-use Auth;
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class DriverMiddleware
 {
     /**
      * Handle an incoming request.
      *
+     * @param Request $request
      * @param Closure(Request): (Response|RedirectResponse) $next
-     * @return Response|RedirectResponse
+     * @return JsonResponse|RedirectResponse|Response
      */
     public function handle(Request $request, Closure $next)
     {
         if (Auth::User()->isDriver()) {
             return $next($request);
         } else {
-            abort(401);
+            if ($request->wantsJson()) {
+                return \response()->json(['message' => 'Unauthorized request'], 403);
+            }
+            abort(403, 'Unauthorized request');
         }
     }
 }
