@@ -18,6 +18,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\DataTables\Customer\CompletedJobDataTable;
 use App\DataTables\Customer\JobDataTable;
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\AddressBook;
 use App\Models\CustomerContact;
@@ -28,8 +29,7 @@ use App\Models\JobStatus;
 use App\Models\JobStatusHistory;
 use App\Models\OrderJob;
 use App\Models\User;
-use DB;
-use Helper;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -39,6 +39,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -76,7 +77,7 @@ class JobController extends Controller
                 $addressBooks = AddressBook::when(
                     $search,
                     function ($query) use ($search) {
-                        $query->where('company_name', 'like', '%'.$search.'%');
+                        $query->where('company_name', 'like', '%' . $search . '%');
                     }
                 )->when($id, function ($query) use ($id) {
                     $query->where('user_id', $id);
@@ -91,7 +92,7 @@ class JobController extends Controller
 
                 return response()->json($response);
             }
-            if ($request->user_id && ! $request->company_name) {
+            if ($request->user_id && !$request->company_name) {
                 $user = User::with('defaultAddress', 'customer:company_name,user_id,id,area_id', 'customer.area')
                     ->findOrFail($request->user_id);
                 $data = collect($user->defaultAddress);
@@ -119,7 +120,7 @@ class JobController extends Controller
             $customerContacts = CustomerContact::when(
                 $search,
                 function ($query) use ($search) {
-                    $query->where('customer_contact', 'like', '%'.$search.'%');
+                    $query->where('customer_contact', 'like', '%' . $search . '%');
                 }
             )->when($id, function ($query) use ($id) {
                 $query->where('user_id', $id);
@@ -159,7 +160,7 @@ class JobController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return RedirectResponse
+     * @return array|RedirectResponse
      *
      * @throws ValidationException
      */
@@ -203,15 +204,22 @@ class JobController extends Controller
 
             DailyJob::create([
                 'order_job_id' => $job->id,
-                'job_number' => Carbon::now()->format('ymd').'-'.$dailyJobs,
+                'job_number' => Carbon::now()->format('ymd') . '-' . $dailyJobs,
             ]);
             $this->jobOrderStatusHistory($job->id, Auth::id(), null, JobStatus::getStatusId(JobStatus::NEW_JOB));
             DB::commit();
-
+            if ($request->wantsJson()) {
+                return ['success' => true, 'message' => "Job Created successfully", 'data' => $job];
+            }
             return redirect()->route('jobs.index')->with('success', 'Job Created successfully');
         } catch (Exception $e) {
             DB::rollback();
-
+            if ($request->wantsJson()) {
+                if (config('app.debug')) {
+                    return ['success' => false, 'message' => $e->getMessage()];
+                }
+                return ['success' => false, 'message' => "Something went wrong with the input data"];
+            }
             return back()->with('error', $e->getMessage());
         }
     }
@@ -219,8 +227,8 @@ class JobController extends Controller
     /**
      * Validator for validate data in the request.
      *
-     * @param  array  $data The data
-     * @param  int|string|null  $id The identifier for update validation
+     * @param array $data The data
+     * @param int|string|null $id The identifier for update validation
      * @return \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\Validator
      */
     protected function validator(array $data, int|string $id = null)
@@ -270,64 +278,67 @@ class JobController extends Controller
     }
 
     /**
-     * @return void
+     * @param $user_id
+     * @param $address
+     * @param $input_id
+     * @return mixed
      */
-    private function makeNewAddress($user_id, $address, $input_id)
+    private function makeNewAddress($user_id, $address, $input_id): mixed
     {
-        if (isset($address['edit_id_'.$input_id]) && ! empty($address['edit_id_'.$input_id])) {
-            $newAddress = AddressBook::find($address['edit_id_'.$input_id]);
+        if (isset($address['edit_id_' . $input_id]) && !empty($address['edit_id_' . $input_id])) {
+            $newAddress = AddressBook::find($address['edit_id_' . $input_id]);
             if ($newAddress == null) {
                 $newAddress = AddressBook::create([
                     'user_id' => $user_id,
-                    'company_name' => $address['company_name_'.$input_id],
-                    'street_address' => $address['street_address_'.$input_id],
-                    'street_number' => $address['street_number_'.$input_id],
-                    'suburb' => $address['suburb_'.$input_id],
-                    'city' => $address['city_'.$input_id],
-                    'state' => $address['state_'.$input_id],
-                    'zip' => $address['zip_'.$input_id],
-                    'country' => $address['country_'.$input_id],
-                    'place_id' => $address['place_id_'.$input_id],
-                    'area_id' => $address[$input_id.'_area_id'],
-                    'latitude' => $address['latitude_'.$input_id],
-                    'longitude' => $address['longitude_'.$input_id],
-                    'location_url' => $address['location_url_'.$input_id],
-                    'full_json_response' => $address['json_response_'.$input_id],
+                    'company_name' => $address['company_name_' . $input_id],
+                    'street_address' => $address['street_address_' . $input_id],
+                    'street_number' => $address['street_number_' . $input_id],
+                    'suburb' => $address['suburb_' . $input_id],
+                    'city' => $address['city_' . $input_id],
+                    'state' => $address['state_' . $input_id],
+                    'zip' => $address['zip_' . $input_id],
+                    'country' => $address['country_' . $input_id],
+                    'place_id' => $address['place_id_' . $input_id],
+                    'area_id' => $address[$input_id . '_area_id'],
+                    'latitude' => $address['latitude_' . $input_id],
+                    'longitude' => $address['longitude_' . $input_id],
+                    'location_url' => $address['location_url_' . $input_id],
+                    'full_json_response' => $address['json_response_' . $input_id],
                     'status' => true,
                     'set_as_default' => false,
                 ]);
             } else {
-                $newAddress->company_name = $address['company_name_'.$input_id];
-                $newAddress->street_address = $address['street_address_'.$input_id];
-                $newAddress->street_number = $address['street_number_'.$input_id];
-                $newAddress->suburb = $address['suburb_'.$input_id];
-                $newAddress->city = $address['city_'.$input_id];
-                $newAddress->state = $address['state_'.$input_id];
-                $newAddress->zip = $address['zip_'.$input_id];
-                $newAddress->country = $address['country_'.$input_id];
-                $newAddress->place_id = $address['place_id_'.$input_id];
-                $newAddress->area_id = $address[$input_id.'_area_id'];
-                $newAddress->latitude = $address['latitude_'.$input_id];
-                $newAddress->longitude = $address['longitude_'.$input_id];
-                $newAddress->location_url = $address['location_url_'.$input_id];
-                $newAddress->full_json_response = $address['json_response_'.$input_id];
+                $newAddress->company_name = $address['company_name_' . $input_id];
+                $newAddress->street_address = $address['street_address_' . $input_id];
+                $newAddress->street_number = $address['street_number_' . $input_id];
+                $newAddress->suburb = $address['suburb_' . $input_id];
+                $newAddress->city = $address['city_' . $input_id];
+                $newAddress->state = $address['state_' . $input_id];
+                $newAddress->zip = $address['zip_' . $input_id];
+                $newAddress->country = $address['country_' . $input_id];
+                $newAddress->place_id = $address['place_id_' . $input_id];
+                $newAddress->area_id = $address[$input_id . '_area_id'];
+                $newAddress->latitude = $address['latitude_' . $input_id];
+                $newAddress->longitude = $address['longitude_' . $input_id];
+                $newAddress->location_url = $address['location_url_' . $input_id];
+                $newAddress->full_json_response = $address['json_response_' . $input_id];
                 if ($newAddress->isDirty('company_name') || $newAddress->isDirty('street_address') || $newAddress->isDirty('street_number') || $newAddress->isDirty('suburb') || $newAddress->isDirty('city') || $newAddress->isDirty('state') || $newAddress->isDirty('zip') || $newAddress->isDirty('country') || $newAddress->isDirty('area_id')) {
                     $newAddress = AddressBook::create([
                         'user_id' => $user_id,
-                        'company_name' => $address['company_name_'.$input_id],
-                        'street_address' => $address['street_address_'.$input_id],
-                        'street_number' => $address['street_number_'.$input_id],
-                        'suburb' => $address['suburb_'.$input_id],
-                        'city' => $address['city_'.$input_id],
-                        'state' => $address['state_'.$input_id],
-                        'zip' => $address['zip_'.$input_id],
-                        'country' => $address['country_'.$input_id],
-                        'place_id' => $address['place_id_'.$input_id],
-                        'area_id' => $address[$input_id.'_area_id'],
-                        'latitude' => $address['latitude_'.$input_id],
-                        'longitude' => $address['longitude_'.$input_id],
-                        'location_url' => $address['location_url_'.$input_id],
-                        'full_json_response' => $address['json_response_'.$input_id],
+                        'company_name' => $address['company_name_' . $input_id],
+                        'street_address' => $address['street_address_' . $input_id],
+                        'street_number' => $address['street_number_' . $input_id],
+                        'suburb' => $address['suburb_' . $input_id],
+                        'city' => $address['city_' . $input_id],
+                        'state' => $address['state_' . $input_id],
+                        'zip' => $address['zip_' . $input_id],
+                        'country' => $address['country_' . $input_id],
+                        'place_id' => $address['place_id_' . $input_id],
+                        'area_id' => $address[$input_id . '_area_id'],
+                        'latitude' => $address['latitude_' . $input_id],
+                        'longitude' => $address['longitude_' . $input_id],
+                        'location_url' => $address['location_url_' . $input_id],
+                        'full_json_response' => $address['json_response_' . $input_id],
                         'status' => true,
                         'set_as_default' => false,
                     ]);
@@ -338,20 +349,20 @@ class JobController extends Controller
         } else {
             $newAddress = AddressBook::create([
                 'user_id' => $user_id,
-                'company_name' => $address['company_name_'.$input_id],
-                'street_address' => $address['street_address_'.$input_id],
-                'street_number' => $address['street_number_'.$input_id],
-                'suburb' => $address['suburb_'.$input_id],
-                'city' => $address['city_'.$input_id],
-                'state' => $address['state_'.$input_id],
-                'zip' => $address['zip_'.$input_id],
-                'country' => $address['country_'.$input_id],
-                'place_id' => $address['place_id_'.$input_id],
-                'area_id' => $address[$input_id.'_area_id'],
-                'latitude' => $address['latitude_'.$input_id],
-                'longitude' => $address['longitude_'.$input_id],
-                'location_url' => $address['location_url_'.$input_id],
-                'full_json_response' => $address['json_response_'.$input_id],
+                'company_name' => $address['company_name_' . $input_id],
+                'street_address' => $address['street_address_' . $input_id],
+                'street_number' => $address['street_number_' . $input_id],
+                'suburb' => $address['suburb_' . $input_id],
+                'city' => $address['city_' . $input_id],
+                'state' => $address['state_' . $input_id],
+                'zip' => $address['zip_' . $input_id],
+                'country' => $address['country_' . $input_id],
+                'place_id' => $address['place_id_' . $input_id],
+                'area_id' => $address[$input_id . '_area_id'],
+                'latitude' => $address['latitude_' . $input_id],
+                'longitude' => $address['longitude_' . $input_id],
+                'location_url' => $address['location_url_' . $input_id],
+                'full_json_response' => $address['json_response_' . $input_id],
                 'status' => true,
                 'set_as_default' => false,
             ]);
@@ -374,27 +385,30 @@ class JobController extends Controller
     }
 
     /**
-     * @param $job_id
+     * @param $order_job_id
+     * @param $address
+     * @param $type
+     * @param null $address_book_id
      * @return mixed
      */
-    private function makeNewJobAddress($order_job_id, $address, $type, $address_book_id = null)
+    private function makeNewJobAddress($order_job_id, $address, $type, $address_book_id = null): mixed
     {
         $newAddress = JobAddress::where('order_job_id', $order_job_id)->where('type', $type)->first();
         if ($newAddress) {
             $newAddress->address_book_id = $address_book_id;
-            $newAddress->company_name = $address['company_name_'.$type];
-            $newAddress->street_address = $address['street_address_'.$type];
-            $newAddress->street_number = $address['street_number_'.$type];
-            $newAddress->suburb = $address['suburb_'.$type];
-            $newAddress->city = $address['city_'.$type];
-            $newAddress->state = $address['state_'.$type];
-            $newAddress->zip = $address['zip_'.$type];
-            $newAddress->country = $address['country_'.$type];
-            $newAddress->place_id = $address['place_id_'.$type];
-            $newAddress->latitude = $address['latitude_'.$type];
-            $newAddress->longitude = $address['longitude_'.$type];
-            $newAddress->location_url = $address['location_url_'.$type];
-            $newAddress->full_json_response = $address['json_response_'.$type];
+            $newAddress->company_name = $address['company_name_' . $type];
+            $newAddress->street_address = $address['street_address_' . $type];
+            $newAddress->street_number = $address['street_number_' . $type];
+            $newAddress->suburb = $address['suburb_' . $type];
+            $newAddress->city = $address['city_' . $type];
+            $newAddress->state = $address['state_' . $type];
+            $newAddress->zip = $address['zip_' . $type];
+            $newAddress->country = $address['country_' . $type];
+            $newAddress->place_id = $address['place_id_' . $type];
+            $newAddress->latitude = $address['latitude_' . $type];
+            $newAddress->longitude = $address['longitude_' . $type];
+            $newAddress->location_url = $address['location_url_' . $type];
+            $newAddress->full_json_response = $address['json_response_' . $type];
             $newAddress->save();
 
             return $newAddress;
@@ -403,19 +417,19 @@ class JobController extends Controller
                 'order_job_id' => $order_job_id,
                 'address_book_id' => $address_book_id,
                 'type' => $type,
-                'company_name' => $address['company_name_'.$type],
-                'street_address' => $address['street_address_'.$type],
-                'street_number' => $address['street_number_'.$type],
-                'suburb' => $address['suburb_'.$type],
-                'city' => $address['city_'.$type],
-                'state' => $address['state_'.$type],
-                'zip' => $address['zip_'.$type],
-                'country' => $address['country_'.$type],
-                'place_id' => $address['place_id_'.$type],
-                'latitude' => $address['latitude_'.$type],
-                'longitude' => $address['longitude_'.$type],
-                'location_url' => $address['location_url_'.$type],
-                'full_json_response' => $address['json_response_'.$type],
+                'company_name' => $address['company_name_' . $type],
+                'street_address' => $address['street_address_' . $type],
+                'street_number' => $address['street_number_' . $type],
+                'suburb' => $address['suburb_' . $type],
+                'city' => $address['city_' . $type],
+                'state' => $address['state_' . $type],
+                'zip' => $address['zip_' . $type],
+                'country' => $address['country_' . $type],
+                'place_id' => $address['place_id_' . $type],
+                'latitude' => $address['latitude_' . $type],
+                'longitude' => $address['longitude_' . $type],
+                'location_url' => $address['location_url_' . $type],
+                'full_json_response' => $address['json_response_' . $type],
             ]);
         }
     }
@@ -425,7 +439,7 @@ class JobController extends Controller
      *
      * @throws ValidationException
      */
-    public function update(Request $request, OrderJob $job): RedirectResponse
+    public function update(Request $request, OrderJob $job): array|RedirectResponse
     {
         $this->validator($request->all(), $job->id)->validate();
         $request->has('van_hire') ? $vanHire = true : $vanHire = false;
@@ -466,13 +480,24 @@ class JobController extends Controller
             }
             DB::commit();
             if ($job->wasChanged() || $fromJobAddress->wasChanged() || $toJobAddress->wasChanged()) {
+                if ($request->wantsJson()) {
+                    return ['success' => true, 'message' => "Job Updated successfully", 'data' => $job];
+                }
                 return redirect()->route('jobs.index')->with('success', 'Job Updated successfully');
+            } else {
+                if ($request->wantsJson()) {
+                    return ['success' => true, 'message' => "No changes have been made", 'data' => $job];
+                }
+                return back()->with('info', 'No changes have been made.');
             }
-
-            return back()->with('info', 'No changes have made.');
         } catch (Exception $e) {
             DB::rollback();
-
+            if ($request->wantsJson()) {
+                if (config('app.debug')) {
+                    return ['success' => false, 'message' => $e->getMessage()];
+                }
+                return ['success' => false, 'message' => "Something went wrong with the input data"];
+            }
             return back()->with('error', $e->getMessage());
         }
     }
@@ -518,11 +543,15 @@ class JobController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @param OrderJob $job
+     * @return array|RedirectResponse
      */
-    public function destroy(OrderJob $job): RedirectResponse
+    public function destroy(OrderJob $job): array|RedirectResponse
     {
         $job->delete();
-
+        if (request()->wantsJson()) {
+            return ['success' => true, 'message' => 'Job Deleted successfully'];
+        }
         return back()->with('success', 'Job Deleted successfully');
     }
 }

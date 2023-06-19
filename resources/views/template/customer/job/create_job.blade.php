@@ -509,7 +509,7 @@
 
                 function getAddressByCompanyName(company_name,user_id, type) {
                     $.ajax({
-                        url: '{{ Helper::getRoute('job.getAddress') }}',
+                        url: '{{ Helper::getRoute('jobs.getAddress') }}',
                         type: 'post',
                         data: {company_name: company_name,user_id:user_id},
                         dataType: 'json',

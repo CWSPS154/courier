@@ -7,15 +7,22 @@ use App\Http\Resources\Api\V1\Customer\JobsResource;
 use App\Models\JobStatus;
 use App\Models\OrderJob;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class JobController extends Controller
 {
+    public function __construct(
+        protected \App\Http\Controllers\Customer\JobController $webJobController
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -62,11 +69,14 @@ class JobController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Response
+     * @return Response|JsonResponse|array|RedirectResponse
+     * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request): Response|JsonResponse|array|RedirectResponse
     {
-        //
+        $request->mergeIfMissing(['customer' => Auth::id()]);
+        $response = $this->webJobController->store($request);
+        return $this->response($response);
     }
 
     /**
@@ -82,7 +92,7 @@ class JobController extends Controller
         $type = \request()->get('type');
 
         if ($orderJob->user_id != Auth::id()) {
-            return response()->json(['message' => "Unauthorized job"], 403);
+            return response()->json(['message' => "Unauthorized record"], 403);
         }
 
         if ($type === 'active' && in_array($orderJob->status_id, [
@@ -124,21 +134,64 @@ class JobController extends Controller
      *
      * @param Request $request
      * @param OrderJob $orderJob
-     * @return Response
+     * @return array|JsonResponse|RedirectResponse|Response
+     * @throws ValidationException
      */
-    public function update(Request $request, OrderJob $orderJob)
+    public function update(Request $request, OrderJob $orderJob): Response|JsonResponse|array|RedirectResponse
     {
-        //
+        $request->mergeIfMissing(['customer' => Auth::id()]);
+        $response = $this->webJobController->update($request, $orderJob);
+        return $this->response($response);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param OrderJob $orderJob
-     * @return Response
+     * @return Response|JsonResponse|array|RedirectResponse
      */
-    public function destroy(OrderJob $orderJob)
+    public function destroy(OrderJob $orderJob): Response|JsonResponse|array|RedirectResponse
     {
-        //
+        $response = $this->webJobController->destroy($orderJob);
+        return $this->response($response);
+    }
+
+    /**
+     * @param array|RedirectResponse $response
+     * @return array|JsonResponse|RedirectResponse
+     */
+    protected function response(array|RedirectResponse $response): RedirectResponse|array|JsonResponse
+    {
+        if (isset($response['success']) && $response['success']) {
+            if (isset($response['data']) && $response['data']) {
+                $job = $response['data']->load([
+                    'user:name,id',
+                    'customerContact:customer_contact,id',
+                    'fromArea:area,id',
+                    'toArea:area,id',
+                    'status:status,id',
+                    'creator:name,id',
+                    'editor:name,id',
+                    'dailyJob:job_number,id,order_job_id',
+                    'jobAssign:order_job_id,user_id,id',
+                    'jobAssign.user:name,id',
+                    'fromAddress',
+                    'toAddress',
+                    'jobStatusHistory',
+                    'jobStatusHistory.user:name,id',
+                    'jobStatusHistory.fromStatus:status,id',
+                    'jobStatusHistory.toStatus:status,id'
+                ]);
+                return response()->json([
+                    'message' => $response['message'],
+                    'data' => new JobsResource($job)
+                ]);
+            } else {
+                return response()->json(['message' => $response['message']]);
+            }
+        } else if (isset($response['success'])) {
+            return response()->json(['message' => $response['message']], 422);
+        }
+        return $response;
     }
 }

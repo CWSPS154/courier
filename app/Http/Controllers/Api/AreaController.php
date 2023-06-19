@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\AreaResource;
 use App\Models\Area;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -46,12 +47,15 @@ class AreaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $area
-     * @return AreaResource
+     * @param Area $area
+     * @return AreaResource|JsonResponse
      */
-    public function show($area): AreaResource
+    public function show(Area $area): JsonResponse|AreaResource
     {
-        return new AreaResource(Area::whereStatus(true)->findOrFail($area));
+        if(!$area->status) {
+            return response()->json(['message' => "Unauthorized record"], 403);
+        }
+        return new AreaResource($area);
     }
 
     /**
