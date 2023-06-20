@@ -190,7 +190,7 @@ class JobController extends Controller
                 return response()->json(['message' => $response['message']]);
             }
         } else if (isset($response['success'])) {
-            return response()->json(['message' => $response['message']], 422);
+            return response()->json(['message' => $response['message']],  $response['code'] ?? 422);
         }
         return $response;
     }

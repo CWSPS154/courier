@@ -441,6 +441,12 @@ class JobController extends Controller
      */
     public function update(Request $request, OrderJob $job): array|RedirectResponse
     {
+        if ($job->status_id == JobStatus::getStatusId(JobStatus::DELIVERED)) {
+            if ($request->wantsJson()) {
+                return ['success' => false, 'message' => "You don't have the permission to edit this record", 'code' => 403];
+            }
+            return redirect()->route('jobs.index')->with('error', "You don't have the permission to edit this record");
+        }
         $this->validator($request->all(), $job->id)->validate();
         $request->has('van_hire') ? $vanHire = true : $vanHire = false;
         DB::beginTransaction();
@@ -548,6 +554,12 @@ class JobController extends Controller
      */
     public function destroy(OrderJob $job): array|RedirectResponse
     {
+        if ($job->status_id == JobStatus::getStatusId(JobStatus::DELIVERED)) {
+            if (request()->wantsJson()) {
+                return ['success' => false, 'message' => "You don't have the permission to delete this record", 'code' => 403];
+            }
+            return redirect()->route('jobs.index')->with('error', "You don't have the permission to delete this record");
+        }
         $job->delete();
         if (request()->wantsJson()) {
             return ['success' => true, 'message' => 'Job Deleted successfully'];

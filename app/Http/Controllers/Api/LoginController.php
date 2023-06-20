@@ -46,7 +46,7 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $this->guard()->user()->tokens()->delete();
             $token = $this->guard()->user()->createToken('access-token')->plainTextToken;
-            return response()->json(['access-token' => $token], 200);
+            return response()->json(['access_token' => $token], 200);
         }
         $this->incrementLoginAttempts($request);
         return $this->sendFailedLoginResponse($request);

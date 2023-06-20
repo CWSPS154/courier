@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AreaController;
 use App\Http\Controllers\Api\Customer\AddressBookController;
 use App\Http\Controllers\Api\Customer\JobController;
+use App\Http\Controllers\Api\CustomerContactController;
 use App\Http\Controllers\Api\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,5 +25,6 @@ Route::middleware(['auth:sanctum', 'customer','is-active'])->prefix('v1/customer
     Route::apiResource('order-jobs', JobController::class);
     Route::apiResource('address-book', AddressBookController::class);
     Route::apiResource('areas', AreaController::class)->only('index','show');
+    Route::get('contacts', CustomerContactController::class);
 });
 
