@@ -16,23 +16,33 @@
 
 namespace App\Http\Middleware;
 
-use Auth;
 use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class IsActiveMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @param Closure(Request): (Response|RedirectResponse) $next
+     * @return JsonResponse|RedirectResponse|Response
      */
     public function handle(Request $request, Closure $next)
     {
         if (Auth::User()->is_active) {
             return $next($request);
         } else {
+            if ($request->wantsJson()) {
+                return response()->json(
+                    ['message' => 'Your account was deactivated by the admin. Please contact the admin for more details'],
+                    403
+                );
+            }
             abort(403, 'Your account was deactivated by the admin. Please contact the admin for more details');
         }
     }

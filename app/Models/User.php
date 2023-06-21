@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Wildside\Userstamps\Userstamps;
 
 class User extends Authenticatable implements AuthenticatableContract, CanResetPasswordContract, MustVerifyEmail
@@ -41,6 +42,7 @@ class User extends Authenticatable implements AuthenticatableContract, CanResetP
     use Userstamps;
     use CascadeSoftDeletes;
     use HasUuids;
+    use HasApiTokens;
 
     /**
      * @var string
